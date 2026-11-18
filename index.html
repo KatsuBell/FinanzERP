@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="es" class="light">
 <head>
@@ -338,7 +339,7 @@ service cloud.firestore {
   <!-- ======================================================================== -->
   <!-- BARRA SUPERIOR GLOBAL (CONMUTADOR MODO PC / MÓVIL + ESTADO FIREBASE)     -->
   <!-- ======================================================================== -->
-  <div class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-3 sm:px-6 py-2.5 flex items-center justify-between gap-2 sticky top-0 z-40">
+  <div class="h-14 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-3 sm:px-5 flex items-center justify-between gap-2 sticky top-0 z-40 shrink-0">
     <!-- Marca + Estado Nube -->
     <div class="flex items-center gap-2.5 min-w-0">
       <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-orange-500 to-brand-600 flex items-center justify-center text-white shadow-sm shrink-0">
@@ -346,14 +347,14 @@ service cloud.firestore {
       </div>
       <div class="min-w-0">
         <span class="font-extrabold text-sm sm:text-base tracking-tight text-slate-900 dark:text-white block leading-none">Finanz<span class="text-orange-500">ERP</span></span>
-        <button onclick="openFirebaseModal()" id="global-sync-pill" class="mt-0.5 inline-flex items-center gap-1 text-[10px] font-semibold text-slate-500 dark:text-slate-400 hover:text-brand-600 transition truncate">
+        <button onclick="openFirebaseModal()" id="global-sync-pill" class="mt-0.5 inline-flex items-center gap-1 text-[10px] font-bold text-slate-500 dark:text-slate-400 hover:text-brand-600 transition truncate">
           <span id="global-sync-dot" class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
           <span id="global-sync-label">Local (Conectar Nube)</span>
         </button>
       </div>
     </div>
 
-    <!-- Controles Derechos: Conmutador PC / Móvil + Tema -->
+    <!-- Controles Derechos: Conmutador PC / Móvil + Botón Nube Unificado + Tema -->
     <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
       <!-- Conmutador Dual Interfaz -->
       <div class="inline-flex rounded-xl bg-slate-100 dark:bg-slate-800 p-0.5 border border-slate-200/70 dark:border-slate-700">
@@ -367,8 +368,9 @@ service cloud.firestore {
         </button>
       </div>
 
-      <button onclick="openFirebaseModal()" title="Sincronización Firebase" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition">
-        <i data-lucide="cloud" class="w-4 h-4"></i>
+      <button onclick="openFirebaseModal()" id="top-cloud-btn" title="Sincronización Firebase" class="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition flex items-center gap-1.5 text-xs font-bold border border-transparent">
+        <i data-lucide="cloud" id="top-cloud-icon" class="w-4 h-4"></i>
+        <span id="top-cloud-text" class="hidden md:inline">Nube</span>
       </button>
 
       <button onclick="toggleTheme()" title="Modo Oscuro / Claro" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition">
@@ -379,168 +381,230 @@ service cloud.firestore {
   </div>
 
   <!-- ======================================================================== -->
+  <!-- MODAL HISTORIAL DETALLADO POR AMIGO                                      -->
+  <!-- ======================================================================== -->
+  <div id="friend-history-modal" class="fixed inset-0 z-[78] hidden items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-2xl w-full p-5 sm:p-6 shadow-2xl flex flex-col max-h-[88vh]">
+      <div class="flex items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
+        <div>
+          <h3 id="fh-title" class="text-lg font-extrabold text-slate-900 dark:text-white">Historial con Amigo</h3>
+          <p id="fh-subtitle" class="text-xs text-slate-500 mt-0.5">Balance neto y movimientos compartidos</p>
+        </div>
+        <button onclick="closeFriendHistoryModal()" class="p-2 rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- KPIs rápidos del amigo -->
+      <div class="grid grid-cols-3 gap-2.5 my-3.5 text-xs">
+        <div class="p-3 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200/70 dark:border-emerald-900">
+          <span class="text-emerald-700 dark:text-emerald-400 font-semibold block">Te debe (pend.)</span>
+          <span id="fh-owed-me" class="text-base font-extrabold text-emerald-700 dark:text-emerald-300">0,00 €</span>
+        </div>
+        <div class="p-3 rounded-xl bg-rose-50/70 dark:bg-rose-950/30 border border-rose-200/70 dark:border-rose-900">
+          <span class="text-rose-700 dark:text-rose-400 font-semibold block">Le debes (pend.)</span>
+          <span id="fh-i-owe" class="text-base font-extrabold text-rose-700 dark:text-rose-300">0,00 €</span>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+          <span class="text-slate-500 font-semibold block">Saldo Neto</span>
+          <span id="fh-net" class="text-base font-extrabold">0,00 €</span>
+        </div>
+      </div>
+
+      <!-- Lista cronológica completa -->
+      <div id="fh-list" class="flex-1 overflow-y-auto space-y-2 pr-1"></div>
+
+      <div class="pt-3 mt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
+        <button id="fh-settle-all-btn" onclick="settleAllForFriend()" class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white transition">
+          Saldar todo lo pendiente ✓
+        </button>
+        <button onclick="closeFriendHistoryModal()" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- ======================================================================== -->
   <!--                    1. INTERFAZ ESCRITORIO (ERP COMPLETO)                 -->
   <!-- ======================================================================== -->
-  <!-- ======================================================================== -->
-  <div id="desktop-shell" class="min-h-[calc(100vh-53px)] flex flex-col lg:flex-row">
+  <div id="desktop-shell" class="h-[calc(100vh-56px)] overflow-hidden flex flex-col lg:flex-row">
     
-    <!-- Barra Lateral Escritorio -->
-    <aside class="w-full lg:w-64 bg-white dark:bg-slate-900 border-b lg:border-b-0 lg:border-r border-slate-200 dark:border-slate-800 flex flex-col justify-between">
-      <nav class="p-3 lg:p-4 flex lg:flex-col gap-1.5 overflow-x-auto no-scrollbar">
-        <button onclick="switchDesktopTab('dashboard')" id="dnav-dashboard" class="dnav-btn active flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all whitespace-nowrap">
-          <i data-lucide="layout-dashboard" class="w-4 h-4 shrink-0"></i>
-          <span>Resumen General</span>
-        </button>
-        <button onclick="switchDesktopTab('transactions')" id="dnav-transactions" class="dnav-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all whitespace-nowrap">
-          <i data-lucide="arrow-left-right" class="w-4 h-4 shrink-0"></i>
-          <span>Movimientos & Tickets</span>
-          <span id="dbadge-pending-tickets" class="ml-auto hidden px-2 py-0.5 text-[11px] font-bold rounded-full bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300">0</span>
-        </button>
-        <button onclick="switchDesktopTab('debts')" id="dnav-debts" class="dnav-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all whitespace-nowrap">
-          <i data-lucide="users" class="w-4 h-4 shrink-0"></i>
-          <span>Deudas Amigos</span>
-          <span id="dbadge-debts" class="ml-auto inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300">0</span>
-        </button>
-        <button onclick="switchDesktopTab('forecast')" id="dnav-forecast" class="dnav-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all whitespace-nowrap">
-          <i data-lucide="trending-up" class="w-4 h-4 shrink-0"></i>
-          <span>Previsiones Cash Flow</span>
-        </button>
-      </nav>
-
-      <!-- Herramientas Importación & Backup en Barra Lateral -->
-      <div class="p-4 border-t border-slate-100 dark:border-slate-800 space-y-2">
-        <button onclick="openIngModal()" class="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs font-bold bg-orange-500 hover:bg-orange-600 text-white shadow-sm transition">
-          <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
-          <span>Subir Excel ING</span>
-        </button>
-        <button onclick="openHomebankModal()" class="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-bold bg-sky-600/10 hover:bg-sky-600/20 text-sky-700 dark:text-sky-300 border border-sky-500/20 transition">
-          <i data-lucide="database" class="w-4 h-4"></i>
-          <span>Importar HomeBank</span>
-        </button>
-
-        <div class="grid grid-cols-2 gap-1.5 pt-1">
-          <button onclick="exportData()" class="flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-xl text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 transition">
-            <i data-lucide="download" class="w-3.5 h-3.5"></i>
-            <span>Backup JSON</span>
+    <!-- Barra Lateral Escritorio (Compacta, altura completa sin corte y colapsable) -->
+    <aside id="desktop-sidebar" class="w-full lg:w-60 h-auto lg:h-full bg-white dark:bg-slate-900 border-b lg:border-b-0 lg:border-r border-slate-200 dark:border-slate-800 flex flex-col justify-between shrink-0 transition-all duration-200">
+      <div class="flex flex-col min-h-0">
+        <!-- Cabecera Sidebar con Botón Colapsar / Expandir -->
+        <div class="hidden lg:flex items-center justify-between px-3.5 py-2 border-b border-slate-100 dark:border-slate-800/80">
+          <span class="sidebar-label text-[10px] font-bold uppercase tracking-wider text-slate-400">Menú ERP</span>
+          <button onclick="toggleSidebarCollapse()" id="sidebar-collapse-btn" title="Minimizar / Expandir barra lateral" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition ml-auto">
+            <i data-lucide="chevrons-left" id="sidebar-collapse-icon" class="w-4 h-4"></i>
           </button>
-          <label class="flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-xl text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 transition cursor-pointer">
-            <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+        </div>
+
+        <nav class="p-2 lg:p-2.5 flex lg:flex-col gap-1 overflow-x-auto no-scrollbar">
+          <button onclick="switchDesktopTab('dashboard')" id="dnav-dashboard" title="Resumen General" class="dnav-btn active flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all whitespace-nowrap">
+            <i data-lucide="layout-dashboard" class="w-4 h-4 shrink-0"></i>
+            <span class="sidebar-label">Resumen General</span>
+          </button>
+          <button onclick="switchDesktopTab('transactions')" id="dnav-transactions" title="Movimientos & Tickets" class="dnav-btn flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all whitespace-nowrap">
+            <i data-lucide="arrow-left-right" class="w-4 h-4 shrink-0"></i>
+            <span class="sidebar-label">Movimientos</span>
+            <span id="dbadge-pending-tickets" class="sidebar-label ml-auto hidden px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300">0</span>
+          </button>
+          <button onclick="switchDesktopTab('debts')" id="dnav-debts" title="Deudas Amigos" class="dnav-btn flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all whitespace-nowrap">
+            <i data-lucide="users" class="w-4 h-4 shrink-0"></i>
+            <span class="sidebar-label">Deudas Amigos</span>
+            <span id="dbadge-debts" class="sidebar-label ml-auto inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300">0</span>
+          </button>
+          <button onclick="switchDesktopTab('forecast')" id="dnav-forecast" title="Previsiones Cash Flow" class="dnav-btn flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all whitespace-nowrap">
+            <i data-lucide="trending-up" class="w-4 h-4 shrink-0"></i>
+            <span class="sidebar-label">Previsiones</span>
+          </button>
+          <button onclick="switchDesktopTab('settings')" id="dnav-settings" title="Ajustes y Reglas Automáticas" class="dnav-btn flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all whitespace-nowrap">
+            <i data-lucide="settings" class="w-4 h-4 shrink-0"></i>
+            <span class="sidebar-label">Ajustes y Reglas</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- Herramientas Importación & Backup Compactas en Barra Lateral (siempre visibles sin recorte) -->
+      <div class="hidden lg:flex flex-col gap-1.5 p-2.5 border-t border-slate-100 dark:border-slate-800">
+        <button onclick="openIngModal()" title="Subir Excel ING" class="w-full flex items-center justify-center gap-2 px-2.5 py-2 rounded-xl text-xs font-bold bg-orange-500 hover:bg-orange-600 text-white shadow-sm transition">
+          <i data-lucide="file-spreadsheet" class="w-4 h-4 shrink-0"></i>
+          <span class="sidebar-label truncate">Subir Excel ING</span>
+        </button>
+        <button onclick="openHomebankModal()" title="Importar HomeBank" class="w-full flex items-center justify-center gap-2 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-sky-600/10 hover:bg-sky-600/20 text-sky-700 dark:text-sky-300 border border-sky-500/20 transition">
+          <i data-lucide="database" class="w-3.5 h-3.5 shrink-0"></i>
+          <span class="sidebar-label truncate">Importar HomeBank</span>
+        </button>
+
+        <div class="sidebar-label grid grid-cols-2 gap-1 pt-0.5">
+          <button onclick="exportData()" class="flex items-center justify-center gap-1 px-2 py-1.5 rounded-lg text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 transition">
+            <i data-lucide="download" class="w-3 h-3"></i>
+            <span>Backup</span>
+          </button>
+          <label class="flex items-center justify-center gap-1 px-2 py-1.5 rounded-lg text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 transition cursor-pointer">
+            <i data-lucide="upload" class="w-3 h-3"></i>
             <span>Restaurar</span>
             <input type="file" accept=".json" class="hidden" onchange="importData(event)" />
           </label>
         </div>
 
-        <button onclick="confirmClearAllData()" class="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-medium text-slate-400 hover:text-rose-500 transition">
-          <i data-lucide="trash-2" class="w-3 h-3"></i>
-          <span>Vaciar datos (empezar de cero)</span>
+        <button onclick="confirmClearAllData()" title="Vaciar datos" class="w-full flex items-center justify-center gap-1 px-2 py-1 rounded-lg text-[10px] font-medium text-slate-400 hover:text-rose-500 transition">
+          <i data-lucide="trash-2" class="w-3 h-3 shrink-0"></i>
+          <span class="sidebar-label truncate">Vaciar datos</span>
         </button>
       </div>
     </aside>
 
-    <!-- Contenido Principal Escritorio -->
-    <main class="flex-1 p-5 sm:p-8 max-w-7xl w-full mx-auto space-y-6 min-w-0">
+    <!-- Contenido Principal Escritorio (Scroll exclusivo dentro del área de trabajo) -->
+    <main class="flex-1 h-full overflow-y-auto p-4 sm:p-6 max-w-7xl w-full mx-auto space-y-4 min-w-0">
       
       <!-- ==================== PC TAB 1: DASHBOARD ==================== -->
-      <section id="dview-dashboard" class="dtab-view space-y-6">
-        <!-- KPIs -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Patrimonio Total</span>
-              <div class="w-8 h-8 rounded-xl bg-brand-50 dark:bg-brand-900/30 text-brand-600 flex items-center justify-center"><i data-lucide="landmark" class="w-4 h-4"></i></div>
+      <section id="dview-dashboard" class="dtab-view space-y-4">
+        <!-- KPIs Compactos -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3.5">
+          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Patrimonio Total</span>
+              <div class="w-7 h-7 rounded-lg bg-brand-50 dark:bg-brand-900/30 text-brand-600 flex items-center justify-center"><i data-lucide="landmark" class="w-3.5 h-3.5"></i></div>
             </div>
-            <div id="dkpi-balance" class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">0,00 €</div>
-            <div class="mt-2 flex items-center justify-between text-xs">
-              <span class="text-slate-400">5 cuentas consolidadas</span>
+            <div id="dkpi-balance" class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white">0,00 €</div>
+            <div class="mt-1.5 flex items-center justify-between text-[11px]">
+              <span class="text-slate-400">5 cuentas</span>
               <span id="dkpi-net-debts-badge" class="font-bold"></span>
             </div>
           </div>
 
-          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Ingresos del Mes</span>
-              <div class="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 flex items-center justify-center"><i data-lucide="arrow-down-left" class="w-4 h-4"></i></div>
+          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Ingresos del Mes</span>
+              <div class="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 flex items-center justify-center"><i data-lucide="arrow-down-left" class="w-3.5 h-3.5"></i></div>
             </div>
-            <div id="dkpi-income" class="text-2xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400">0,00 €</div>
-            <div class="mt-2 text-xs text-slate-400">Excluye traspasos internos</div>
+            <div id="dkpi-income" class="text-xl sm:text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">0,00 €</div>
+            <div class="mt-1.5 text-[11px] text-slate-400">Sin traspasos internos</div>
           </div>
 
-          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Gastos del Mes</span>
-              <div class="w-8 h-8 rounded-xl bg-rose-50 dark:bg-rose-900/30 text-rose-600 flex items-center justify-center"><i data-lucide="arrow-up-right" class="w-4 h-4"></i></div>
+          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Gastos del Mes</span>
+              <div class="w-7 h-7 rounded-lg bg-rose-50 dark:bg-rose-900/30 text-rose-600 flex items-center justify-center"><i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i></div>
             </div>
-            <div id="dkpi-expense" class="text-2xl sm:text-3xl font-extrabold text-rose-600 dark:text-rose-400">0,00 €</div>
-            <div class="mt-2 text-xs text-slate-400">Excluye redondeos ahorro</div>
+            <div id="dkpi-expense" class="text-xl sm:text-2xl font-extrabold text-rose-600 dark:text-rose-400">0,00 €</div>
+            <div class="mt-1.5 text-[11px] text-slate-400">Excluye redondeos</div>
           </div>
 
-          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Ahorro Neto Mes</span>
-              <div class="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-900/30 text-amber-600 flex items-center justify-center"><i data-lucide="piggy-bank" class="w-4 h-4"></i></div>
+          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Ahorro Neto Mes</span>
+              <div class="w-7 h-7 rounded-lg bg-amber-50 dark:bg-amber-900/30 text-amber-600 flex items-center justify-center"><i data-lucide="piggy-bank" class="w-3.5 h-3.5"></i></div>
             </div>
-            <div id="dkpi-savings" class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">0,00 €</div>
-            <div class="mt-2 flex items-center gap-2">
+            <div id="dkpi-savings" class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white">0,00 €</div>
+            <div class="mt-1.5 flex items-center gap-2">
               <div class="flex-1 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                 <div id="dkpi-savings-bar" class="h-full bg-brand-600 rounded-full transition-all" style="width: 0%"></div>
               </div>
-              <span id="dkpi-savings-rate" class="text-xs font-bold">0%</span>
+              <span id="dkpi-savings-rate" class="text-[11px] font-bold">0%</span>
             </div>
           </div>
         </div>
 
         <!-- 5 Cuentas -->
         <div>
-          <div class="flex items-center justify-between mb-3">
-            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-500">Mis Cuentas y Huchas</h2>
-            <span class="text-xs text-slate-400">Haz clic en cualquier cuenta para filtrar sus movimientos</span>
+          <div class="flex items-center justify-between mb-2">
+            <h2 class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Mis Cuentas y Huchas</h2>
+            <span class="text-[11px] text-slate-400">Haz clic en cualquier cuenta para filtrar sus movimientos</span>
           </div>
-          <div id="d-accounts-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5"></div>
+          <div id="d-accounts-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3"></div>
         </div>
 
-        <!-- Gráficos Panorámicos -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div class="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
-            <h2 class="text-base font-bold text-slate-900 dark:text-white">Evolución Ingresos vs. Gastos (Últimos 6 meses)</h2>
-            <p class="text-xs text-slate-500 mb-4">Consolidado de cuentas ING + Efectivo</p>
-            <div class="relative h-64 w-full"><canvas id="dchart-income-expense"></canvas></div>
+        <!-- Gráficos Panorámicos Optimizado en Altura -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div class="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm">
+            <div class="flex items-center justify-between mb-2">
+              <div>
+                <h2 class="text-sm font-bold text-slate-900 dark:text-white">Evolución Ingresos vs. Gastos (Últimos 6 meses)</h2>
+                <p class="text-[11px] text-slate-500">Consolidado de cuentas ING + Efectivo</p>
+              </div>
+            </div>
+            <div class="relative h-48 w-full"><canvas id="dchart-income-expense"></canvas></div>
           </div>
 
-          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col">
-            <h2 class="text-base font-bold text-slate-900 dark:text-white">Gastos por Categoría (Mes)</h2>
-            <p class="text-xs text-slate-500 mb-3">Distribución porcentual</p>
-            <div class="relative h-44 w-full flex items-center justify-center"><canvas id="dchart-categories"></canvas></div>
-            <div id="dcategory-legend" class="mt-4 space-y-1.5 text-xs max-h-32 overflow-y-auto pr-1"></div>
+          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col">
+            <h2 class="text-sm font-bold text-slate-900 dark:text-white">Gastos por Categoría (Mes)</h2>
+            <div class="flex items-center gap-3 mt-2 flex-1">
+              <div class="relative h-36 w-36 shrink-0"><canvas id="dchart-categories"></canvas></div>
+              <div id="dcategory-legend" class="space-y-1 text-[11px] max-h-40 overflow-y-auto pr-1 flex-1"></div>
+            </div>
           </div>
         </div>
 
         <!-- Últimos Movimientos + Alertas de Validación y Deudas -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div class="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
-            <div class="flex items-center justify-between mb-4">
-              <h2 class="text-base font-bold text-slate-900 dark:text-white">Últimos Movimientos</h2>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div class="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm">
+            <div class="flex items-center justify-between mb-2.5">
+              <h2 class="text-sm font-bold text-slate-900 dark:text-white">Últimos Movimientos</h2>
               <button onclick="switchDesktopTab('transactions')" class="text-xs font-bold text-brand-600 hover:underline">Ver todos →</button>
             </div>
             <div class="overflow-x-auto">
               <table class="w-full text-left border-collapse">
                 <thead>
-                  <tr class="border-b border-slate-100 dark:border-slate-800 text-[11px] font-bold uppercase text-slate-400">
-                    <th class="pb-2.5">Concepto</th>
-                    <th class="pb-2.5">Cuenta</th>
-                    <th class="pb-2.5">Ticket</th>
-                    <th class="pb-2.5">Fecha</th>
-                    <th class="pb-2.5 text-right">Importe</th>
+                  <tr class="border-b border-slate-100 dark:border-slate-800 text-[10px] font-bold uppercase text-slate-400">
+                    <th class="pb-2">Concepto</th>
+                    <th class="pb-2">Cuenta</th>
+                    <th class="pb-2">Ticket</th>
+                    <th class="pb-2">Fecha</th>
+                    <th class="pb-2 text-right">Importe</th>
                   </tr>
                 </thead>
-                <tbody id="ddashboard-recent-tx" class="divide-y divide-slate-100 dark:divide-slate-800/60 text-sm"></tbody>
+                <tbody id="ddashboard-recent-tx" class="divide-y divide-slate-100 dark:divide-slate-800/60 text-xs"></tbody>
               </table>
             </div>
           </div>
 
-          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm space-y-4">
-            <h2 class="text-base font-bold text-slate-900 dark:text-white">Pendientes de Revisión</h2>
-            <div id="ddashboard-alerts" class="space-y-2.5"></div>
+          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-2.5">
+            <h2 class="text-sm font-bold text-slate-900 dark:text-white">Pendientes de Revisión</h2>
+            <div id="ddashboard-alerts" class="space-y-2"></div>
           </div>
         </div>
       </section>
@@ -753,18 +817,26 @@ service cloud.firestore {
             </div>
 
             <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
-              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Saldos Netos por Amigo</h3>
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Saldos Netos por Amigo</h3>
+                <span class="text-[11px] text-brand-600 dark:text-brand-400 font-semibold">Haz clic en un amigo para ver todo su historial →</span>
+              </div>
               <div id="ddebt-person-cards" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5"></div>
             </div>
 
             <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm space-y-3">
-              <div class="flex items-center justify-between">
+              <div class="flex flex-wrap items-center justify-between gap-2">
                 <h3 class="text-sm font-bold text-slate-900 dark:text-white">Movimientos Compartidos</h3>
-                <select id="ddebt-filter" onchange="renderDesktopDebts()" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                  <option value="pending">Pendientes</option>
-                  <option value="settled">Saldados</option>
-                  <option value="all">Todos</option>
-                </select>
+                <div class="flex items-center gap-2">
+                  <select id="ddebt-person-filter" onchange="renderDesktopDebts()" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                    <option value="all">Todos los amigos</option>
+                  </select>
+                  <select id="ddebt-filter" onchange="renderDesktopDebts()" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                    <option value="pending">Pendientes</option>
+                    <option value="settled">Saldados</option>
+                    <option value="all">Todos</option>
+                  </select>
+                </div>
               </div>
               <div id="ddebt-list" class="space-y-2.5"></div>
             </div>
@@ -773,59 +845,59 @@ service cloud.firestore {
       </section>
 
       <!-- ==================== PC TAB 4: PREVISIONES CASH FLOW ==================== -->
-      <section id="dview-forecast" class="dtab-view hidden space-y-6">
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm space-y-5">
+      <section id="dview-forecast" class="dtab-view hidden space-y-4">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
           <div class="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <i data-lucide="cpu" class="w-4 h-4 text-brand-600"></i>
                 Previsión Automática de Cash Flow
               </h2>
-              <p class="text-xs text-slate-500">Detecta suscripciones fijas (gimnasio, Spotify...) y calcula la media redondeada al alza de suministros variables (luz, agua, gas)</p>
+              <p class="text-xs text-slate-500">Suscripciones fijas y suministros variables (luz, agua, gas) redondeados al alza</p>
             </div>
             <div class="flex items-center gap-2">
-              <button onclick="detectRecurringFromTransactions(true)" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-sm flex items-center gap-1.5">
-                <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Recalcular desde movimientos
+              <button onclick="detectRecurringFromTransactions(true)" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-sm flex items-center gap-1.5">
+                <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Recalcular
               </button>
-              <div class="inline-flex rounded-xl bg-slate-100 dark:bg-slate-800 p-1">
-                <button onclick="setForecastHorizon(6)" id="btn-horizon-6" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-white dark:bg-slate-700 text-brand-600 dark:text-white shadow-sm">6 Meses</button>
-                <button onclick="setForecastHorizon(12)" id="btn-horizon-12" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400">12 Meses</button>
+              <div class="inline-flex rounded-xl bg-slate-100 dark:bg-slate-800 p-0.5">
+                <button onclick="setForecastHorizon(6)" id="btn-horizon-6" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-white dark:bg-slate-700 text-brand-600 dark:text-white shadow-sm">6 Meses</button>
+                <button onclick="setForecastHorizon(12)" id="btn-horizon-12" class="px-2.5 py-1 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400">12 Meses</button>
               </div>
             </div>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-            <div class="p-4 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900">
-              <span class="text-[11px] font-bold uppercase text-emerald-700 dark:text-emerald-400">Ingresos Recurrentes / mes</span>
-              <div id="fc-kpi-income" class="text-xl font-extrabold text-emerald-700 dark:text-emerald-300 mt-1">0,00 €</div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div class="p-3.5 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900">
+              <span class="text-[10px] font-bold uppercase text-emerald-700 dark:text-emerald-400">Ingresos Recurrentes / mes</span>
+              <div id="fc-kpi-income" class="text-lg font-extrabold text-emerald-700 dark:text-emerald-300 mt-0.5">0,00 €</div>
             </div>
-            <div class="p-4 rounded-xl bg-rose-50/70 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900">
-              <span class="text-[11px] font-bold uppercase text-rose-700 dark:text-rose-400">Fijos + Suministros / mes</span>
-              <div id="fc-kpi-expense" class="text-xl font-extrabold text-rose-700 dark:text-rose-300 mt-1">0,00 €</div>
+            <div class="p-3.5 rounded-xl bg-rose-50/70 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900">
+              <span class="text-[10px] font-bold uppercase text-rose-700 dark:text-rose-400">Fijos + Suministros / mes</span>
+              <div id="fc-kpi-expense" class="text-lg font-extrabold text-rose-700 dark:text-rose-300 mt-0.5">0,00 €</div>
             </div>
-            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 flex flex-col justify-between">
+            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 flex flex-col justify-between">
               <div class="flex items-center justify-between">
-                <span class="text-[11px] font-bold uppercase text-slate-500">Gasto Diario Variable</span>
+                <span class="text-[10px] font-bold uppercase text-slate-500">Gasto Diario Variable</span>
                 <input type="checkbox" id="fc-include-variable" onchange="toggleForecastVariable()" class="rounded text-brand-600 cursor-pointer" />
               </div>
-              <div class="flex items-baseline justify-between mt-1">
-                <span id="fc-kpi-variable" class="text-lg font-extrabold">0,00 €</span>
+              <div class="flex items-baseline justify-between mt-0.5">
+                <span id="fc-kpi-variable" class="text-base font-extrabold">0,00 €</span>
                 <span class="text-[10px] text-slate-400">Súper / Ocio est.</span>
               </div>
             </div>
-            <div class="p-4 rounded-xl bg-brand-50/80 dark:bg-brand-950/40 border border-brand-200 dark:border-brand-900">
-              <span class="text-[11px] font-bold uppercase text-brand-700 dark:text-brand-400">Ahorro Neto Mensual</span>
-              <div id="forecast-monthly-net" class="text-xl font-extrabold mt-1">+0,00 €</div>
-              <div id="forecast-projected-end" class="text-[11px] text-slate-500 mt-0.5">Final: 0,00 €</div>
+            <div class="p-3.5 rounded-xl bg-brand-50/80 dark:bg-brand-950/40 border border-brand-200 dark:border-brand-900">
+              <span class="text-[10px] font-bold uppercase text-brand-700 dark:text-brand-400">Ahorro Neto Mensual</span>
+              <div id="forecast-monthly-net" class="text-lg font-extrabold mt-0.5">+0,00 €</div>
+              <div id="forecast-projected-end" class="text-[10px] text-slate-500">Final: 0,00 €</div>
             </div>
           </div>
 
-          <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
+          <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
             <span class="text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
               <i data-lucide="arrow-up-circle" class="w-4 h-4 text-amber-500"></i>
               Redondeo al alza para suministros variables (luz, agua, gas, gasolina):
             </span>
-            <select id="fc-rounding-step" onchange="changeForecastRoundingStep()" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-bold">
+            <select id="fc-rounding-step" onchange="changeForecastRoundingStep()" class="px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-bold text-xs">
               <option value="1">Al euro superior (43,20 € → 44,00 €)</option>
               <option value="5">Múltiplo de 5 € superior (43,20 € → 45,00 €)</option>
               <option value="10">Múltiplo de 10 € superior (43,20 € → 50,00 €)</option>
@@ -833,25 +905,25 @@ service cloud.firestore {
           </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm space-y-3">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm space-y-2.5">
             <div class="flex items-center justify-between">
-              <h3 class="text-sm font-bold text-slate-900 dark:text-white">Ingresos Recurrentes Detectados</h3>
-              <button onclick="openAddRecurringModal('income')" class="px-2.5 py-1 rounded-xl text-xs font-bold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400">+ Añadir</button>
+              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500">Ingresos Recurrentes Detectados</h3>
+              <button onclick="openAddRecurringModal('income')" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400">+ Añadir</button>
             </div>
-            <div id="recurring-income-list" class="space-y-2"></div>
+            <div id="recurring-income-list" class="space-y-1.5 max-h-48 overflow-y-auto pr-1"></div>
           </div>
 
-          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm space-y-3">
+          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm space-y-2.5">
             <div class="flex items-center justify-between">
-              <h3 class="text-sm font-bold text-slate-900 dark:text-white">Gastos Fijos y Suministros (Al Alza)</h3>
-              <button onclick="openAddRecurringModal('expense')" class="px-2.5 py-1 rounded-xl text-xs font-bold bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-400">+ Añadir</button>
+              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500">Gastos Fijos y Suministros (Al Alza)</h3>
+              <button onclick="openAddRecurringModal('expense')" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-400">+ Añadir</button>
             </div>
-            <div id="recurring-expense-list" class="space-y-2"></div>
+            <div id="recurring-expense-list" class="space-y-1.5 max-h-48 overflow-y-auto pr-1"></div>
           </div>
         </div>
 
-        <div id="add-recurring-box" class="hidden bg-white dark:bg-slate-900 border-2 border-brand-500/40 rounded-2xl p-5 shadow-md">
+        <div id="add-recurring-box" class="hidden bg-white dark:bg-slate-900 border-2 border-brand-500/40 rounded-2xl p-4 shadow-md">
           <form onsubmit="submitManualRecurring(event)" class="grid grid-cols-1 sm:grid-cols-4 gap-3">
             <input type="hidden" id="rec-manual-type" value="expense" />
             <div class="sm:col-span-2">
@@ -870,10 +942,112 @@ service cloud.firestore {
           </form>
         </div>
 
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
-          <h2 class="text-base font-bold text-slate-900 dark:text-white mb-1">Proyección de Liquidez</h2>
-          <p class="text-xs text-slate-500 mb-4">Saldo inicial consolidado: <span id="forecast-start-balance" class="font-bold"></span></p>
-          <div class="relative h-64 w-full"><canvas id="chart-forecast"></canvas></div>
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm">
+          <div class="flex items-center justify-between mb-2">
+            <h2 class="text-sm font-bold text-slate-900 dark:text-white">Proyección de Liquidez</h2>
+            <span class="text-xs text-slate-500">Saldo inicial: <strong id="forecast-start-balance"></strong></span>
+          </div>
+          <div class="relative h-48 w-full"><canvas id="chart-forecast"></canvas></div>
+        </div>
+      </section>
+
+      <!-- ==================== PC TAB 5: AJUSTES Y AUTOMATIZACIONES ==================== -->
+      <section id="dview-settings" class="dtab-view hidden space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          
+          <!-- BLOQUE A: REGLAS AUTOMÁTICAS DE GASTOS COMPARTIDOS (TIPO HOMEBANK) -->
+          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 sm:p-6 shadow-sm space-y-4">
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <h2 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                  <i data-lucide="zap" class="w-4 h-4 text-amber-500"></i>
+                  Reglas de Gastos Recurrentes Compartidos
+                </h2>
+                <p class="text-xs text-slate-500 mt-0.5">
+                  Cuando entre un cargo que coincida (ej. <strong>Netflix</strong>, <strong>Spotify</strong>) al importar ING/HomeBank o registrar un gasto, se creará automáticamente la deuda con el amigo indicado.
+                </p>
+              </div>
+            </div>
+
+            <!-- Formulario nueva regla -->
+            <form onsubmit="submitSharedRule(event)" class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-3">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-500 mb-1">Palabra clave en descripción</label>
+                  <input type="text" id="rule-keyword" placeholder="Ej. Netflix, Spotify, Disney..." required class="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700" />
+                </div>
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-500 mb-1">Amigo que comparte el gasto</label>
+                  <select id="rule-friend" required class="w-full px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700"></select>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-500 mb-1">Tipo de reparto</label>
+                  <select id="rule-mode" onchange="updateRuleModePlaceholder()" class="w-full px-3 py-2 rounded-xl text-xs font-semibold bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700">
+                    <option value="fixed">Importe fijo (€)</option>
+                    <option value="percent">Porcentaje (%)</option>
+                  </select>
+                </div>
+                <div>
+                  <label id="rule-value-label" class="block text-[11px] font-bold text-slate-500 mb-1">Su parte (€)</label>
+                  <input type="number" id="rule-value" step="0.01" min="0.01" placeholder="Ej. 5.50" required class="w-full px-3 py-2 rounded-xl text-sm font-bold bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700" />
+                </div>
+                <button type="submit" class="w-full py-2 px-4 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs transition shadow-sm">
+                  + Guardar Regla
+                </button>
+              </div>
+            </form>
+
+            <!-- Listado de reglas activas -->
+            <div class="space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Reglas Configuradas</span>
+                <button onclick="applySharedRulesToExistingTransactions()" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500/15 text-amber-700 dark:text-amber-300 hover:bg-amber-500/25 transition flex items-center gap-1.5">
+                  <i data-lucide="play" class="w-3.5 h-3.5"></i>
+                  <span>Aplicar reglas a movimientos existentes</span>
+                </button>
+              </div>
+              <div id="shared-rules-list" class="space-y-2"></div>
+            </div>
+          </div>
+
+          <!-- BLOQUE B: GESTIÓN DE AMIGOS Y CUENTAS -->
+          <div class="space-y-6">
+            <!-- Gestión de Amigos (Añadir, Renombrar, Eliminar) -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 sm:p-6 shadow-sm space-y-4">
+              <div>
+                <h2 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                  <i data-lucide="users" class="w-4 h-4 text-brand-600"></i>
+                  Gestión de Amigos
+                </h2>
+                <p class="text-xs text-slate-500 mt-0.5">Añade, renombra o elimina contactos de tu lista de deudas compartidas.</p>
+              </div>
+
+              <form onsubmit="addFriendFromSettings(event)" class="flex gap-2">
+                <input type="text" id="settings-new-friend" placeholder="Nombre del nuevo amigo..." required class="flex-1 px-3.5 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700" />
+                <button type="submit" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition">+ Añadir</button>
+              </form>
+
+              <div id="settings-friends-list" class="divide-y divide-slate-100 dark:divide-slate-800 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden"></div>
+            </div>
+
+            <!-- Resumen Cuentas y Sistema -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 sm:p-6 shadow-sm space-y-3">
+              <h2 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <i data-lucide="sliders" class="w-4 h-4 text-slate-500"></i>
+                Cuentas y Sistema
+              </h2>
+              <div id="settings-accounts-summary" class="space-y-2 text-xs"></div>
+              <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-wrap gap-2">
+                <button onclick="openFirebaseModal()" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-brand-600 text-white">Configurar Firebase Sync</button>
+                <button onclick="exportData()" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200">Descargar Backup JSON</button>
+                <button onclick="confirmClearAllData()" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-rose-50 dark:bg-rose-950/40 text-rose-600">Vaciar todos los datos</button>
+              </div>
+            </div>
+          </div>
+
         </div>
       </section>
     </main>
@@ -1117,7 +1291,10 @@ service cloud.firestore {
     <!-- MÓVIL VISTA 4: CENAS Y DEUDAS CON AMIGOS -->
     <section id="mview-debts" class="mtab-view hidden space-y-4">
       <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-sm space-y-4">
-        <h2 class="text-base font-extrabold text-slate-900 dark:text-white">Cenas y Cuentas con Amigos</h2>
+        <div class="flex items-center justify-between">
+          <h2 class="text-base font-extrabold text-slate-900 dark:text-white">Cenas y Cuentas con Amigos</h2>
+          <button onclick="switchMobileTab('settings')" class="text-xs font-bold text-brand-600 flex items-center gap-1"><i data-lucide="settings" class="w-3.5 h-3.5"></i> Amigos/Reglas</button>
+        </div>
 
         <form onsubmit="submitMobileDebt(event)" class="space-y-3.5">
           <div class="grid grid-cols-2 gap-2 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
@@ -1155,7 +1332,9 @@ service cloud.firestore {
 
       <!-- Lista de Deudas Pendientes en Móvil -->
       <div class="space-y-2">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 px-1">Pendientes de Saldar</h3>
+        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 px-1">Saldos por Amigo (Pulsa para ver historial)</h3>
+        <div id="m-debts-person-cards" class="grid grid-cols-2 gap-2"></div>
+        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 px-1 pt-2">Pendientes de Saldar</h3>
         <div id="m-debts-list" class="space-y-2"></div>
       </div>
     </section>
@@ -1174,28 +1353,52 @@ service cloud.firestore {
       <div id="m-tx-list" class="space-y-2.5"></div>
     </section>
 
+    <!-- MÓVIL VISTA 6: AJUSTES MÓVIL (AMIGOS Y REGLAS COMPARTIDAS) -->
+    <section id="mview-settings" class="mtab-view hidden space-y-4">
+      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-sm space-y-3">
+        <h2 class="text-base font-extrabold text-slate-900 dark:text-white">Gestión de Amigos</h2>
+        <form onsubmit="addFriendFromMobile(event)" class="flex gap-2">
+          <input type="text" id="m-new-friend" placeholder="Añadir amigo..." required class="flex-1 px-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700" />
+          <button type="submit" class="px-3.5 py-2 rounded-xl bg-emerald-600 text-white text-xs font-bold">+ Añadir</button>
+        </form>
+        <div id="m-settings-friends-list" class="divide-y divide-slate-100 dark:divide-slate-800 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden"></div>
+      </div>
+
+      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-sm space-y-3">
+        <div class="flex items-center justify-between">
+          <h2 class="text-base font-extrabold text-slate-900 dark:text-white">Reglas Compartidas</h2>
+          <button onclick="applySharedRulesToExistingTransactions()" class="px-2.5 py-1 rounded-lg bg-amber-500/15 text-amber-700 dark:text-amber-300 text-[11px] font-bold">Aplicar ahora</button>
+        </div>
+        <div id="m-shared-rules-list" class="space-y-2"></div>
+      </div>
+    </section>
+
     <!-- Barra de Navegación Inferior Fija Estilo App Nativa -->
-    <nav class="fixed bottom-0 inset-x-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 px-2 py-1.5 flex items-center justify-around">
-      <button onclick="switchMobileTab('home')" id="mnav-home" class="mnav-btn active flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl text-[11px] font-bold">
-        <i data-lucide="home" class="w-5 h-5"></i>
+    <nav class="fixed bottom-0 inset-x-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 px-1 py-1.5 flex items-center justify-around">
+      <button onclick="switchMobileTab('home')" id="mnav-home" class="mnav-btn active flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-xl text-[10px] font-bold">
+        <i data-lucide="home" class="w-4 h-4"></i>
         <span>Inicio</span>
       </button>
-      <button onclick="switchMobileTab('cash')" id="mnav-cash" class="mnav-btn flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl text-[11px] font-bold">
-        <i data-lucide="banknote" class="w-5 h-5"></i>
+      <button onclick="switchMobileTab('cash')" id="mnav-cash" class="mnav-btn flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-xl text-[10px] font-bold">
+        <i data-lucide="banknote" class="w-4 h-4"></i>
         <span>Efectivo</span>
       </button>
-      <button onclick="switchMobileTab('ticket')" id="mnav-ticket" class="mnav-btn flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl text-[11px] font-bold">
-        <i data-lucide="camera" class="w-5 h-5"></i>
+      <button onclick="switchMobileTab('ticket')" id="mnav-ticket" class="mnav-btn flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-xl text-[10px] font-bold">
+        <i data-lucide="camera" class="w-4 h-4"></i>
         <span>Ticket</span>
       </button>
-      <button onclick="switchMobileTab('debts')" id="mnav-debts" class="mnav-btn flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl text-[11px] font-bold">
-        <i data-lucide="users" class="w-5 h-5"></i>
+      <button onclick="switchMobileTab('debts')" id="mnav-debts" class="mnav-btn flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-xl text-[10px] font-bold">
+        <i data-lucide="users" class="w-4 h-4"></i>
         <span>Cenas</span>
       </button>
-      <button onclick="switchMobileTab('list')" id="mnav-list" class="mnav-btn flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl text-[11px] font-bold relative">
-        <i data-lucide="list" class="w-5 h-5"></i>
+      <button onclick="switchMobileTab('list')" id="mnav-list" class="mnav-btn flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-xl text-[10px] font-bold relative">
+        <i data-lucide="list" class="w-4 h-4"></i>
         <span>Lista</span>
-        <span id="mbadge-pending" class="hidden absolute top-0.5 right-2 w-2 h-2 rounded-full bg-amber-500"></span>
+        <span id="mbadge-pending" class="hidden absolute top-0.5 right-1.5 w-2 h-2 rounded-full bg-amber-500"></span>
+      </button>
+      <button onclick="switchMobileTab('settings')" id="mnav-settings" class="mnav-btn flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-xl text-[10px] font-bold">
+        <i data-lucide="settings" class="w-4 h-4"></i>
+        <span>Ajustes</span>
       </button>
     </nav>
   </div>
@@ -1211,6 +1414,10 @@ service cloud.firestore {
     .dark .mnav-btn.active { color: #818cf8; }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    /* Estado Colapsado de la Barra Lateral Escritorio */
+    #desktop-sidebar.collapsed { width: 4.25rem; }
+    #desktop-sidebar.collapsed .sidebar-label { display: none !important; }
+    #desktop-sidebar.collapsed .dnav-btn { justify-content: center; padding-left: 0.5rem; padding-right: 0.5rem; }
   </style>
 
   <!-- ======================================================================== -->
@@ -1223,42 +1430,21 @@ service cloud.firestore {
 
     const STORAGE_KEY = 'finanzerp_master_v3';
     const FB_CONFIG_KEY = 'finanzerp_firebase_config_v1';
-
-    const ACCOUNTS = {
-      ing_corriente: { id: 'ing_corriente', name: 'ING Corriente', subtitle: 'Cuenta Nómina / Diario', icon: 'credit-card', badgeClass: 'bg-orange-100 text-orange-700 dark:bg-orange-950/60 dark:text-orange-400', iconBg: 'bg-orange-500/15 text-orange-600' },
-      ing_ahorro: { id: 'ing_ahorro', name: 'ING Ahorro', subtitle: 'Cuenta NARANJA', icon: 'piggy-bank', badgeClass: 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300', iconBg: 'bg-amber-500/15 text-amber-600' },
-      ing_nocuenta: { id: 'ing_nocuenta', name: 'ING NoCuenta', subtitle: 'Cuenta Digital ING', icon: 'smartphone', badgeClass: 'bg-teal-100 text-teal-800 dark:bg-teal-950/60 dark:text-teal-300', iconBg: 'bg-teal-500/15 text-teal-600' },
-      efectivo: { id: 'efectivo', name: 'Efectivo', subtitle: 'Cartera / Billetes', icon: 'banknote', badgeClass: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300', iconBg: 'bg-emerald-500/15 text-emerald-600' },
-      hucha_monedas: { id: 'hucha_monedas', name: 'Hucha Colección', subtitle: 'Monedas repetidas', icon: 'coins', badgeClass: 'bg-violet-100 text-violet-800 dark:bg-violet-950/60 dark:text-violet-300', iconBg: 'bg-violet-500/15 text-violet-600' }
-    };
-
-    const CATEGORIES = {
-      expense: ['Alimentación', 'Ocio y viajes', 'Compras', 'Vehículo y transporte', 'Hogar', 'Educación y salud', 'Otros gastos', 'Ahorro', 'Movimientos excluidos'],
-      income: ['Nómina y otras prestaciones', 'Otros ingresos', 'Ahorro', 'Movimientos excluidos']
-    };
-
-    const CATEGORY_COLORS = {
-      'Alimentación': '#10b981', 'Ocio y viajes': '#f59e0b', 'Compras': '#ec4899',
-      'Vehículo y transporte': '#3b82f6', 'Hogar': '#6366f1', 'Educación y salud': '#ef4444',
-      'Otros gastos': '#64748b', 'Ahorro': '#8b5cf6', 'Movimientos excluidos': '#94a3b8'
-    };
-
-    const DEFAULT_FRIENDS = ['Aissa', 'Asensio', 'Jose', 'Ortiz', 'Carlos', 'Manu', 'Borja', 'Abde'];
-
-    let charts = { incomeExpense: null, categories: null, forecast: null };
-    let fbApp = null, fbAuth = null, fbDb = null, fbUser = null, fbUnsubscribe = null, isApplyingRemoteUpdate = false;
-
+    const SIDEBAR_COLLAPSED_KEY = 'finanzerp_sidebar_collapsed';
     let state = {
       theme: 'light',
       transactions: [],
       accountSnapshots: { ing_corriente: null, ing_ahorro: null, ing_nocuenta: null },
       debts: [],
       friends: [...DEFAULT_FRIENDS],
+      sharedRules: [],
       forecast: { horizon: 6, roundingStep: 1, includeVariableDaily: false, variableDailyEstimate: 0, recurringItems: [] }
     };
 
     // Estados temporales de UI
     let uiMode = window.innerWidth < 768 ? 'mobile' : 'desktop';
+    let sidebarCollapsed = localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === 'true';
+    let activeHistoryFriend = null;
     let pendingIngImport = null;
     let pendingHomebankImport = null;
     let pendingDesktopTicketBase64 = null;
@@ -1352,6 +1538,8 @@ service cloud.firestore {
     function updateFirebaseStatusUI(status, email = '') {
       const dot = document.getElementById('global-sync-dot');
       const label = document.getElementById('global-sync-label');
+      const topCloudBtn = document.getElementById('top-cloud-btn');
+      const topCloudText = document.getElementById('top-cloud-text');
       const badge = document.getElementById('fb-status-badge');
       const emailEl = document.getElementById('fb-user-email');
       const loginBtn = document.getElementById('fb-login-btn');
@@ -1363,23 +1551,35 @@ service cloud.firestore {
       if (status === 'connected') {
         dot.className = 'w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse';
         label.textContent = 'Nube Sincronizada';
-        badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span> Conectado en tiempo real`;
+        label.className = 'text-emerald-600 dark:text-emerald-400 font-bold';
+        topCloudBtn.className = 'px-2.5 py-1.5 rounded-xl bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/25 transition flex items-center gap-1.5 text-xs font-bold';
+        if (topCloudText) topCloudText.textContent = 'Sincronizada';
+        badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Conectado en tiempo real`;
         emailEl.textContent = `Sesión iniciada como ${email}`;
         logoutBtn.classList.remove('hidden');
       } else if (status === 'ready_login') {
         dot.className = 'w-1.5 h-1.5 rounded-full bg-amber-500';
         label.textContent = 'Iniciar sesión Google';
+        label.className = 'text-amber-600 dark:text-amber-400 font-bold';
+        topCloudBtn.className = 'px-2.5 py-1.5 rounded-xl bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 hover:bg-amber-500/25 transition flex items-center gap-1.5 text-xs font-bold';
+        if (topCloudText) topCloudText.textContent = 'Conectar';
         badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500"></span> Firebase listo — Falta iniciar sesión`;
         emailEl.textContent = 'Pulsa "Entrar con Google" para sincronizar tus dispositivos.';
         loginBtn.classList.remove('hidden');
       } else if (status === 'error') {
         dot.className = 'w-1.5 h-1.5 rounded-full bg-rose-500';
         label.textContent = 'Error Config Nube';
+        label.className = 'text-rose-600 font-bold';
+        topCloudBtn.className = 'px-2.5 py-1.5 rounded-xl bg-rose-500/15 text-rose-700 dark:text-rose-300 border border-rose-500/30 transition flex items-center gap-1.5 text-xs font-bold';
+        if (topCloudText) topCloudText.textContent = 'Error Nube';
         badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-rose-500"></span> Error en firebaseConfig`;
         emailEl.textContent = 'Verifica que el JSON pegado sea válido.';
       } else {
         dot.className = 'w-1.5 h-1.5 rounded-full bg-slate-400';
         label.textContent = 'Local (Conectar Nube)';
+        label.className = 'text-slate-500 dark:text-slate-400 font-semibold';
+        topCloudBtn.className = 'px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition flex items-center gap-1.5 text-xs font-bold border border-transparent';
+        if (topCloudText) topCloudText.textContent = 'Nube';
         badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-slate-400"></span> Modo Local (sin nube configurada)`;
         emailEl.textContent = 'Pega abajo tu firebaseConfig para sincronizar PC y móvil.';
       }
@@ -1478,6 +1678,9 @@ service cloud.firestore {
           { id: 'db-2', direction: 'owed_to_me', person: 'Asensio', concept: 'Entradas cine', amount: 14.00, date: getDate(4), settled: false }
         ],
         friends: [...DEFAULT_FRIENDS],
+        sharedRules: [
+          { id: 'rule-demo-1', keyword: 'Spotify', person: 'Asensio', mode: 'fixed', value: 5.50, enabled: true }
+        ],
         forecast: { horizon: 6, roundingStep: 1, includeVariableDaily: false, variableDailyEstimate: 0, recurringItems: [] }
       };
     }
@@ -1487,7 +1690,12 @@ service cloud.firestore {
         const saved = localStorage.getItem(STORAGE_KEY);
         if (saved) {
           const parsed = JSON.parse(saved);
-          state = { ...state, ...parsed, forecast: { ...state.forecast, ...(parsed.forecast || {}) } };
+          state = {
+            ...state,
+            ...parsed,
+            sharedRules: Array.isArray(parsed.sharedRules) ? parsed.sharedRules : [],
+            forecast: { ...state.forecast, ...(parsed.forecast || {}) }
+          };
         } else {
           state = getInitialDemoData();
         }
@@ -1618,9 +1826,30 @@ service cloud.firestore {
         dShell.classList.remove('hidden');
         btnD.className = 'px-2.5 py-1 rounded-lg text-[11px] font-bold transition flex items-center gap-1 bg-white dark:bg-slate-700 text-brand-600 dark:text-white shadow-sm';
         btnM.className = 'px-2.5 py-1 rounded-lg text-[11px] font-bold transition flex items-center gap-1 text-slate-500';
+        applySidebarCollapseState();
         renderDesktopDashboard();
       }
       lucide.createIcons();
+    };
+
+    function applySidebarCollapseState() {
+      const sb = document.getElementById('desktop-sidebar');
+      const icon = document.getElementById('sidebar-collapse-icon');
+      if (!sb) return;
+      if (sidebarCollapsed) {
+        sb.classList.add('collapsed');
+        if (icon) icon.setAttribute('data-lucide', 'chevrons-right');
+      } else {
+        sb.classList.remove('collapsed');
+        if (icon) icon.setAttribute('data-lucide', 'chevrons-left');
+      }
+      lucide.createIcons();
+    }
+
+    window.toggleSidebarCollapse = function() {
+      sidebarCollapsed = !sidebarCollapsed;
+      localStorage.setItem(SIDEBAR_COLLAPSED_KEY, String(sidebarCollapsed));
+      applySidebarCollapseState();
     };
 
     function applyTheme() {
@@ -1863,6 +2092,7 @@ service cloud.firestore {
       if (tabId === 'transactions') renderDesktopTransactions();
       if (tabId === 'debts') renderDesktopDebts();
       if (tabId === 'forecast') renderForecast();
+      if (tabId === 'settings') renderSettingsView();
       lucide.createIcons();
     };
 
@@ -1893,20 +2123,20 @@ service cloud.firestore {
       document.getElementById('d-accounts-grid').innerHTML = Object.values(ACCOUNTS).map(acc => {
         const bal = m.balances[acc.id] || 0;
         return `
-          <button onclick="filterDesktopByAccount('${acc.id}')" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500 rounded-2xl p-4 text-left shadow-sm transition group">
-            <div class="flex items-center justify-between mb-2">
-              <div class="w-8 h-8 rounded-xl ${acc.iconBg} flex items-center justify-center"><i data-lucide="${acc.icon}" class="w-4 h-4"></i></div>
+          <button onclick="filterDesktopByAccount('${acc.id}')" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500 rounded-2xl p-3.5 text-left shadow-sm transition group">
+            <div class="flex items-center justify-between mb-1.5">
+              <div class="w-7 h-7 rounded-lg ${acc.iconBg} flex items-center justify-center"><i data-lucide="${acc.icon}" class="w-3.5 h-3.5"></i></div>
               <span class="text-[10px] font-bold text-slate-400 group-hover:text-brand-600">Ver →</span>
             </div>
             <div class="text-xs font-bold text-slate-800 dark:text-slate-200">${acc.name}</div>
-            <div class="text-[11px] text-slate-400 mb-1.5">${acc.subtitle}</div>
-            <div class="text-lg font-extrabold ${bal >= 0 ? 'text-slate-900 dark:text-white' : 'text-rose-600'}">${formatMoney(bal)}</div>
+            <div class="text-[10px] text-slate-400 mb-1">${acc.subtitle}</div>
+            <div class="text-base font-extrabold ${bal >= 0 ? 'text-slate-900 dark:text-white' : 'text-rose-600'}">${formatMoney(bal)}</div>
           </button>
         `;
       }).join('');
 
       // Últimos movimientos
-      const recent = [...state.transactions].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 6);
+      const recent = [...state.transactions].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 5);
       document.getElementById('ddashboard-recent-tx').innerHTML = recent.map(tx => {
         const acc = ACCOUNTS[tx.account] || ACCOUNTS.ing_corriente;
         return `
@@ -2097,6 +2327,7 @@ service cloud.firestore {
       if (pendingDesktopTicketBase64) newTx.ticketImage = pendingDesktopTicketBase64;
 
       state.transactions.unshift(newTx);
+      const autoDebtsCreated = evaluateSharedRulesForTransaction(newTx);
       pendingDesktopTicketBase64 = null;
       document.getElementById('dtx-desc').value = '';
       document.getElementById('dtx-amount').value = '';
@@ -2105,7 +2336,10 @@ service cloud.firestore {
 
       saveState();
       refreshAllViews();
-      showToast('Movimiento guardado correctamente');
+      showToast(autoDebtsCreated > 0
+        ? `Movimiento guardado + ${autoDebtsCreated} deuda(s) compartida(s) creada(s) ⚡`
+        : 'Movimiento guardado correctamente'
+      );
     };
 
     window.renderDesktopTransactions = function() {
@@ -2282,6 +2516,13 @@ service cloud.firestore {
       netEl.textContent = `${m.netDebts >= 0 ? '+' : ''}${formatMoney(m.netDebts)}`;
       netEl.className = `text-xl font-extrabold mt-1 ${m.netDebts >= 0 ? 'text-emerald-600' : 'text-rose-600'}`;
 
+      // Poblar selector de filtro por persona
+      const personFilterSel = document.getElementById('ddebt-person-filter');
+      const prevPersonFilter = personFilterSel.value || 'all';
+      const allPeople = [...new Set([...state.friends, ...state.debts.map(d => d.person)])];
+      personFilterSel.innerHTML = `<option value="all">Todos los amigos</option>` +
+        allPeople.map(p => `<option value="${escapeHtml(p)}" ${p === prevPersonFilter ? 'selected' : ''}>${escapeHtml(p)}</option>`).join('');
+
       const byPerson = {};
       state.debts.filter(d => !d.settled).forEach(d => {
         byPerson[d.person] = (byPerson[d.person] || 0) + (d.direction === 'owed_to_me' ? Number(d.amount) : -Number(d.amount));
@@ -2291,29 +2532,39 @@ service cloud.firestore {
       document.getElementById('ddebt-person-cards').innerHTML = pEntries.length === 0
         ? `<div class="col-span-full text-xs text-slate-400">Sin saldos pendientes con nadie</div>`
         : pEntries.map(([person, net]) => `
-          <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700">
-            <div class="text-xs font-bold text-slate-800 dark:text-white">${escapeHtml(person)}</div>
+          <button type="button" onclick="openFriendHistoryModal('${escapeHtml(person)}')" class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/70 hover:bg-brand-50/70 dark:hover:bg-brand-950/30 border border-slate-200 dark:border-slate-700 hover:border-brand-500 text-left transition group">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-800 dark:text-white group-hover:text-brand-600">${escapeHtml(person)}</span>
+              <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400 group-hover:text-brand-600"></i>
+            </div>
             <div class="text-sm font-extrabold mt-0.5 ${net >= 0 ? 'text-emerald-600' : 'text-rose-600'}">${net >= 0 ? `Te debe ${formatMoney(net)}` : `Le debes ${formatMoney(Math.abs(net))}`}</div>
-          </div>
+          </button>
         `).join('');
 
       const filter = document.getElementById('ddebt-filter').value;
-      const list = state.debts.filter(d => filter === 'all' ? true : (filter === 'pending' ? !d.settled : d.settled));
+      const personFilter = personFilterSel.value;
+      const list = state.debts
+        .filter(d => filter === 'all' ? true : (filter === 'pending' ? !d.settled : d.settled))
+        .filter(d => personFilter === 'all' ? true : d.person === personFilter);
+
       document.getElementById('ddebt-list').innerHTML = list.length === 0
         ? `<div class="text-center py-6 text-xs text-slate-400">No hay registros en esta vista</div>`
         : list.map(d => `
           <div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3 ${d.settled ? 'opacity-50' : ''}">
             <div>
-              <div class="flex items-center gap-2">
+              <div class="flex flex-wrap items-center gap-2">
                 <span class="px-2 py-0.5 rounded text-[10px] font-bold ${d.direction === 'owed_to_me' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">
                   ${d.direction === 'owed_to_me' ? 'Te debe' : 'Le debes'}
                 </span>
-                <span class="text-sm font-bold text-slate-900 dark:text-white">${escapeHtml(d.person)}</span>
+                <button type="button" onclick="openFriendHistoryModal('${escapeHtml(d.person)}')" class="text-sm font-bold text-slate-900 dark:text-white hover:text-brand-600 underline decoration-dotted">
+                  ${escapeHtml(d.person)}
+                </button>
+                ${d.autoRuleId ? '<span class="px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 text-[10px] font-bold">⚡ Auto</span>' : ''}
                 <span class="text-xs text-slate-400">• ${getDaysAgoText(d.date)} (${formatDate(d.date)})</span>
               </div>
               <div class="text-xs text-slate-500 mt-0.5">${escapeHtml(d.concept)}</div>
             </div>
-            <div class="flex items-center gap-2.5">
+            <div class="flex items-center gap-2.5 shrink-0">
               <span class="text-sm font-extrabold ${d.direction === 'owed_to_me' ? 'text-emerald-600' : 'text-rose-600'}">${formatMoney(d.amount)}</span>
               <button onclick="toggleSettleDebt('${d.id}')" class="px-3 py-1.5 rounded-xl text-xs font-bold ${d.settled ? 'bg-slate-200 dark:bg-slate-800' : 'bg-brand-600 text-white'}">
                 ${d.settled ? 'Reabrir' : 'Saldar ✓'}
@@ -2325,12 +2576,95 @@ service cloud.firestore {
       lucide.createIcons();
     };
 
+    /**
+     * ==========================================================================
+     * MODAL HISTORIAL COMPLETO POR AMIGO
+     * ==========================================================================
+     */
+    window.openFriendHistoryModal = function(personName) {
+      activeHistoryFriend = personName;
+      renderFriendHistoryModal();
+      document.getElementById('friend-history-modal').classList.remove('hidden');
+      document.getElementById('friend-history-modal').classList.add('flex');
+      lucide.createIcons();
+    };
+
+    window.closeFriendHistoryModal = function() {
+      activeHistoryFriend = null;
+      document.getElementById('friend-history-modal').classList.add('hidden');
+      document.getElementById('friend-history-modal').classList.remove('flex');
+    };
+
+    function renderFriendHistoryModal() {
+      if (!activeHistoryFriend) return;
+      const personDebts = state.debts
+        .filter(d => d.person === activeHistoryFriend)
+        .sort((a, b) => b.date.localeCompare(a.date));
+
+      let owedMe = 0, iOwe = 0;
+      personDebts.filter(d => !d.settled).forEach(d => {
+        if (d.direction === 'owed_to_me') owedMe += Number(d.amount);
+        else iOwe += Number(d.amount);
+      });
+      const net = owedMe - iOwe;
+
+      document.getElementById('fh-title').textContent = `Historial con ${activeHistoryFriend}`;
+      document.getElementById('fh-subtitle').textContent = `${personDebts.length} movimiento(s) compartido(s) en total`;
+      document.getElementById('fh-owed-me').textContent = formatMoney(owedMe);
+      document.getElementById('fh-i-owe').textContent = formatMoney(iOwe);
+
+      const netEl = document.getElementById('fh-net');
+      netEl.textContent = `${net >= 0 ? '+' : ''}${formatMoney(net)}`;
+      netEl.className = `text-base font-extrabold ${net >= 0 ? 'text-emerald-600' : 'text-rose-600'}`;
+
+      const settleAllBtn = document.getElementById('fh-settle-all-btn');
+      if (personDebts.some(d => !d.settled)) settleAllBtn.classList.remove('hidden');
+      else settleAllBtn.classList.add('hidden');
+
+      document.getElementById('fh-list').innerHTML = personDebts.length === 0
+        ? `<div class="p-6 text-center text-xs text-slate-400">No hay movimientos registrados con ${escapeHtml(activeHistoryFriend)}</div>`
+        : personDebts.map(d => `
+          <div class="p-3 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 ${d.settled ? 'opacity-55 bg-slate-50/50 dark:bg-slate-800/30' : 'bg-white dark:bg-slate-900'}">
+            <div class="min-w-0">
+              <div class="flex flex-wrap items-center gap-1.5">
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold ${d.direction === 'owed_to_me' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">
+                  ${d.direction === 'owed_to_me' ? 'Pagaste tú (Te debe)' : 'Pagó ' + escapeHtml(activeHistoryFriend) + ' (Le debes)'}
+                </span>
+                ${d.autoRuleId ? '<span class="px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 text-[10px] font-bold">⚡ Regla Auto</span>' : ''}
+                <span class="text-[11px] text-slate-400">${formatDate(d.date)} (${getDaysAgoText(d.date)})</span>
+              </div>
+              <div class="text-xs font-bold text-slate-800 dark:text-slate-200 mt-1 truncate">${escapeHtml(d.concept)}</div>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              <span class="text-xs sm:text-sm font-extrabold ${d.direction === 'owed_to_me' ? 'text-emerald-600' : 'text-rose-600'}">${formatMoney(d.amount)}</span>
+              <button onclick="toggleSettleDebt('${d.id}')" class="px-2.5 py-1 rounded-lg text-[11px] font-bold ${d.settled ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300' : 'bg-brand-600 text-white'}">
+                ${d.settled ? 'Reabrir' : 'Saldar ✓'}
+              </button>
+              <button onclick="deleteDebt('${d.id}')" class="p-1 text-slate-400 hover:text-rose-600"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+            </div>
+          </div>
+        `).join('');
+      lucide.createIcons();
+    }
+
+    window.settleAllForFriend = function() {
+      if (!activeHistoryFriend) return;
+      state.debts.forEach(d => {
+        if (d.person === activeHistoryFriend && !d.settled) d.settled = true;
+      });
+      saveState();
+      refreshAllViews();
+      renderFriendHistoryModal();
+      showToast(`Todas las cuentas con ${activeHistoryFriend} marcadas como saldadas ✓`);
+    };
+
     window.toggleSettleDebt = function(id) {
       const d = state.debts.find(x => x.id === id);
       if (!d) return;
       d.settled = !d.settled;
       saveState();
       refreshAllViews();
+      if (activeHistoryFriend) renderFriendHistoryModal();
       showToast(d.settled ? 'Deuda marcada como saldada ✓' : 'Deuda reabierta');
     };
 
@@ -2338,64 +2672,260 @@ service cloud.firestore {
       state.debts = state.debts.filter(x => x.id !== id);
       saveState();
       refreshAllViews();
+      if (activeHistoryFriend) renderFriendHistoryModal();
     };
 
     /**
      * ==========================================================================
-     * INTERFAZ MÓVIL (POCKET APP DE BOLSILLO)
+     * MOTOR DE REGLAS AUTOMÁTICAS DE GASTOS COMPARTIDOS (TIPO HOMEBANK)
      * ==========================================================================
      */
-    window.switchMobileTab = function(tabId, listFilter = null) {
-      document.querySelectorAll('.mnav-btn').forEach(b => b.classList.remove('active'));
-      const btn = document.getElementById(`mnav-${tabId}`);
-      if (btn) btn.classList.add('active');
+    function evaluateSharedRulesForTransaction(tx) {
+      if (!tx || tx.type !== 'expense' || tx.isInternal) return 0;
+      const rules = (state.sharedRules || []).filter(r => r.enabled !== false);
+      if (rules.length === 0) return 0;
 
-      document.querySelectorAll('.mtab-view').forEach(v => v.classList.add('hidden'));
-      document.getElementById(`mview-${tabId}`).classList.remove('hidden');
+      const descLower = String(tx.desc || '').toLowerCase();
+      let createdCount = 0;
 
-      if (tabId === 'home') renderMobileHome();
-      if (tabId === 'debts') { renderMobileFriendsChips(); renderMobileDebts(); }
-      if (tabId === 'list') {
-        if (listFilter) document.getElementById('m-list-filter').value = listFilter;
-        renderMobileList();
+      rules.forEach(rule => {
+        const kw = String(rule.keyword || '').toLowerCase().trim();
+        if (!kw || !descLower.includes(kw)) return;
+
+        // Evitar duplicar deuda si ya se generó para este movimiento y este amigo
+        const alreadyExists = state.debts.some(d =>
+          (d.sourceTxId === tx.id && d.person === rule.person) ||
+          (d.autoRuleId === rule.id && d.date === tx.date && d.person === rule.person)
+        );
+        if (alreadyExists) return;
+
+        const shareAmount = rule.mode === 'percent'
+          ? Math.round((Number(tx.amount) * (Number(rule.value) / 100)) * 100) / 100
+          : Math.round(Number(rule.value) * 100) / 100;
+
+        if (shareAmount <= 0) return;
+
+        state.debts.unshift({
+          id: `db-auto-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+          direction: 'owed_to_me',
+          person: rule.person,
+          concept: `${tx.desc} (Parte compartida ${rule.mode === 'percent' ? rule.value + '%' : 'fija'})`,
+          amount: shareAmount,
+          date: tx.date,
+          settled: false,
+          sourceTxId: tx.id,
+          autoRuleId: rule.id
+        });
+        createdCount++;
+      });
+
+      return createdCount;
+    }
+
+    window.applySharedRulesToExistingTransactions = function() {
+      let totalCreated = 0;
+      state.transactions.forEach(tx => {
+        totalCreated += evaluateSharedRulesForTransaction(tx);
+      });
+      if (totalCreated > 0) {
+        saveState();
+        refreshAllViews();
+        showToast(`⚡ ¡Se han generado ${totalCreated} deuda(s) automática(s)!`);
+      } else {
+        showToast('No había cargos nuevos pendientes de aplicar reglas', 'info');
       }
-      lucide.createIcons();
     };
 
-    function renderMobileHome() {
-      const m = calculateMetrics();
-      document.getElementById('mkpi-balance').textContent = formatMoney(m.totalBalance);
-      document.getElementById('mkpi-income').textContent = `+${formatMoney(m.monthIncome)}`;
-      document.getElementById('mkpi-expense').textContent = `-${formatMoney(m.monthExpense)}`;
+    window.updateRuleModePlaceholder = function() {
+      const mode = document.getElementById('rule-mode').value;
+      const label = document.getElementById('rule-value-label');
+      const input = document.getElementById('rule-value');
+      if (mode === 'percent') {
+        label.textContent = 'Porcentaje (%)';
+        input.placeholder = 'Ej. 50';
+      } else {
+        label.textContent = 'Su parte (€)';
+        input.placeholder = 'Ej. 5.50';
+      }
+    };
 
-      const dbBadge = document.getElementById('mkpi-debts-badge');
-      dbBadge.textContent = m.netDebts === 0 ? 'Deudas: 0 €' : `Amigos: ${m.netDebts >= 0 ? '+' : ''}${formatMoney(m.netDebts)}`;
+    window.submitSharedRule = function(e) {
+      e.preventDefault();
+      const keyword = document.getElementById('rule-keyword').value.trim();
+      const person = document.getElementById('rule-friend').value;
+      const mode = document.getElementById('rule-mode').value;
+      const value = parseFloat(document.getElementById('rule-value').value);
+      if (!keyword || !person || isNaN(value) || value <= 0) return;
 
-      document.getElementById('m-accounts-list').innerHTML = Object.values(ACCOUNTS).map(acc => {
-        const bal = m.balances[acc.id] || 0;
-        return `
-          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 flex items-center justify-between shadow-sm">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl ${acc.iconBg} flex items-center justify-center"><i data-lucide="${acc.icon}" class="w-5 h-5"></i></div>
-              <div>
-                <div class="text-sm font-bold text-slate-900 dark:text-white">${acc.name}</div>
-                <div class="text-[11px] text-slate-400">${acc.subtitle}</div>
+      state.sharedRules.push({
+        id: 'rule-' + Date.now(),
+        keyword,
+        person,
+        mode,
+        value,
+        enabled: true
+      });
+
+      document.getElementById('rule-keyword').value = '';
+      document.getElementById('rule-value').value = '';
+      saveState();
+      refreshAllViews();
+      showToast(`Regla creada: "${keyword}" → ${person}`);
+    };
+
+    window.toggleSharedRule = function(id) {
+      const r = state.sharedRules.find(x => x.id === id);
+      if (r) { r.enabled = !r.enabled; saveState(); renderSettingsView(); }
+    };
+
+    window.deleteSharedRule = function(id) {
+      state.sharedRules = state.sharedRules.filter(x => x.id !== id);
+      saveState();
+      renderSettingsView();
+      showToast('Regla eliminada', 'info');
+    };
+
+    /**
+     * ==========================================================================
+     * PESTAÑA AJUSTES: GESTIÓN COMPLETA DE AMIGOS (AÑADIR, RENOMBRAR, ELIMINAR)
+     * ==========================================================================
+     */
+    window.addFriendFromSettings = function(e) {
+      e.preventDefault();
+      const inp = document.getElementById('settings-new-friend');
+      const name = inp.value.trim();
+      if (!name) return;
+      if (state.friends.some(f => f.toLowerCase() === name.toLowerCase())) {
+        return showToast('Ese amigo ya está en la lista', 'error');
+      }
+      state.friends.push(name);
+      inp.value = '';
+      saveState();
+      refreshAllViews();
+      showToast(`Amigo "${name}" añadido`);
+    };
+
+    window.addFriendFromMobile = function(e) {
+      e.preventDefault();
+      const inp = document.getElementById('m-new-friend');
+      const name = inp.value.trim();
+      if (!name) return;
+      if (state.friends.some(f => f.toLowerCase() === name.toLowerCase())) {
+        return showToast('Ese amigo ya existe', 'error');
+      }
+      state.friends.push(name);
+      inp.value = '';
+      saveState();
+      refreshAllViews();
+      showToast(`Amigo "${name}" añadido`);
+    };
+
+    window.renameFriend = function(oldName) {
+      const idx = state.friends.indexOf(oldName);
+      if (idx === -1) return;
+      const inputEl = document.getElementById(`rename-input-${idx}`);
+      const newName = inputEl ? inputEl.value.trim() : '';
+      if (!newName || newName === oldName) return;
+      if (state.friends.some(f => f.toLowerCase() === newName.toLowerCase())) {
+        return showToast('Ya existe otro amigo con ese nombre', 'error');
+      }
+      state.friends[idx] = newName;
+      state.debts.forEach(d => { if (d.person === oldName) d.person = newName; });
+      state.sharedRules.forEach(r => { if (r.person === oldName) r.person = newName; });
+      saveState();
+      refreshAllViews();
+      showToast(`Nombre actualizado: ${oldName} → ${newName}`);
+    };
+
+    window.deleteFriend = async function(name) {
+      const relatedCount = state.debts.filter(d => d.person === name).length;
+      const msg = relatedCount > 0
+        ? `¿Seguro que quieres quitar a "${name}" de tu lista? Tiene ${relatedCount} movimiento(s) en el historial (sus deudas existentes se conservarán en el historial).`
+        : `¿Seguro que quieres eliminar a "${name}" de tu lista de amigos?`;
+      const ok = await askConfirmation(`Eliminar a ${name}`, msg);
+      if (!ok) return;
+
+      state.friends = state.friends.filter(f => f !== name);
+      saveState();
+      refreshAllViews();
+      showToast(`"${name}" eliminado de la lista de amigos`, 'info');
+    };
+
+    function renderSettingsView() {
+      // Poblar selector de amigos en reglas compartidas
+      const ruleFriendSel = document.getElementById('rule-friend');
+      if (ruleFriendSel) {
+        ruleFriendSel.innerHTML = state.friends.map(f => `<option value="${escapeHtml(f)}">${escapeHtml(f)}</option>`).join('');
+      }
+
+      // Lista de reglas compartidas (PC)
+      const rulesHtml = (state.sharedRules || []).length === 0
+        ? `<div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 text-center text-xs text-slate-400">No hay reglas automáticas configuradas aún. Añade una arriba (ej. Netflix, Spotify).</div>`
+        : state.sharedRules.map(r => `
+          <div class="p-3 rounded-xl border ${r.enabled ? 'bg-slate-50/80 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700' : 'opacity-50 border-slate-200/40'} flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <input type="checkbox" ${r.enabled ? 'checked' : ''} onchange="toggleSharedRule('${r.id}')" class="rounded text-brand-600 cursor-pointer" />
+              <div class="min-w-0">
+                <div class="text-xs font-bold text-slate-900 dark:text-white truncate">
+                  Si descripción contiene <span class="px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300">"${escapeHtml(r.keyword)}"</span>
+                </div>
+                <div class="text-[11px] text-slate-500 mt-0.5">
+                  → <strong>${escapeHtml(r.person)}</strong> te debe <strong>${r.mode === 'percent' ? `${r.value}%` : formatMoney(r.value)}</strong>
+                </div>
               </div>
             </div>
-            <div class="text-base font-extrabold ${bal >= 0 ? 'text-slate-900 dark:text-white' : 'text-rose-600'}">${formatMoney(bal)}</div>
+            <button onclick="deleteSharedRule('${r.id}')" title="Eliminar regla" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 transition shrink-0">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
           </div>
-        `;
-      }).join('');
+        `).join('');
+      const pcRulesEl = document.getElementById('shared-rules-list');
+      if (pcRulesEl) pcRulesEl.innerHTML = rulesHtml;
+      const mobRulesEl = document.getElementById('m-shared-rules-list');
+      if (mobRulesEl) mobRulesEl.innerHTML = rulesHtml;
 
-      const pendAlert = document.getElementById('m-pending-alert');
-      const dotBadge = document.getElementById('mbadge-pending');
-      if (m.pendingTicketsCount > 0) {
-        pendAlert.classList.remove('hidden');
-        dotBadge.classList.remove('hidden');
-        document.getElementById('m-pending-count-text').textContent = `${m.pendingTicketsCount} ticket(s) pendientes de validar`;
-      } else {
-        pendAlert.classList.add('hidden');
-        dotBadge.classList.add('hidden');
+      // Lista de amigos en Ajustes (PC)
+      const friendsHtml = state.friends.length === 0
+        ? `<div class="p-4 text-center text-xs text-slate-400">No hay amigos en la lista</div>`
+        : state.friends.map((f, idx) => {
+          const count = state.debts.filter(d => d.person === f).length;
+          return `
+            <div class="p-2.5 px-3.5 flex items-center justify-between gap-2 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/40">
+              <div class="flex items-center gap-2 flex-1 min-w-0">
+                <input type="text" id="rename-input-${idx}" value="${escapeHtml(f)}" onchange="renameFriend('${escapeHtml(f)}')" class="w-full max-w-[160px] px-2 py-1 rounded-lg text-xs font-bold bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 focus:bg-white dark:focus:bg-slate-900 border border-transparent focus:border-brand-500 focus:outline-none" />
+                <button type="button" onclick="openFriendHistoryModal('${escapeHtml(f)}')" class="text-[11px] text-brand-600 hover:underline shrink-0">${count} movs.</button>
+              </div>
+              <button type="button" onclick="deleteFriend('${escapeHtml(f)}')" title="Quitar amigo" class="px-2.5 py-1 rounded-lg text-xs font-bold text-rose-600 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 transition flex items-center gap-1 shrink-0">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                <span>Quitar</span>
+              </button>
+            </div>
+          `;
+        }).join('');
+      const pcFriendsEl = document.getElementById('settings-friends-list');
+      if (pcFriendsEl) pcFriendsEl.innerHTML = friendsHtml;
+
+      // Lista de amigos en Ajustes (Móvil)
+      const mobFriendsEl = document.getElementById('m-settings-friends-list');
+      if (mobFriendsEl) {
+        mobFriendsEl.innerHTML = state.friends.map(f => `
+          <div class="p-3 flex items-center justify-between gap-2 bg-white dark:bg-slate-900">
+            <button type="button" onclick="openFriendHistoryModal('${escapeHtml(f)}')" class="text-xs font-bold text-slate-900 dark:text-white hover:text-brand-600">${escapeHtml(f)}</button>
+            <button type="button" onclick="deleteFriend('${escapeHtml(f)}')" class="px-2.5 py-1 rounded-lg text-[11px] font-bold text-rose-600 bg-rose-50 dark:bg-rose-950/40">Quitar</button>
+          </div>
+        `).join('');
+      }
+
+      // Resumen de cuentas en Ajustes
+      const balances = getAccountBalances();
+      const accSumEl = document.getElementById('settings-accounts-summary');
+      if (accSumEl) {
+        accSumEl.innerHTML = Object.values(ACCOUNTS).map(a => `
+          <div class="flex items-center justify-between py-1.5 border-b border-slate-100 dark:border-slate-800/60">
+            <span class="font-semibold text-slate-700 dark:text-slate-300">${a.name} <span class="text-slate-400 font-normal">(${a.subtitle})</span></span>
+            <span class="font-extrabold">${formatMoney(balances[a.id] || 0)}</span>
+          </div>
+        `).join('');
       }
       lucide.createIcons();
     }
@@ -2720,34 +3250,60 @@ service cloud.firestore {
       else if (/(zara|primark|bershka|decathlon|amazon|media\s*markt|fnac)/i.test(fullLower)) category = 'Compras';
       else if (/(farmacia|optica|clinica|gimnasio|fitness)/i.test(fullLower)) category = 'Educación y salud';
       else if (/(ikea|leroy|ferreteria|bazar)/i.test(fullLower)) category = 'Hogar';
+    window.switchMobileTab = function(tabId, listFilter = null) {
+      document.querySelectorAll('.mnav-btn').forEach(b => b.classList.remove('active'));
+      const btn = document.getElementById(`mnav-${tabId}`);
+      if (btn) btn.classList.add('active');
 
-      return { merchant, date: detectedDate, amount: totalAmount, category };
-    }
+      document.querySelectorAll('.mtab-view').forEach(v => v.classList.add('hidden'));
+      document.getElementById(`mview-${tabId}`).classList.remove('hidden');
 
-    /**
-     * ==========================================================================
-     * IMPORTADOR EXCEL ING (.XLSX / .XLS)
-     * ==========================================================================
-     */
-    window.openIngModal = function() {
-      pendingIngImport = null;
-      document.getElementById('ing-file-input').value = '';
-      document.getElementById('ing-preview-box').classList.add('hidden');
-      document.getElementById('ing-import-modal').classList.remove('hidden');
-      document.getElementById('ing-import-modal').classList.add('flex');
+      if (tabId === 'home') renderMobileHome();
+      if (tabId === 'debts') { renderMobileFriendsChips(); renderMobileDebts(); }
+      if (tabId === 'settings') renderSettingsView();
+      if (tabId === 'list') {
+        if (listFilter) document.getElementById('m-list-filter').value = listFilter;
+        renderMobileList();
+      }
       lucide.createIcons();
     };
-    window.closeIngModal = function() {
-      document.getElementById('ing-import-modal').classList.add('hidden');
-      document.getElementById('ing-import-modal').classList.remove('flex');
-    };
-
-    function parseIngDate(val) {
-      if (!val) return null;
-      if (typeof val === 'number') {
-        const dateObj = new Date(Math.floor(val - 25569) * 86400 * 1000);
-        return dateObj.toISOString().split('T')[0];
+    function renderMobileDebts() {
+      const byPerson = {};
+      state.debts.filter(d => !d.settled).forEach(d => {
+        byPerson[d.person] = (byPerson[d.person] || 0) + (d.direction === 'owed_to_me' ? Number(d.amount) : -Number(d.amount));
+      });
+      const pCardsEl = document.getElementById('m-debts-person-cards');
+      if (pCardsEl) {
+        const entries = Object.entries(byPerson);
+        pCardsEl.innerHTML = entries.length === 0
+          ? `<div class="col-span-2 p-3 rounded-2xl bg-white dark:bg-slate-900 text-center text-xs text-slate-400">Sin saldos abiertos</div>`
+          : entries.map(([person, net]) => `
+            <button type="button" onclick="openFriendHistoryModal('${escapeHtml(person)}')" class="p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-left shadow-sm">
+              <div class="text-xs font-extrabold text-slate-900 dark:text-white flex items-center justify-between">
+                <span>${escapeHtml(person)}</span>
+                <span class="text-[10px] text-brand-600">Historial →</span>
+              </div>
+              <div class="text-xs font-bold mt-0.5 ${net >= 0 ? 'text-emerald-600' : 'text-rose-600'}">${net >= 0 ? `+${formatMoney(net)}` : `-${formatMoney(Math.abs(net))}`}</div>
+            </button>
+          `).join('');
       }
+
+      const pending = state.debts.filter(d => !d.settled);
+      document.getElementById('m-debts-list').innerHTML = pending.length === 0
+        ? `<div class="p-4 rounded-2xl bg-white dark:bg-slate-900 text-center text-xs text-slate-400">Sin deudas pendientes</div>`
+        : pending.map(d => `
+          <div class="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+            <div>
+              <button type="button" onclick="openFriendHistoryModal('${escapeHtml(d.person)}')" class="text-xs font-extrabold text-slate-900 dark:text-white underline decoration-dotted">${escapeHtml(d.person)} <span class="font-normal text-slate-400">• ${getDaysAgoText(d.date)}</span></button>
+              <div class="text-[11px] text-slate-500">${escapeHtml(d.concept)}</div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-extrabold ${d.direction === 'owed_to_me' ? 'text-emerald-600' : 'text-rose-600'}">${d.direction === 'owed_to_me' ? '+' : '-'}${formatMoney(d.amount)}</span>
+              <button onclick="toggleSettleDebt('${d.id}')" class="px-2.5 py-1.5 rounded-xl bg-brand-600 text-white text-[11px] font-bold">Saldar</button>
+            </div>
+          </div>
+        `).join('');
+    }
       const str = String(val).trim();
       const match = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
       if (match) return `${match[3]}-${match[2].padStart(2, '0')}-${match[1].padStart(2, '0')}`;
@@ -2883,14 +3439,17 @@ service cloud.firestore {
       const targetAccount = document.getElementById('ing-target-account').value;
       const syncRounding = document.getElementById('ing-sync-rounding').checked;
       let count = 0;
+      let autoDebts = 0;
 
       pendingIngImport.movements.forEach((mov, idx) => {
         if (!isDuplicateMovement(mov, targetAccount)) {
-          state.transactions.push({
+          const newTx = {
             id: `ing-${Date.now()}-${idx}`, account: targetAccount, type: mov.type, category: mov.category,
             subcategory: mov.subcategory, desc: mov.desc, amount: mov.amount, date: mov.date,
             isInternal: mov.isInternal, validated: true, source: 'ing_excel'
-          });
+          };
+          state.transactions.push(newTx);
+          autoDebts += evaluateSharedRulesForTransaction(newTx);
           count++;
           if (syncRounding && targetAccount !== 'ing_ahorro' && mov.subcategory === 'Redondeo' && mov.type === 'expense') {
             state.transactions.push({
@@ -2910,7 +3469,10 @@ service cloud.firestore {
       closeIngModal();
       detectRecurringFromTransactions(false);
       refreshAllViews();
-      showToast(`¡${count} movimientos de ING importados!`);
+      showToast(autoDebts > 0
+        ? `¡${count} movimientos ING importados + ${autoDebts} deuda(s) compartida(s) creada(s) ⚡!`
+        : `¡${count} movimientos de ING importados!`
+      );
     };
 
     /**
@@ -3114,10 +3676,11 @@ service cloud.firestore {
       document.querySelectorAll('.hb-acc-select').forEach(sel => { map[sel.dataset.hbAcc] = sel.value; });
 
       let imported = 0;
+      let autoDebts = 0;
       pendingHomebankImport.ops.forEach((op, idx) => {
         const targetAcc = map[op.hbAccount] || 'ing_corriente';
         if (!isDuplicateMovement(op, targetAcc)) {
-          state.transactions.push({
+          const newTx = {
             id: `hb-${Date.now()}-${idx}`,
             account: targetAcc,
             type: op.type,
@@ -3129,7 +3692,9 @@ service cloud.firestore {
             isInternal: false,
             validated: true,
             source: 'homebank'
-          });
+          };
+          state.transactions.push(newTx);
+          autoDebts += evaluateSharedRulesForTransaction(newTx);
           imported++;
         }
       });
@@ -3138,7 +3703,10 @@ service cloud.firestore {
       closeHomebankModal();
       detectRecurringFromTransactions(false);
       refreshAllViews();
-      showToast(`¡${imported} movimientos históricos importados desde HomeBank!`);
+      showToast(autoDebts > 0
+        ? `¡${imported} movimientos HomeBank importados + ${autoDebts} deuda(s) compartida(s) ⚡!`
+        : `¡${imported} movimientos históricos importados desde HomeBank!`
+      );
     };
 
     /**
@@ -3428,6 +3996,7 @@ service cloud.firestore {
       document.getElementById('dfilter-category').innerHTML = `<option value="all">Todas las categorías</option>` + allCats.map(c => `<option value="${c}">${c}</option>`).join('');
       renderDesktopFriendsChips();
       renderMobileFriendsChips();
+      renderSettingsView();
 
       if (uiMode === 'mobile') {
         renderMobileHome();
@@ -3457,3 +4026,4 @@ service cloud.firestore {
   </script>
 </body>
 </html>
+```
