@@ -41,6 +41,7 @@
     body.pocket-mode .pocket-hide { display: none !important; }
     body.pocket-mode .pocket-only { display: block !important; }
     body.pocket-mode .pocket-only.grid { display: grid !important; }
+    body.pocket-mode .pocket-only.table-cell { display: table-cell !important; }
     body.pocket-mode .pocket-grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
     body.pocket-mode .pocket-stack { grid-template-columns: minmax(0, 1fr) !important; }
     body.pocket-mode #cfTreasuryTableBody { max-height: none !important; }
@@ -391,7 +392,7 @@
           <div class="flex flex-wrap items-center justify-between gap-2">
             <div>
               <h3 class="font-bold text-sm">Cuadro de Previsiones</h3>
-              <p class="text-[11px] text-slate-400">Entradas, salidas y saldo previsto por cuenta.</p>
+              <p class="text-[11px] text-slate-400">Importe previsto, fecha y saldo resultante por cuenta.</p>
             </div>
             <div class="flex items-center gap-1.5 w-full sm:w-auto">
               <select id="cfTimelineAccount" onchange="renderCashFlow()" class="flex-1 sm:flex-initial px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold">
@@ -399,7 +400,7 @@
                 <option value="ing_ahorro">💰 ING Ahorro</option>
                 <option value="ing_nocuenta">💳 ING NoCuenta</option>
                 <option value="efectivo">💵 Efectivo</option>
-                <option value="hucha_monedas">🪙 Hucha Colección</option>
+                <option value="hucha_monedas">🐷 Hucha Colección</option>
                 <option value="all">📋 Todas las cuentas</option>
               </select>
               <select id="cfTimelineDays" onchange="renderCashFlow()" class="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs">
@@ -419,11 +420,12 @@
             <table class="w-full text-left border-collapse text-xs">
               <thead>
                 <tr class="bg-slate-800 text-white">
-                  <th class="py-2 px-2.5 font-semibold border-r border-slate-700">Fecha</th>
-                  <th class="py-2 px-2.5 font-semibold border-r border-slate-700">Concepto</th>
-                  <th class="py-2 px-2.5 font-semibold border-r border-slate-700 text-right pocket-hide">Debe</th>
-                  <th class="py-2 px-2.5 font-semibold border-r border-slate-700 text-right pocket-hide">Haber</th>
-                  <th class="py-2 px-2.5 font-semibold text-right">Saldo</th>
+                  <th class="py-2 px-2 font-semibold border-r border-slate-700">Fecha</th>
+                  <th class="py-2 px-2 font-semibold border-r border-slate-700">Concepto</th>
+                  <th class="py-2 px-2 font-semibold border-r border-slate-700 text-right pocket-hide">Debe (+)</th>
+                  <th class="py-2 px-2 font-semibold border-r border-slate-700 text-right pocket-hide">Haber (-)</th>
+                  <th class="py-2 px-2 font-semibold border-r border-slate-700 text-right pocket-only table-cell">Importe</th>
+                  <th class="py-2 px-2 font-semibold text-right">Saldo</th>
                 </tr>
               </thead>
               <tbody id="cfTreasuryTableBody" class="divide-y divide-slate-200 dark:divide-slate-800"></tbody>
@@ -547,7 +549,7 @@
 
     <div class="grid grid-cols-2 gap-2">
       <button type="button" id="qcAccCash" onclick="selectQcAccount('efectivo')" class="py-2 rounded-xl text-xs font-bold bg-emerald-600 text-white">👛 Cartera Efectivo</button>
-      <button type="button" id="qcAccCoin" onclick="selectQcAccount('hucha_monedas')" class="py-2 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-400">🪙 Hucha Colección</button>
+      <button type="button" id="qcAccCoin" onclick="selectQcAccount('hucha_monedas')" class="py-2 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-400">🐷 Hucha Colección</button>
     </div>
 
     <div id="qcTypeRow" class="grid grid-cols-2 gap-2">
@@ -583,7 +585,7 @@
         <option value="Ocio y viajes">🎟️ Ocio / Baile</option>
         <option value="Gasolina y transporte">⛽ Transporte / Gasolina</option>
         <option value="Compras">🛍️ Compras</option>
-        <option value="Ahorro monedas">🪙 Monedas repes</option>
+        <option value="Ahorro monedas">🐷 Monedas repes</option>
         <option value="Otros gastos">📦 Otros</option>
       </select>
       <input id="qcConcept" type="text" placeholder="Nota corta (opcional)" class="px-2.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs" />
@@ -871,7 +873,7 @@
     { id: 'ing_ahorro', name: 'ING Ahorro', icon: '💰', color: 'text-amber-500' },
     { id: 'ing_nocuenta', name: 'ING NoCuenta', icon: '💳', color: 'text-sky-500' },
     { id: 'efectivo', name: 'Efectivo', icon: '💵', color: 'text-emerald-500' },
-    { id: 'hucha_monedas', name: 'Hucha Colección', icon: '🪙', color: 'text-amber-400' }
+    { id: 'hucha_monedas', name: 'Hucha Colección', icon: '🐷', color: 'text-amber-400' }
   ];
 
   const DONUT_COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ec4899', '#06b6d4', '#8b5cf6'];
@@ -2254,11 +2256,12 @@
 
     rowsHtml.push(`
       <tr class="bg-emerald-500/10 font-bold">
-        <td class="py-2 px-2.5 border-r border-slate-200 dark:border-slate-800 font-mono text-[11px]">${formatEsDate(todayISO())}</td>
-        <td class="py-2 px-2.5 border-r border-slate-200 dark:border-slate-800">Saldo inicial</td>
-        <td class="py-2 px-2.5 border-r border-slate-200 dark:border-slate-800 text-right text-emerald-600 dark:text-emerald-400 pocket-hide">${fmt(startBal)}</td>
-        <td class="py-2 px-2.5 border-r border-slate-200 dark:border-slate-800 text-right text-slate-400 pocket-hide">- €</td>
-        <td class="py-2 px-2.5 text-right ${running < 0 ? 'bg-rose-500/20 text-rose-500' : ''}">${fmt(running)}</td>
+        <td class="py-2 px-2 border-r border-slate-200 dark:border-slate-800 font-mono text-[11px]">${formatEsDate(todayISO()).slice(0, 5)}</td>
+        <td class="py-2 px-2 border-r border-slate-200 dark:border-slate-800">Saldo inicial</td>
+        <td class="py-2 px-2 border-r border-slate-200 dark:border-slate-800 text-right text-emerald-600 dark:text-emerald-400 pocket-hide">${fmt(startBal)}</td>
+        <td class="py-2 px-2 border-r border-slate-200 dark:border-slate-800 text-right text-slate-400 pocket-hide">- €</td>
+        <td class="py-2 px-2 border-r border-slate-200 dark:border-slate-800 text-right text-slate-400 pocket-only table-cell">-</td>
+        <td class="py-2 px-2 text-right ${running < 0 ? 'bg-rose-500/20 text-rose-500' : ''}">${fmt(running)}</td>
       </tr>
     `);
 
@@ -2274,11 +2277,12 @@
         if (showEmpty) {
           rowsHtml.push(`
             <tr class="text-slate-400">
-              <td class="py-1.5 px-2.5 border-r border-slate-200 dark:border-slate-800 font-mono text-[11px]">${formatEsDate(iso)}</td>
-              <td class="py-1.5 px-2.5 border-r border-slate-200 dark:border-slate-800">Movimientos</td>
-              <td class="py-1.5 px-2.5 border-r border-slate-200 dark:border-slate-800 text-right pocket-hide">- €</td>
-              <td class="py-1.5 px-2.5 border-r border-slate-200 dark:border-slate-800 text-right pocket-hide">- €</td>
-              <td class="py-1.5 px-2.5 text-right font-semibold ${running < 0 ? 'bg-rose-500/20 text-rose-500' : 'text-slate-700 dark:text-slate-200'}">${fmt(running)}</td>
+              <td class="py-1.5 px-2 border-r border-slate-200 dark:border-slate-800 font-mono text-[11px]">${formatEsDate(iso)}</td>
+              <td class="py-1.5 px-2 border-r border-slate-200 dark:border-slate-800">Movimientos</td>
+              <td class="py-1.5 px-2 border-r border-slate-200 dark:border-slate-800 text-right pocket-hide">- €</td>
+              <td class="py-1.5 px-2 border-r border-slate-200 dark:border-slate-800 text-right pocket-hide">- €</td>
+              <td class="py-1.5 px-2 border-r border-slate-200 dark:border-slate-800 text-right pocket-only table-cell">-</td>
+              <td class="py-1.5 px-2 text-right font-semibold ${running < 0 ? 'bg-rose-500/20 text-rose-500' : 'text-slate-700 dark:text-slate-200'}">${fmt(running)}</td>
             </tr>
           `);
         }
@@ -2290,14 +2294,17 @@
           running += ev.amount;
           const accLabel = selAcc === 'all' ? ` [${ACCOUNTS_META.find(a => a.id === ev.account)?.name || ev.account}]` : '';
           const negCell = running < 0 ? 'bg-rose-500/25 text-rose-500 font-extrabold' : 'font-bold';
+          const shortDate = formatEsDate(iso).slice(0, 5);
+          const amtSigned = `${ev.amount >= 0 ? '+' : ''}${fmt(ev.amount)}`;
 
           rowsHtml.push(`
             <tr class="hover:bg-slate-50 dark:hover:bg-slate-850/70">
-              <td class="py-2 px-2.5 border-r border-slate-200 dark:border-slate-800 font-mono text-[11px]">${formatEsDate(iso)}</td>
-              <td class="py-2 px-2.5 border-r border-slate-200 dark:border-slate-800 font-medium">${ev.name}<span class="text-[10px] text-slate-400">${accLabel}</span></td>
-              <td class="py-2 px-2.5 border-r border-slate-200 dark:border-slate-800 text-right font-semibold pocket-hide ${debeVal > 0 ? 'text-emerald-500' : 'text-slate-400'}">${debeVal > 0 ? fmt(debeVal) : '- €'}</td>
-              <td class="py-2 px-2.5 border-r border-slate-200 dark:border-slate-800 text-right font-semibold pocket-hide ${haberVal > 0 ? 'text-rose-500' : 'text-slate-400'}">${haberVal > 0 ? fmt(haberVal) : '- €'}</td>
-              <td class="py-2 px-2.5 text-right ${negCell}">${fmt(running)}</td>
+              <td class="py-2 px-2 border-r border-slate-200 dark:border-slate-800 font-mono text-[11px]"><span class="pocket-hide">${formatEsDate(iso)}</span><span class="pocket-only table-cell">${shortDate}</span></td>
+              <td class="py-2 px-2 border-r border-slate-200 dark:border-slate-800 font-medium">${ev.name}<span class="text-[10px] text-slate-400">${accLabel}</span></td>
+              <td class="py-2 px-2 border-r border-slate-200 dark:border-slate-800 text-right font-semibold pocket-hide ${debeVal > 0 ? 'text-emerald-500' : 'text-slate-400'}">${debeVal > 0 ? fmt(debeVal) : '- €'}</td>
+              <td class="py-2 px-2 border-r border-slate-200 dark:border-slate-800 text-right font-semibold pocket-hide ${haberVal > 0 ? 'text-rose-500' : 'text-slate-400'}">${haberVal > 0 ? fmt(haberVal) : '- €'}</td>
+              <td class="py-2 px-2 border-r border-slate-200 dark:border-slate-800 text-right font-bold whitespace-nowrap pocket-only table-cell ${ev.amount >= 0 ? 'text-emerald-500' : 'text-rose-500'}">${amtSigned}</td>
+              <td class="py-2 px-2 text-right whitespace-nowrap ${negCell}">${fmt(running)}</td>
             </tr>
           `);
         });
