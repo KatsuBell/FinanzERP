@@ -38,8 +38,10 @@
     body.pocket-mode .desktop-only-table { display: none !important; }
     body.pocket-mode .mobile-cards-list { display: block !important; }
     body.pocket-mode .pocket-hide { display: none !important; }
+    body.pocket-mode .pocket-only { display: block !important; }
     body.pocket-mode .pocket-grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
     body.pocket-mode .pocket-stack { grid-template-columns: minmax(0, 1fr) !important; }
+    .pocket-only { display: none; }
   </style>
 </head>
 <body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans antialiased">
@@ -117,7 +119,7 @@
   <!-- ==================== ÁREA PRINCIPAL ==================== -->
   <div class="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
 
-    <!-- BARRA SUPERIOR CON 1 SOLO BOTÓN DE TEMA -->
+    <!-- BARRA SUPERIOR -->
     <header class="h-14 px-4 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 shrink-0">
       <div class="flex items-center gap-2.5 min-w-0">
         <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold shrink-0 md:hidden">F</div>
@@ -125,12 +127,12 @@
       </div>
 
       <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
-        <button type="button" onclick="openModal('modalQuickCash')" class="px-2.5 sm:px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm">
-          <span>💵</span><span class="hidden sm:inline pocket-hide">+ Efectivo / Hucha</span><span class="sm:hidden">+ Efectivo</span>
+        <button type="button" onclick="openModal('modalQuickCash')" class="pocket-hide px-2.5 sm:px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm">
+          <span>💵</span><span class="hidden sm:inline">+ Efectivo / Hucha</span><span class="sm:hidden">+ Efectivo</span>
         </button>
 
-        <button type="button" onclick="openModal('modalQuickDebt')" class="px-2.5 sm:px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-semibold flex items-center gap-1.5 shadow-sm">
-          <span>🍽️</span><span class="hidden sm:inline pocket-hide">+ Cena / Deuda</span><span class="sm:hidden">+ Deuda</span>
+        <button type="button" onclick="openModal('modalQuickDebt')" class="pocket-hide px-2.5 sm:px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-semibold flex items-center gap-1.5 shadow-sm">
+          <span>🍽️</span><span class="hidden sm:inline">+ Cena / Deuda</span><span class="sm:hidden">+ Deuda</span>
         </button>
 
         <button type="button" id="headerThemeBtn" onclick="toggleTheme()" title="Cambiar Modo Claro / Oscuro" class="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-medium border border-slate-200 dark:border-slate-700">
@@ -141,9 +143,9 @@
           💻 PC
         </button>
 
-        <button type="button" id="headerCloudBtn" onclick="openModal('modalFirebase')" class="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold flex items-center gap-1.5 transition-colors">
+        <button type="button" id="headerCloudBtn" onclick="openModal('modalFirebase')" class="pocket-hide px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold flex items-center gap-1.5 transition-colors">
           <span>☁️</span>
-          <span id="headerCloudLabel" class="hidden sm:inline pocket-hide">Nube Local</span>
+          <span id="headerCloudLabel" class="hidden sm:inline">Nube Local</span>
         </button>
       </div>
     </header>
@@ -153,20 +155,21 @@
 
       <!-- ==================== VISTA 1: RESUMEN GENERAL ==================== -->
       <section id="view-dashboard" class="space-y-4 max-w-7xl mx-auto">
-        <div id="pocketQuickBar" class="hidden grid-cols-3 gap-2">
-          <button type="button" onclick="openModal('modalQuickCash')" class="p-3 rounded-2xl bg-emerald-600 text-white flex flex-col items-center justify-center gap-1 shadow-sm">
-            <span class="text-xl">💵</span><span class="text-[11px] font-bold">Efectivo / Hucha</span>
+        <!-- ACCESOS RÁPIDOS DE DÍA A DÍA EN MÓVIL -->
+        <div id="pocketQuickBar" class="pocket-only grid-cols-3 gap-2">
+          <button type="button" onclick="openNewTxModal()" class="p-2.5 rounded-2xl bg-indigo-600 text-white flex flex-col items-center justify-center gap-1 shadow-sm">
+            <span class="text-lg">✍️</span><span class="text-[11px] font-bold">Manual</span>
           </button>
-          <button type="button" onclick="openModal('modalOcr')" class="p-3 rounded-2xl bg-sky-600 text-white flex flex-col items-center justify-center gap-1 shadow-sm">
-            <span class="text-xl">📸</span><span class="text-[11px] font-bold">Foto Ticket OCR</span>
+          <button type="button" onclick="openModal('modalOcr')" class="p-2.5 rounded-2xl bg-sky-600 text-white flex flex-col items-center justify-center gap-1 shadow-sm">
+            <span class="text-lg">📸</span><span class="text-[11px] font-bold">Ticket OCR</span>
           </button>
-          <button type="button" onclick="openModal('modalQuickDebt')" class="p-3 rounded-2xl bg-amber-500 text-slate-950 flex flex-col items-center justify-center gap-1 shadow-sm">
-            <span class="text-xl">🍽️</span><span class="text-[11px] font-bold">Cena / Amigos</span>
+          <button type="button" onclick="openModal('modalQuickDebt')" class="p-2.5 rounded-2xl bg-amber-500 text-slate-950 flex flex-col items-center justify-center gap-1 shadow-sm">
+            <span class="text-lg">🤝</span><span class="text-[11px] font-bold">Deuda</span>
           </button>
         </div>
 
-        <!-- KPIs -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 pocket-grid-2 gap-3">
+        <!-- KPIs (SOLO EN PC / ESCRITORIO) -->
+        <div class="pocket-hide grid grid-cols-2 lg:grid-cols-4 gap-3">
           <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
             <div class="text-xs text-slate-400 flex items-center justify-between"><span>Patrimonio Total</span><span>🏦</span></div>
             <div id="kpiTotalBalance" class="text-lg sm:text-2xl font-bold mt-1 text-indigo-500">0,00 €</div>
@@ -189,29 +192,33 @@
           </div>
         </div>
 
-        <!-- MIS CUENTAS Y HUCHAS -->
+        <!-- MIS CUENTAS Y HUCHAS (CON FECHA DE ÚLTIMO DATO) -->
         <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
           <div class="flex items-center justify-between mb-2.5">
-            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Mis Cuentas y Huchas <span class="normal-case font-normal">(clic en una cuenta para ver sus movimientos)</span></h2>
-            <button type="button" onclick="openModal('modalAdjustAccounts')" class="text-xs text-indigo-500 hover:underline font-medium">Ajustar saldos base</button>
+            <div>
+              <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Saldo de Cuentas y Huchas</h2>
+              <p class="text-[11px] text-slate-400">Se muestra la fecha del último movimiento registrado en cada cuenta.</p>
+            </div>
+            <button type="button" onclick="openModal('modalAdjustAccounts')" class="text-xs text-indigo-500 hover:underline font-medium shrink-0">Ajustar saldos</button>
           </div>
           <div id="accountsGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 pocket-grid-2 gap-2.5"></div>
         </div>
 
-        <!-- RADAR DE LIQUIDEZ A 1 SEMANA VISTA POR CUENTA -->
-        <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-          <div class="flex items-center justify-between mb-2.5">
+        <!-- PREVISIÓN PRÓXIMOS DÍAS -->
+        <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-2.5">
+          <div class="flex items-center justify-between gap-2">
             <div>
-              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Radar de Liquidez · Próximos 7 Días por Cuenta</h3>
-              <p class="text-[11px] text-slate-400">Comprueba si tienes saldo suficiente o si necesitas traspasar dinero antes de que pasen recibos.</p>
+              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Previsión Próximos Días</h3>
+              <p class="text-[11px] text-slate-400">Entradas y salidas previstas y cómo queda el saldo.</p>
             </div>
-            <button type="button" onclick="setTab('cashflow')" class="text-xs text-indigo-500 hover:underline font-semibold shrink-0">Ver tabla de previsiones →</button>
+            <button type="button" onclick="setTab('cashflow')" class="text-xs text-indigo-500 hover:underline font-semibold shrink-0">Tabla completa →</button>
           </div>
           <div id="weeklyRadarGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 pocket-stack gap-2.5"></div>
+          <div id="pocketForecastFeed" class="pocket-only pt-2 border-t border-slate-100 dark:border-slate-800 space-y-1.5"></div>
         </div>
 
-        <!-- GRÁFICOS (BARRAS + DISCO INTERACTIVO) Y ACTIVIDAD RECIENTE -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 pocket-stack gap-4">
+        <!-- GRÁFICOS Y ÚLTIMOS MOVIMIENTOS (SOLO EN PC / ESCRITORIO) -->
+        <div class="pocket-hide grid grid-cols-1 lg:grid-cols-12 gap-4">
           <div class="lg:col-span-5 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
             <div class="flex items-center justify-between mb-2">
               <h3 class="font-bold text-sm">Evolución (6 Meses)</h3>
@@ -302,7 +309,7 @@
             <p class="text-xs text-slate-400">Haz clic sobre cualquier amigo para ver todo su historial de movimientos contigo.</p>
           </div>
           <div class="flex items-center gap-2">
-            <button type="button" onclick="setTab('settings')" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-medium">⚙️ Gestionar amigos</button>
+            <button type="button" onclick="setTab('settings')" class="pocket-hide px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-medium">⚙️ Gestionar amigos</button>
             <button type="button" onclick="openModal('modalQuickDebt')" class="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-semibold">+ Apuntar Cena / Préstamo</button>
           </div>
         </div>
@@ -321,9 +328,9 @@
         </div>
       </section>
 
-      <!-- ==================== VISTA 4: PREVISIONES CASH FLOW (ESTILO CUADRO DE TESORERÍA) ==================== -->
+      <!-- ==================== VISTA 4: PREVISIONES CASH FLOW ==================== -->
       <section id="view-cashflow" class="hidden space-y-3 max-w-7xl mx-auto">
-        <div class="grid grid-cols-2 lg:grid-cols-4 pocket-grid-2 gap-3">
+        <div class="pocket-hide grid grid-cols-2 lg:grid-cols-4 gap-3">
           <div class="bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800">
             <div class="text-[11px] text-slate-400">Entradas Previstas / Mes</div>
             <div id="cfFixedIncome" class="text-lg font-bold text-emerald-500 mt-0.5">0,00 €</div>
@@ -349,7 +356,7 @@
               <h3 class="font-bold text-sm">Programar Ingreso o Gasto Recurrente</h3>
               <p class="text-[11px] text-slate-400">Define en qué cuenta entra o sale, qué día del mes cae y su importe para construir la tabla de tesorería.</p>
             </div>
-            <div class="flex items-center gap-1.5">
+            <div class="pocket-hide flex items-center gap-1.5">
               <select id="cfRoundStep" onchange="detectRecurringFromTransactions()" class="px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[11px]">
                 <option value="1">Suministros alza: +1 €</option>
                 <option value="5" selected>Suministros alza: +5 €</option>
@@ -377,7 +384,7 @@
           </div>
         </div>
 
-        <!-- TABLA PRINCIPAL DE PREVISIONES POR CUENTA (ESTILO TESORERÍA CON FECHA, CONCEPTO, DEBE, HABER, SALDO) -->
+        <!-- TABLA PRINCIPAL DE PREVISIONES POR CUENTA -->
         <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
           <div class="flex flex-wrap items-center justify-between gap-2">
             <div>
@@ -395,11 +402,11 @@
               </select>
               <select id="cfTimelineDays" onchange="renderCashFlow()" class="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs">
                 <option value="7">Próximos 7 días</option>
-                <option value="15">Próximos 15 días</option>
-                <option value="30" selected>Próximos 30 días</option>
+                <option value="15" selected>Próximos 15 días</option>
+                <option value="30">Próximos 30 días</option>
                 <option value="60">Próximos 60 días</option>
               </select>
-              <label class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs cursor-pointer">
+              <label class="pocket-hide flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs cursor-pointer">
                 <input id="cfShowEmptyDays" type="checkbox" onchange="renderCashFlow()" class="rounded" />
                 Mostrar días sin movimientos
               </label>
@@ -410,11 +417,11 @@
             <table class="w-full text-left border-collapse text-xs">
               <thead>
                 <tr class="bg-slate-800 text-white">
-                  <th class="py-2 px-3 font-semibold border-r border-slate-700 w-28">Fecha</th>
+                  <th class="py-2 px-3 font-semibold border-r border-slate-700 w-24">Fecha</th>
                   <th class="py-2 px-3 font-semibold border-r border-slate-700">Concepto</th>
-                  <th class="py-2 px-3 font-semibold border-r border-slate-700 text-right w-28">Debe (+)</th>
-                  <th class="py-2 px-3 font-semibold border-r border-slate-700 text-right w-28">Haber (-)</th>
-                  <th class="py-2 px-3 font-semibold text-right w-32">Saldo</th>
+                  <th class="py-2 px-3 font-semibold border-r border-slate-700 text-right w-24">Debe (+)</th>
+                  <th class="py-2 px-3 font-semibold border-r border-slate-700 text-right w-24">Haber (-)</th>
+                  <th class="py-2 px-3 font-semibold text-right w-28">Saldo</th>
                 </tr>
               </thead>
               <tbody id="cfTreasuryTableBody" class="divide-y divide-slate-200 dark:divide-slate-800"></tbody>
@@ -493,7 +500,7 @@
     <!-- ==================== BARRA INFERIOR POCKET MÓVIL ==================== -->
     <nav id="mobileBottomNav" class="md:hidden fixed bottom-0 inset-x-0 h-14 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex items-center justify-around px-1 z-30">
       <button type="button" onclick="setTab('dashboard')" data-tab="dashboard" class="mob-nav flex flex-col items-center justify-center text-[10px] font-medium text-indigo-500">
-        <span class="text-base">📊</span><span>Inicio</span>
+        <span class="text-base">🏠</span><span>Saldos</span>
       </button>
       <button type="button" onclick="setTab('transactions')" data-tab="transactions" class="mob-nav flex flex-col items-center justify-center text-[10px] font-medium text-slate-400">
         <span class="text-base">💳</span><span>Movimientos</span>
@@ -900,6 +907,20 @@
 
   let fbAuth = null, fbDb = null, fbUser = null, fbUnsub = null, isApplyingRemote = false;
 
+  function formatEsDate(isoStr) {
+    if (!isoStr || !isoStr.includes('-')) return isoStr;
+    const [y, m, d] = isoStr.split('-');
+    return `${d}/${m}/${y}`;
+  }
+
+  function getAccountLastDate(accId) {
+    const txs = (state.transactions || [])
+      .filter(t => t.account === accId && t.date)
+      .map(t => t.date)
+      .sort((a, b) => b.localeCompare(a));
+    return txs[0] || null;
+  }
+
   // ==================== TEMA SEGÚN DISPOSITIVO + 1 BOTÓN ====================
   function initThemeFromDevice() {
     const saved = localStorage.getItem(THEME_KEY);
@@ -998,7 +1019,7 @@
   function setTab(tab) {
     ui.tab = tab;
     const titles = {
-      dashboard: 'Resumen General',
+      dashboard: ui.viewMode === 'mobile' ? 'Saldos y Previsión' : 'Resumen General',
       transactions: 'Movimientos por Cuenta',
       debts: 'Deudas & Amigos',
       cashflow: 'Previsiones Cash Flow',
@@ -1047,6 +1068,7 @@
   function toggleViewMode() {
     ui.viewMode = ui.viewMode === 'pc' ? 'mobile' : 'pc';
     applyViewMode();
+    setTab(ui.tab);
   }
 
   function applyViewMode() {
@@ -1501,7 +1523,6 @@
     const d = imgData.data;
     for (let i = 0; i < d.length; i += 4) {
       let gray = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
-      // Aumentar contraste para tickets térmicos claros
       gray = (gray - 128) * 1.45 + 128;
       gray = Math.max(0, Math.min(255, gray));
       d[i] = d[i + 1] = d[i + 2] = gray;
@@ -1516,7 +1537,6 @@
     let amount = null;
     let dateIso = null;
 
-    // 1. Buscar fecha (DD/MM/AAAA, DD-MM-AAAA, DD/MM/AA o AAAA-MM-DD)
     const fullText = rawText.replace(/\s+/g, ' ');
     const dateMatch1 = fullText.match(/\b(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})\b/);
     if (dateMatch1) {
@@ -1534,11 +1554,9 @@
       }
     }
 
-    // 2. Buscar importe (priorizar líneas con TOTAL / IMPORTE / PAGAR / EUR)
     const parseEuroNum = (str) => {
       const clean = str.replace(/[^\d.,]/g, '');
       if (!clean) return NaN;
-      // Si tiene coma y punto, el último separador suele ser decimal
       if (clean.includes(',') && clean.includes('.')) {
         if (clean.lastIndexOf(',') > clean.lastIndexOf('.')) {
           return parseFloat(clean.replace(/\./g, '').replace(',', '.'));
@@ -1574,7 +1592,6 @@
       }
     }
 
-    // 3. Buscar nombre del comercio en las primeras líneas útiles
     const skipWords = /^(ticket|factura|simplificada|recibo|gracias|nif|cif|tel|tlf|fecha|hora|iva|base|total|su\s*ticket)/i;
     for (const line of lines.slice(0, 8)) {
       if (line.length < 3 || line.length > 45) continue;
@@ -1658,7 +1675,7 @@
   }
 
   function openNewTxModal() {
-    document.getElementById('editTxTitle').textContent = 'Nuevo Movimiento';
+    document.getElementById('editTxTitle').textContent = 'Nuevo Movimiento Manual';
     document.getElementById('editTxId').value = '';
     document.getElementById('editTxDate').value = todayISO();
     document.getElementById('editTxAmount').value = '';
@@ -1841,12 +1858,6 @@
     return events;
   }
 
-  function formatEsDate(isoStr) {
-    if (!isoStr || !isoStr.includes('-')) return isoStr;
-    const [y, m, d] = isoStr.split('-');
-    return `${d}/${m}/${y}`;
-  }
-
   function selectDonutSlice(catName, amount, pct) {
     ui.donutSelected = { catName, amount, pct };
     const badge = document.getElementById('donutSelectedBadge');
@@ -1871,6 +1882,8 @@
     const grid = document.getElementById('accountsGrid');
     grid.innerHTML = ACCOUNTS_META.map(acc => {
       const bal = getAccountBalance(acc.id);
+      const lastDate = getAccountLastDate(acc.id);
+      const dateLabel = lastDate ? `Act. ${formatEsDate(lastDate)}` : 'Sin mov.';
       totalAll += bal;
       if (acc.id.startsWith('ing_')) totalBank += bal;
       return `
@@ -1879,7 +1892,10 @@
             <span class="truncate group-hover:text-indigo-400 font-medium">${acc.name}</span><span>${acc.icon}</span>
           </div>
           <div class="text-sm sm:text-base font-bold mt-1 ${acc.color}">${fmt(bal)}</div>
-          <div class="text-[10px] text-slate-400 mt-0.5">Ver historial →</div>
+          <div class="text-[10px] text-slate-400 mt-0.5 flex items-center justify-between gap-1">
+            <span>${dateLabel}</span>
+            <span class="pocket-hide">Ver →</span>
+          </div>
         </div>
       `;
     }).join('');
@@ -1904,12 +1920,35 @@
           </div>
           <div class="flex items-center justify-between text-[11px] text-slate-400 mt-1.5">
             <span>Hoy: <b>${fmt(startBal)}</b></span>
-            <span>7 días: <b class="${net7d >= 0 ? 'text-emerald-500' : 'text-rose-500'}">${net7d >= 0 ? '+' : ''}${fmt(net7d)}</b></span>
-            <span>Final: <b class="${endBal >= 0 ? '' : 'text-rose-500'}">${fmt(endBal)}</b></span>
+            <span>7d: <b class="${net7d >= 0 ? 'text-emerald-500' : 'text-rose-500'}">${net7d >= 0 ? '+' : ''}${fmt(net7d)}</b></span>
+            <span>Prev: <b class="${endBal >= 0 ? '' : 'text-rose-500'}">${fmt(endBal)}</b></span>
           </div>
         </div>
       `;
     }).join('');
+
+    // Lista compacta de próximos movimientos previstos para móvil
+    const pocketFeed = document.getElementById('pocketForecastFeed');
+    if (pocketFeed) {
+      const nextEvs = buildUpcomingEvents(15, 'all').filter(e => e.offset >= 1).slice(0, 6);
+      if (nextEvs.length === 0) {
+        pocketFeed.innerHTML = `<div class="text-[11px] text-slate-400 py-1">Sin movimientos recurrentes programados en los próximos 15 días.</div>`;
+      } else {
+        pocketFeed.innerHTML = nextEvs.map(ev => {
+          const accShort = ACCOUNTS_META.find(a => a.id === ev.account)?.name || ev.account;
+          return `
+            <div onclick="document.getElementById('cfTimelineAccount').value='${ev.account}'; setTab('cashflow');" class="cursor-pointer flex items-center justify-between gap-2 py-1 px-2 rounded-lg bg-slate-50 dark:bg-slate-850 text-xs">
+              <div class="truncate">
+                <span class="font-mono text-[10px] text-slate-400 mr-1.5">${formatEsDate(ev.date)}</span>
+                <span class="font-semibold">${ev.name}</span>
+                <span class="text-[10px] text-slate-400">· ${accShort}</span>
+              </div>
+              <span class="font-bold shrink-0 ${ev.amount >= 0 ? 'text-emerald-500' : 'text-rose-500'}">${ev.amount >= 0 ? '+' : ''}${fmt(ev.amount)}</span>
+            </div>
+          `;
+        }).join('');
+      }
+    }
 
     const curMonth = todayISO().slice(0, 7);
     let mInc = 0, mExp = 0, pendingTickets = 0;
@@ -2117,7 +2156,7 @@
         <div class="p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2">
           <div class="min-w-0">
             <div class="text-xs font-bold truncate">${t.concept}</div>
-            <div class="text-[11px] text-slate-400">${t.date} · ${acc}</div>
+            <div class="text-[11px] text-slate-400">${formatEsDate(t.date)} · ${acc}</div>
             <div class="mt-1 flex items-center gap-1.5">
               <button type="button" onclick="toggleTxValidated('${t.id}')" class="px-2 py-0.5 rounded-full text-[10px] font-semibold ${t.validated ? 'bg-emerald-500/15 text-emerald-500' : 'bg-amber-500/15 text-amber-500'}">${t.validated ? '✅ Validado' : '⏳ Pendiente'}</button>
               ${t.ticket ? `<button type="button" onclick="viewTicket('${t.id}')" class="px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-400 text-[10px]">📎 Ticket</button>` : ''}
@@ -2188,7 +2227,7 @@
 
     const monthlyNet = fInc - fExp;
     const selAcc = document.getElementById('cfTimelineAccount').value;
-    const days = parseInt(document.getElementById('cfTimelineDays').value || '30');
+    const days = parseInt(document.getElementById('cfTimelineDays').value || '15');
     const showEmpty = document.getElementById('cfShowEmptyDays')?.checked;
 
     const startBal = selAcc === 'all'
@@ -2205,7 +2244,6 @@
     let running = startBal;
     const rowsHtml = [];
 
-    // Fila inicial de saldo actual
     rowsHtml.push(`
       <tr class="bg-emerald-500/10 font-bold">
         <td class="py-2 px-3 border-r border-slate-200 dark:border-slate-800 font-mono text-[11px]">${formatEsDate(todayISO())}</td>
@@ -2369,12 +2407,14 @@
 
     const hBtn = document.getElementById('headerCloudBtn');
     const hLabel = document.getElementById('headerCloudLabel');
-    if (synced) {
-      hBtn.className = 'px-2.5 py-1.5 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-500 text-xs font-bold flex items-center gap-1.5 transition-colors';
-      hLabel.textContent = 'Nube Activa';
-    } else {
-      hBtn.className = 'px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold flex items-center gap-1.5 transition-colors';
-      hLabel.textContent = 'Nube Local';
+    if (hBtn && hLabel) {
+      if (synced) {
+        hBtn.className = 'pocket-hide px-2.5 py-1.5 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-500 text-xs font-bold flex items-center gap-1.5 transition-colors';
+        hLabel.textContent = 'Nube Activa';
+      } else {
+        hBtn.className = 'pocket-hide px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold flex items-center gap-1.5 transition-colors';
+        hLabel.textContent = 'Nube Local';
+      }
     }
   }
 
