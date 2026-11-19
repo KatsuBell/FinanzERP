@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" class="dark">
+<html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -24,12 +24,22 @@
     html, body { height: 100%; margin: 0; overflow: hidden; }
     .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
     .custom-scroll::-webkit-scrollbar-track { background: transparent; }
-    .custom-scroll::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.3); border-radius: 9999px; }
-    .custom-scroll::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.5); }
+    .custom-scroll::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.35); border-radius: 9999px; }
+    .custom-scroll::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.55); }
     .sidebar-collapsed .nav-label,
     .sidebar-collapsed .brand-text,
     .sidebar-collapsed .sidebar-footer-full { display: none !important; }
     .sidebar-collapsed .nav-btn { justify-content: center; padding-left: 0; padding-right: 0; }
+
+    /* ==================== MODO POCKET MÓVIL FORZADO ==================== */
+    body.pocket-mode #desktopSidebar { display: none !important; }
+    body.pocket-mode #mobileBottomNav { display: flex !important; }
+    body.pocket-mode #mainContent { padding-bottom: 4.75rem !important; max-width: 540px; margin: 0 auto; width: 100%; }
+    body.pocket-mode .desktop-only-table { display: none !important; }
+    body.pocket-mode .mobile-cards-list { display: block !important; }
+    body.pocket-mode .pocket-hide { display: none !important; }
+    body.pocket-mode .pocket-grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+    body.pocket-mode .pocket-stack { grid-template-columns: minmax(0, 1fr) !important; }
   </style>
 </head>
 <body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans antialiased">
@@ -98,9 +108,8 @@
         </span>
         <button type="button" onclick="openModal('modalFirebase')" class="text-indigo-500 hover:underline font-medium shrink-0">Config</button>
       </div>
-      <div class="sidebar-footer-full grid grid-cols-2 gap-1.5">
-        <button type="button" onclick="exportBackupJson()" class="px-2 py-1.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 text-[11px] font-medium truncate">⬇ Backup</button>
-        <button type="button" id="sidebarThemeBtn" onclick="toggleTheme()" class="px-2 py-1.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 text-[11px] font-medium truncate">☀️ Modo Claro</button>
+      <div class="sidebar-footer-full">
+        <button type="button" onclick="exportBackupJson()" class="w-full px-2 py-1.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 text-[11px] font-medium truncate">⬇ Exportar Backup JSON</button>
       </div>
     </div>
   </aside>
@@ -108,103 +117,143 @@
   <!-- ==================== ÁREA PRINCIPAL ==================== -->
   <div class="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
 
+    <!-- BARRA SUPERIOR CON 1 SOLO BOTÓN DE TEMA -->
     <header class="h-14 px-4 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 shrink-0">
       <div class="flex items-center gap-2.5 min-w-0">
-        <div class="md:hidden w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold shrink-0">F</div>
+        <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold shrink-0 md:hidden">F</div>
         <h1 id="pageTitle" class="font-bold text-base sm:text-lg truncate">Resumen General</h1>
       </div>
 
       <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
         <button type="button" onclick="openModal('modalQuickCash')" class="px-2.5 sm:px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm">
-          <span>💵</span><span class="hidden sm:inline">+ Efectivo / Hucha</span><span class="sm:hidden">+ Efectivo</span>
+          <span>💵</span><span class="hidden sm:inline pocket-hide">+ Efectivo / Hucha</span><span class="sm:hidden">+ Efectivo</span>
         </button>
 
         <button type="button" onclick="openModal('modalQuickDebt')" class="px-2.5 sm:px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-semibold flex items-center gap-1.5 shadow-sm">
-          <span>🍽️</span><span class="hidden sm:inline">+ Cena / Deuda</span><span class="sm:hidden">+ Deuda</span>
+          <span>🍽️</span><span class="hidden sm:inline pocket-hide">+ Cena / Deuda</span><span class="sm:hidden">+ Deuda</span>
         </button>
 
+        <!-- ÚNICO BOTÓN DE MODO CLARO / OSCURO -->
         <button type="button" id="headerThemeBtn" onclick="toggleTheme()" title="Cambiar Modo Claro / Oscuro" class="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-medium border border-slate-200 dark:border-slate-700">
           ☀️
         </button>
 
-        <button type="button" id="btnViewMode" onclick="toggleViewMode()" title="Alternar vista PC / Móvil" class="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-medium border border-slate-200 dark:border-slate-700">
+        <!-- BOTÓN ALTERNAR VISTA PC / POCKET MÓVIL -->
+        <button type="button" id="btnViewMode" onclick="toggleViewMode()" title="Alternar entre Vista PC completa y Vista Pocket Móvil" class="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-semibold border border-slate-200 dark:border-slate-700">
           💻 PC
         </button>
 
         <button type="button" id="headerCloudBtn" onclick="openModal('modalFirebase')" class="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold flex items-center gap-1.5 transition-colors">
-          <span id="headerCloudIcon">☁️</span>
-          <span id="headerCloudLabel" class="hidden sm:inline">Nube Local</span>
+          <span>☁️</span>
+          <span id="headerCloudLabel" class="hidden sm:inline pocket-hide">Nube Local</span>
         </button>
       </div>
     </header>
 
+    <!-- CONTENIDO DESPLAZABLE -->
     <main id="mainContent" class="flex-1 overflow-y-auto custom-scroll p-3 sm:p-5 pb-20 md:pb-5">
 
       <!-- ==================== VISTA 1: RESUMEN GENERAL ==================== -->
       <section id="view-dashboard" class="space-y-4 max-w-7xl mx-auto">
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <!-- Accesos ultra-rápidos visibles solo en Modo Pocket Móvil -->
+        <div id="pocketQuickBar" class="hidden grid-cols-3 gap-2">
+          <button type="button" onclick="openModal('modalQuickCash')" class="p-3 rounded-2xl bg-emerald-600 text-white flex flex-col items-center justify-center gap-1 shadow-sm">
+            <span class="text-xl">💵</span><span class="text-[11px] font-bold">Efectivo / Hucha</span>
+          </button>
+          <button type="button" onclick="openModal('modalOcr')" class="p-3 rounded-2xl bg-sky-600 text-white flex flex-col items-center justify-center gap-1 shadow-sm">
+            <span class="text-xl">📸</span><span class="text-[11px] font-bold">Foto Ticket OCR</span>
+          </button>
+          <button type="button" onclick="openModal('modalQuickDebt')" class="p-3 rounded-2xl bg-amber-500 text-slate-950 flex flex-col items-center justify-center gap-1 shadow-sm">
+            <span class="text-xl">🍽️</span><span class="text-[11px] font-bold">Cena / Amigos</span>
+          </button>
+        </div>
+
+        <!-- KPIs -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 pocket-grid-2 gap-3">
           <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
             <div class="text-xs text-slate-400 flex items-center justify-between"><span>Patrimonio Total</span><span>🏦</span></div>
-            <div id="kpiTotalBalance" class="text-xl sm:text-2xl font-bold mt-1 text-indigo-500">0,00 €</div>
+            <div id="kpiTotalBalance" class="text-lg sm:text-2xl font-bold mt-1 text-indigo-500">0,00 €</div>
             <div id="kpiBankOnly" class="text-[11px] text-slate-400 mt-0.5">En bancos: 0,00 €</div>
           </div>
           <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-            <div class="text-xs text-slate-400 flex items-center justify-between"><span>Ingresos (Mes actual)</span><span>📈</span></div>
-            <div id="kpiMonthIncome" class="text-xl sm:text-2xl font-bold mt-1 text-emerald-500">0,00 €</div>
+            <div class="text-xs text-slate-400 flex items-center justify-between"><span>Ingresos (Mes)</span><span>📈</span></div>
+            <div id="kpiMonthIncome" class="text-lg sm:text-2xl font-bold mt-1 text-emerald-500">0,00 €</div>
             <div class="text-[11px] text-slate-400 mt-0.5">Nóminas y abonos</div>
           </div>
           <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-            <div class="text-xs text-slate-400 flex items-center justify-between"><span>Gastos (Mes actual)</span><span>📉</span></div>
-            <div id="kpiMonthExpense" class="text-xl sm:text-2xl font-bold mt-1 text-rose-500">0,00 €</div>
+            <div class="text-xs text-slate-400 flex items-center justify-between"><span>Gastos (Mes)</span><span>📉</span></div>
+            <div id="kpiMonthExpense" class="text-lg sm:text-2xl font-bold mt-1 text-rose-500">0,00 €</div>
             <div id="kpiPendingTickets" class="text-[11px] text-amber-500 mt-0.5">0 tickets por validar</div>
           </div>
-          <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-            <div class="text-xs text-slate-400 flex items-center justify-between"><span>Balance Deudas Amigos</span><span>🤝</span></div>
-            <div id="kpiDebtNet" class="text-xl sm:text-2xl font-bold mt-1 text-amber-500">0,00 €</div>
+          <div onclick="setTab('debts')" class="cursor-pointer bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-amber-500 transition-colors shadow-sm">
+            <div class="text-xs text-slate-400 flex items-center justify-between"><span>Balance Amigos</span><span>🤝</span></div>
+            <div id="kpiDebtNet" class="text-lg sm:text-2xl font-bold mt-1 text-amber-500">0,00 €</div>
             <div id="kpiDebtDetail" class="text-[11px] text-slate-400 mt-0.5">Al día con el grupo</div>
           </div>
         </div>
 
+        <!-- MIS CUENTAS Y HUCHAS (CLICABLES PARA VER SU HISTORIAL) -->
         <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
           <div class="flex items-center justify-between mb-2.5">
-            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Mis Cuentas y Huchas</h2>
-            <button type="button" onclick="openModal('modalAdjustAccounts')" class="text-xs text-indigo-500 hover:underline font-medium">Ajustar saldos iniciales</button>
+            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Mis Cuentas y Huchas <span class="normal-case font-normal">(clic en una cuenta para ver sus movimientos)</span></h2>
+            <button type="button" onclick="openModal('modalAdjustAccounts')" class="text-xs text-indigo-500 hover:underline font-medium">Ajustar saldos base</button>
           </div>
-          <div id="accountsGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5"></div>
+          <div id="accountsGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 pocket-grid-2 gap-2.5"></div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
-          <div class="lg:col-span-7 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+        <!-- RADAR DE LIQUIDEZ A 1 SEMANA VISTA POR CUENTA -->
+        <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div class="flex items-center justify-between mb-2.5">
             <div>
-              <div class="flex items-center justify-between mb-3">
-                <h3 class="font-bold text-sm">Ingresos vs Gastos (Últimos 6 meses)</h3>
-                <div class="flex items-center gap-3 text-xs">
-                  <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-sm bg-emerald-500 inline-block"></span>Ingresos</span>
-                  <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-sm bg-rose-500 inline-block"></span>Gastos</span>
-                </div>
-              </div>
-              <div id="chartSixMonths" class="h-40 flex items-end justify-between gap-2 pt-4 pb-1 px-2 border-b border-slate-200 dark:border-slate-800"></div>
+              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Radar de Liquidez · Próximos 7 Días por Cuenta</h3>
+              <p class="text-[11px] text-slate-400">Comprueba si tienes saldo suficiente o si necesitas traspasar dinero antes de que pasen recibos.</p>
             </div>
-            <div class="mt-3 pt-2">
-              <div class="text-xs font-semibold text-slate-400 mb-2">Top Categorías de Gasto del Mes</div>
-              <div id="topCategoriesBars" class="space-y-2"></div>
+            <button type="button" onclick="setTab('cashflow')" class="text-xs text-indigo-500 hover:underline font-semibold shrink-0">Ver calendario 30 días →</button>
+          </div>
+          <div id="weeklyRadarGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 pocket-stack gap-2.5"></div>
+        </div>
+
+        <!-- GRÁFICOS (BARRAS + DISCO) Y ACTIVIDAD RECIENTE -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 pocket-stack gap-4">
+          <!-- Gráfico Barras 6 Meses -->
+          <div class="lg:col-span-5 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="font-bold text-sm">Evolución (6 Meses)</h3>
+              <div class="flex items-center gap-2.5 text-[11px]">
+                <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-xs bg-emerald-500 inline-block"></span>Ingresos</span>
+                <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-xs bg-rose-500 inline-block"></span>Gastos</span>
+              </div>
+            </div>
+            <div id="chartSixMonths" class="h-44 flex items-end justify-between gap-2 pt-4 pb-1 px-2 border-b border-slate-200 dark:border-slate-800"></div>
+          </div>
+
+          <!-- Gráfico de Disco (Donut SVG) por Categorías -->
+          <div class="lg:col-span-4 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+            <h3 class="font-bold text-sm mb-2">Distribución de Gastos (Disco)</h3>
+            <div class="flex items-center gap-3 my-auto">
+              <div id="donutChartContainer" class="w-32 h-32 shrink-0 flex items-center justify-center relative"></div>
+              <div id="donutLegendContainer" class="flex-1 space-y-1.5 text-xs overflow-hidden"></div>
             </div>
           </div>
 
-          <div class="lg:col-span-5 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col">
-            <div class="flex items-center justify-between mb-2.5">
-              <h3 class="font-bold text-sm">Actividad Reciente</h3>
-              <button type="button" onclick="setTab('transactions')" class="text-xs text-indigo-500 hover:underline font-medium">Ver todos →</button>
+          <!-- Últimos Movimientos -->
+          <div class="lg:col-span-3 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="font-bold text-sm">Últimos Movimientos</h3>
+              <button type="button" onclick="setTab('transactions')" class="text-xs text-indigo-500 hover:underline font-medium">Todos →</button>
             </div>
-            <div id="recentTransactionsList" class="space-y-2 flex-1 overflow-y-auto max-h-72 custom-scroll pr-1"></div>
+            <div id="recentTransactionsList" class="space-y-2 flex-1 overflow-y-auto max-h-48 custom-scroll pr-1"></div>
           </div>
         </div>
       </section>
 
       <!-- ==================== VISTA 2: MOVIMIENTOS ==================== -->
       <section id="view-transactions" class="hidden space-y-3 max-w-7xl mx-auto">
+        <!-- Pestañas rápidas por cuenta para saltar con 1 clic -->
+        <div id="accountQuickTabs" class="flex items-center gap-1.5 overflow-x-auto pb-1 custom-scroll"></div>
+
         <div class="bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-wrap items-center gap-2">
-          <input id="filterSearch" oninput="renderTransactions()" type="text" placeholder="Buscar comercio, concepto..." class="flex-1 min-w-[160px] px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs focus:outline-none focus:border-indigo-500" />
+          <input id="filterSearch" oninput="renderTransactions()" type="text" placeholder="Buscar comercio, concepto..." class="flex-1 min-w-[150px] px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs focus:outline-none focus:border-indigo-500" />
           <select id="filterAccount" onchange="renderTransactions()" class="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs">
             <option value="all">Todas las cuentas</option>
             <option value="ing_corriente">ING Corriente</option>
@@ -222,10 +271,11 @@
             <option value="pending">⏳ Pendientes validar</option>
             <option value="with_ticket">📎 Con ticket adjunto</option>
           </select>
-          <button type="button" onclick="openNewTxModal()" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold">+ Nuevo Movimiento</button>
+          <button type="button" onclick="openNewTxModal()" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold">+ Nuevo</button>
         </div>
 
-        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+        <!-- Tabla Escritorio -->
+        <div class="desktop-only-table bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
           <div class="overflow-x-auto custom-scroll">
             <table class="w-full text-left border-collapse text-xs">
               <thead>
@@ -242,8 +292,12 @@
               <tbody id="transactionsTableBody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
             </table>
           </div>
-          <div id="txEmptyState" class="hidden py-10 text-center text-slate-400 text-xs">No hay movimientos que coincidan con el filtro.</div>
         </div>
+
+        <!-- Lista Tarjetas Modo Pocket Móvil -->
+        <div id="transactionsMobileCards" class="mobile-cards-list hidden space-y-2"></div>
+
+        <div id="txEmptyState" class="hidden py-10 text-center text-slate-400 text-xs">No hay movimientos en esta cuenta o filtro.</div>
       </section>
 
       <!-- ==================== VISTA 3: DEUDAS & AMIGOS ==================== -->
@@ -259,7 +313,7 @@
           </div>
         </div>
 
-        <div id="friendsSummaryGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"></div>
+        <div id="friendsSummaryGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 pocket-grid-2 gap-3"></div>
 
         <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
           <div class="flex items-center justify-between mb-3">
@@ -275,65 +329,97 @@
 
       <!-- ==================== VISTA 4: PREVISIONES CASH FLOW ==================== -->
       <section id="view-cashflow" class="hidden space-y-3 max-w-7xl mx-auto">
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <!-- KPIs Cash Flow -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 pocket-grid-2 gap-3">
           <div class="bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800">
-            <div class="text-[11px] text-slate-400">Ingresos Fijos Previstos</div>
+            <div class="text-[11px] text-slate-400">Ingresos Fijos / Mes</div>
             <div id="cfFixedIncome" class="text-lg font-bold text-emerald-500 mt-0.5">0,00 €</div>
           </div>
           <div class="bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800">
-            <div class="text-[11px] text-slate-400">Suscripciones + Suministros</div>
+            <div class="text-[11px] text-slate-400">Recibos y Suministros / Mes</div>
             <div id="cfFixedExpense" class="text-lg font-bold text-rose-500 mt-0.5">0,00 €</div>
           </div>
           <div class="bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800">
-            <div class="text-[11px] text-slate-400">Capacidad Ahorro Mensual</div>
+            <div class="text-[11px] text-slate-400">Ahorro Fijo Mensual</div>
             <div id="cfMonthlySave" class="text-lg font-bold text-indigo-500 mt-0.5">0,00 €</div>
           </div>
           <div class="bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800">
-            <div class="text-[11px] text-slate-400">Proyección a 6 Meses</div>
-            <div id="cfSixMonthsProj" class="text-lg font-bold text-sky-500 mt-0.5">0,00 €</div>
+            <div class="text-[11px] text-slate-400">Liquidez Bancos a 30 Días</div>
+            <div id="cfThirtyDaysProj" class="text-lg font-bold text-sky-500 mt-0.5">0,00 €</div>
           </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-3">
+        <!-- FORMULARIO PARA CREAR INGRESOS / GASTOS RECURRENTES POR CUENTA Y DÍA DEL MES -->
+        <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+            <div>
+              <h3 class="font-bold text-sm">Programar Ingreso o Gasto Recurrente</h3>
+              <p class="text-[11px] text-slate-400">Indica en qué cuenta entra o sale y qué día del mes suele cargarse para calcular tu liquidez futura.</p>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <select id="cfRoundStep" onchange="detectRecurringFromTransactions()" class="px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[11px]">
+                <option value="1">Suministros alza: +1 €</option>
+                <option value="5" selected>Suministros alza: +5 €</option>
+                <option value="10">Suministros alza: +10 €</option>
+              </select>
+              <button type="button" onclick="detectRecurringFromTransactions()" class="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-semibold">🔄 Detectar del banco</button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-12 gap-2">
+            <input id="newRecName" type="text" placeholder="Concepto (ej. Gimnasio, Luz, Nómina...)" class="col-span-2 sm:col-span-3 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs" />
+            <select id="newRecType" class="col-span-1 sm:col-span-2 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs">
+              <option value="expense">Gasto (-)</option>
+              <option value="income">Ingreso (+)</option>
+            </select>
+            <input id="newRecAmount" type="number" step="0.01" placeholder="Importe €" class="col-span-1 sm:col-span-2 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold" />
+            <select id="newRecAccount" class="col-span-1 sm:col-span-2 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs">
+              <option value="ing_corriente">ING Corriente</option>
+              <option value="ing_nocuenta">ING NoCuenta</option>
+              <option value="ing_ahorro">ING Ahorro</option>
+              <option value="efectivo">Efectivo</option>
+            </select>
+            <input id="newRecDay" type="number" min="1" max="31" value="1" title="Día del mes en que ocurre (1 a 31)" placeholder="Día (1-31)" class="col-span-1 sm:col-span-1 px-2 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-center" />
+            <button type="button" onclick="addManualRecurring()" class="col-span-2 sm:col-span-2 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold">+ Añadir Previsión</button>
+          </div>
+        </div>
+
+        <!-- 2 COLUMNAS: LISTA DE PARTIDAS RECURRENTES + CRONOGRAMA DE SALDO POR FECHA Y CUENTA -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 pocket-stack gap-3">
+          <div class="lg:col-span-5 bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-col">
+            <h3 class="font-bold text-sm mb-2">Partidas Programadas (Activas)</h3>
+            <div id="recurringItemsList" class="space-y-1.5 max-h-72 overflow-y-auto custom-scroll pr-1"></div>
+          </div>
+
           <div class="lg:col-span-7 bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-col">
             <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
               <div>
-                <h3 class="font-bold text-sm">Gastos e Ingresos Recurrentes Detectados</h3>
-                <p class="text-[11px] text-slate-400">Suministros (luz, agua, gas, internet) promediados y redondeados al alza.</p>
+                <h3 class="font-bold text-sm">Cronograma de Vencimientos y Saldo por Fecha</h3>
+                <p class="text-[11px] text-slate-400">Simula día a día cómo queda el saldo de la cuenta tras cada cargo.</p>
               </div>
               <div class="flex items-center gap-1.5">
-                <select id="cfRoundStep" onchange="detectRecurringFromTransactions()" class="px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[11px]">
-                  <option value="1">Alza: +1 €</option>
-                  <option value="5" selected>Alza: +5 €</option>
-                  <option value="10">Alza: +10 €</option>
+                <select id="cfTimelineAccount" onchange="renderCashFlow()" class="px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold">
+                  <option value="all">Todas las cuentas</option>
+                  <option value="ing_corriente">ING Corriente</option>
+                  <option value="ing_nocuenta">ING NoCuenta</option>
+                  <option value="ing_ahorro">ING Ahorro</option>
+                  <option value="efectivo">Efectivo</option>
                 </select>
-                <button type="button" onclick="detectRecurringFromTransactions()" class="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-semibold">🔄 Recalcular</button>
+                <select id="cfTimelineDays" onchange="renderCashFlow()" class="px-2 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs">
+                  <option value="7">7 días</option>
+                  <option value="30" selected>30 días</option>
+                  <option value="60">60 días</option>
+                </select>
               </div>
             </div>
-            <div id="recurringItemsList" class="space-y-1.5 max-h-64 overflow-y-auto custom-scroll pr-1"></div>
-          </div>
-
-          <div class="lg:col-span-5 bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-col justify-between">
-            <div>
-              <h3 class="font-bold text-sm mb-2">Simulación de Liquidez (Próximos 6 Meses)</h3>
-              <label class="flex items-center gap-2 text-xs text-slate-400 mb-3 cursor-pointer">
-                <input id="cfIncludeVariable" type="checkbox" checked onchange="renderCashFlow()" class="rounded" />
-                Incluir estimación gasto diario (supermercado/ocio)
-              </label>
-              <div id="cfProjectionTable" class="space-y-1.5"></div>
-            </div>
-            <div class="mt-3 pt-2.5 border-t border-slate-200 dark:border-slate-800 flex gap-2">
-              <input id="newRecName" type="text" placeholder="Añadir partida (ej. Gimnasio)" class="flex-1 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs" />
-              <input id="newRecAmount" type="number" step="0.01" placeholder="-35" class="w-20 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs" />
-              <button type="button" onclick="addManualRecurring()" class="px-3 py-1.5 rounded-xl bg-emerald-600 text-white text-xs font-semibold">+</button>
-            </div>
+            <div id="cfTimelineList" class="space-y-1.5 max-h-72 overflow-y-auto custom-scroll pr-1"></div>
           </div>
         </div>
       </section>
 
       <!-- ==================== VISTA 5: AJUSTES & REGLAS AUTOMÁTICAS ==================== -->
       <section id="view-settings" class="hidden space-y-4 max-w-5xl mx-auto">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 lg:grid-cols-2 pocket-stack gap-4">
           <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3">
             <div>
               <h2 class="font-bold text-sm flex items-center gap-2"><span>👥</span> Gestión de Amigos / Grupo</h2>
@@ -392,8 +478,8 @@
 
     </main>
 
-    <!-- ==================== BARRA INFERIOR MÓVIL ==================== -->
-    <nav class="md:hidden fixed bottom-0 inset-x-0 h-14 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex items-center justify-around px-1 z-30">
+    <!-- ==================== BARRA INFERIOR POCKET MÓVIL ==================== -->
+    <nav id="mobileBottomNav" class="md:hidden fixed bottom-0 inset-x-0 h-14 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex items-center justify-around px-1 z-30">
       <button type="button" onclick="setTab('dashboard')" data-tab="dashboard" class="mob-nav flex flex-col items-center justify-center text-[10px] font-medium text-indigo-500">
         <span class="text-base">📊</span><span>Inicio</span>
       </button>
@@ -406,8 +492,8 @@
       <button type="button" onclick="setTab('debts')" data-tab="debts" class="mob-nav flex flex-col items-center justify-center text-[10px] font-medium text-slate-400">
         <span class="text-base">🤝</span><span>Deudas</span>
       </button>
-      <button type="button" onclick="setTab('settings')" data-tab="settings" class="mob-nav flex flex-col items-center justify-center text-[10px] font-medium text-slate-400">
-        <span class="text-base">⚙️</span><span>Ajustes</span>
+      <button type="button" onclick="setTab('cashflow')" data-tab="cashflow" class="mob-nav flex flex-col items-center justify-center text-[10px] font-medium text-slate-400">
+        <span class="text-base">📈</span><span>Previsión</span>
       </button>
     </nav>
   </div>
@@ -743,12 +829,12 @@
   </div>
 </div>
 
-<!-- ==================== LÓGICA PRINCIPAL DE LA APP ==================== -->
+<!-- ==================== LÓGICA PRINCIPAL ==================== -->
 <script>
-  const STORAGE_KEY = 'finanzerp_state_v3';
-  const LEGACY_KEYS = ['finanzerp_state_v2', 'finanzerp_state_v1', 'finanzerp_data'];
+  const STORAGE_KEY = 'finanzerp_state_v4';
+  const LEGACY_KEYS = ['finanzerp_state_v3', 'finanzerp_state_v2', 'finanzerp_state_v1'];
   const FB_CFG_KEY = 'finanzerp_fb_cfg';
-  const THEME_KEY = 'finanzerp_theme';
+  const THEME_KEY = 'finanzerp_theme_pref';
 
   const ACCOUNTS_META = [
     { id: 'ing_corriente', name: 'ING Corriente', icon: '🧡', color: 'text-orange-500' },
@@ -757,6 +843,8 @@
     { id: 'efectivo', name: 'Efectivo', icon: '💵', color: 'text-emerald-500' },
     { id: 'hucha_monedas', name: 'Hucha Colección', icon: '🪙', color: 'text-yellow-400' }
   ];
+
+  const DONUT_COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ec4899', '#06b6d4', '#8b5cf6'];
 
   const todayISO = () => new Date().toISOString().slice(0, 10);
   const fmt = (n) => new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(Number(n) || 0);
@@ -790,38 +878,50 @@
 
   let fbAuth = null, fbDb = null, fbUser = null, fbUnsub = null, isApplyingRemote = false;
 
-  // ==================== TEMA CLARO / OSCURO ====================
-  function applySavedTheme() {
-    const saved = localStorage.getItem(THEME_KEY) || 'dark';
-    const isDark = saved === 'dark';
+  // ==================== TEMA SEGÚN DISPOSITIVO + 1 BOTÓN ====================
+  function initThemeFromDevice() {
+    const saved = localStorage.getItem(THEME_KEY);
+    let isDark;
+    if (saved === 'dark' || saved === 'light') {
+      isDark = saved === 'dark';
+    } else {
+      isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
     document.documentElement.classList.toggle('dark', isDark);
-    const sBtn = document.getElementById('sidebarThemeBtn');
-    const hBtn = document.getElementById('headerThemeBtn');
-    if (sBtn) sBtn.textContent = isDark ? '☀️ Modo Claro' : '🌙 Modo Oscuro';
-    if (hBtn) hBtn.textContent = isDark ? '☀️' : '🌙';
+    const btn = document.getElementById('headerThemeBtn');
+    if (btn) btn.textContent = isDark ? '☀️' : '🌙';
   }
 
   function toggleTheme() {
-    const currentlyDark = document.documentElement.classList.contains('dark');
-    const next = currentlyDark ? 'light' : 'dark';
+    const isCurrentlyDark = document.documentElement.classList.contains('dark');
+    const next = isCurrentlyDark ? 'light' : 'dark';
     localStorage.setItem(THEME_KEY, next);
-    applySavedTheme();
+    initThemeFromDevice();
   }
 
   // ==================== CARGA Y MIGRACIÓN DE DATOS ====================
   function seedDemoData() {
+    const dToday = todayISO();
+    const dIn3 = new Date(Date.now() + 3 * 86400000).getDate();
+    const dIn5 = new Date(Date.now() + 5 * 86400000).getDate();
     state.accountBases = { ing_corriente: 540.00, ing_ahorro: 1250.00, ing_nocuenta: 180.00, efectivo: 45.00, hucha_monedas: 38.50 };
     state.transactions = [
-      { id: 'tx1', date: todayISO(), account: 'ing_corriente', category: 'Supermercados y alimentación', concept: 'Pago en MERCADONA', amount: -51.60, validated: true, ticket: null },
-      { id: 'tx2', date: todayISO(), account: 'ing_corriente', category: 'Suscripciones', concept: 'Recibo Spotify Family', amount: -17.99, validated: true, ticket: null },
-      { id: 'tx3', date: todayISO(), account: 'efectivo', category: 'Cafeterías y restaurantes', concept: 'Café y tostada Bombon Boss', amount: -4.20, validated: false, ticket: null },
-      { id: 'tx4', date: todayISO(), account: 'ing_corriente', category: 'Nómina o Pensión', concept: 'Nómina Mensual', amount: 1650.00, validated: true, ticket: null }
+      { id: 'tx1', date: dToday, account: 'ing_corriente', category: 'Supermercados y alimentación', concept: 'Pago en MERCADONA', amount: -51.60, validated: true, ticket: null },
+      { id: 'tx2', date: dToday, account: 'ing_corriente', category: 'Suscripciones', concept: 'Recibo Spotify Family', amount: -17.99, validated: true, ticket: null },
+      { id: 'tx3', date: dToday, account: 'efectivo', category: 'Cafeterías y restaurantes', concept: 'Café y tostada Bombon Boss', amount: -4.20, validated: false, ticket: null },
+      { id: 'tx4', date: dToday, account: 'ing_corriente', category: 'Nómina o Pensión', concept: 'Nómina Mensual', amount: 1650.00, validated: true, ticket: null },
+      { id: 'tx5', date: dToday, account: 'ing_nocuenta', category: 'Ocio y viajes', concept: 'Entradas cine y cena', amount: -28.50, validated: true, ticket: null }
     ];
     state.debts = [
-      { id: 'd1', date: todayISO(), friend: 'Aissa', direction: 'i_owe', amount: 20.83, concept: 'Cena Terrone', settled: false },
-      { id: 'd2', date: todayISO(), friend: 'Asensio', direction: 'owe_me', amount: 7.00, concept: 'Spotify (Auto)', settled: false }
+      { id: 'd1', date: dToday, friend: 'Aissa', direction: 'i_owe', amount: 20.83, concept: 'Cena Terrone', settled: false },
+      { id: 'd2', date: dToday, friend: 'Asensio', direction: 'owe_me', amount: 7.00, concept: 'Spotify (Auto)', settled: false }
     ];
-    detectRecurringFromTransactions(true);
+    state.recurring = [
+      { id: 'rec1', name: 'Nómina Mensual', amount: 1650.00, account: 'ing_corriente', dayOfMonth: 28, note: 'Ingreso fijo', active: true, manual: true },
+      { id: 'rec2', name: 'Gimnasio Fitness Park', amount: -34.90, account: 'ing_corriente', dayOfMonth: dIn3, note: 'Cuota fija', active: true, manual: true },
+      { id: 'rec3', name: 'Factura Luz (Media + Alza)', amount: -65.00, account: 'ing_corriente', dayOfMonth: dIn5, note: 'Suministro redondeado al alza', active: true, manual: true },
+      { id: 'rec4', name: 'Spotify Family', amount: -17.99, account: 'ing_nocuenta', dayOfMonth: 15, note: 'Suscripción', active: true, manual: true }
+    ];
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }
 
@@ -838,6 +938,11 @@
       try {
         const parsed = JSON.parse(raw);
         state = { ...state, ...parsed };
+        state.recurring = (state.recurring || []).map((r, i) => ({
+          account: 'ing_corriente',
+          dayOfMonth: ((i * 5) % 28) + 1,
+          ...r
+        }));
         if ((!state.transactions || state.transactions.length === 0) && (!state.debts || state.debts.length === 0)) {
           seedDemoData();
         }
@@ -867,15 +972,15 @@
     return base + sum;
   }
 
-  // ==================== NAVEGACIÓN Y LAYOUT ====================
+  // ==================== NAVEGACIÓN, POCKET MODE Y CLIC EN CUENTAS ====================
   function setTab(tab) {
     ui.tab = tab;
     const titles = {
       dashboard: 'Resumen General',
-      transactions: 'Movimientos Bancarios y Efectivo',
-      debts: 'Deudas Compartidas & Amigos',
+      transactions: 'Movimientos por Cuenta',
+      debts: 'Deudas & Amigos',
       cashflow: 'Previsiones Cash Flow',
-      settings: 'Ajustes y Reglas Automáticas'
+      settings: 'Ajustes y Reglas'
     };
     document.getElementById('pageTitle').textContent = titles[tab] || 'FinanzERP';
 
@@ -902,6 +1007,11 @@
     renderAll();
   }
 
+  function openAccountHistory(accId) {
+    document.getElementById('filterAccount').value = accId;
+    setTab('transactions');
+  }
+
   function toggleSidebar() {
     ui.sidebarCollapsed = !ui.sidebarCollapsed;
     const sb = document.getElementById('desktopSidebar');
@@ -919,7 +1029,15 @@
 
   function applyViewMode() {
     const isMob = ui.viewMode === 'mobile';
+    document.body.classList.toggle('pocket-mode', isMob);
     document.getElementById('btnViewMode').textContent = isMob ? '📱 Móvil' : '💻 PC';
+
+    const pocketBar = document.getElementById('pocketQuickBar');
+    if (pocketBar) {
+      pocketBar.classList.toggle('hidden', !isMob);
+      pocketBar.classList.toggle('grid', isMob);
+    }
+
     const ocrLabel = document.getElementById('ocrDropLabel');
     const ocrInput = document.getElementById('ocrFileInput');
     if (ocrLabel && ocrInput) {
@@ -947,7 +1065,7 @@
     if (el) el.classList.add('hidden');
   }
 
-  // ==================== REGLAS AUTOMÁTICAS DE GASTOS COMPARTIDOS ====================
+  // ==================== REGLAS AUTOMÁTICAS ====================
   function evaluateSharedRulesForTx(tx) {
     if (!tx || Number(tx.amount) >= 0) return 0;
     const text = `${tx.concept || ''} ${tx.category || ''}`.toLowerCase();
@@ -1005,11 +1123,9 @@
 
   function applyRulesToExistingTransactions() {
     let totalCreated = 0;
-    state.transactions.forEach(tx => {
-      totalCreated += evaluateSharedRulesForTx(tx);
-    });
+    state.transactions.forEach(tx => { totalCreated += evaluateSharedRulesForTx(tx); });
     saveState();
-    alert(`Reglas aplicadas: se han generado ${totalCreated} deudas nuevas desde tus movimientos.`);
+    alert(`Reglas aplicadas: se han generado ${totalCreated} deudas nuevas.`);
   }
 
   // ==================== GESTIÓN DE AMIGOS & HISTORIAL ====================
@@ -1070,11 +1186,7 @@
     }
 
     const balEl = document.getElementById('friendModalBalance');
-    balEl.textContent = net === 0
-      ? 'Saldo pendiente: 0,00 € (Al día)'
-      : net > 0
-        ? `Te debe en total: ${fmt(net)}`
-        : `Le debes en total: ${fmt(Math.abs(net))}`;
+    balEl.textContent = net === 0 ? 'Saldo pendiente: 0,00 € (Al día)' : net > 0 ? `Te debe en total: ${fmt(net)}` : `Le debes en total: ${fmt(Math.abs(net))}`;
     balEl.className = `text-sm font-bold ${net > 0 ? 'text-emerald-500' : net < 0 ? 'text-rose-500' : 'text-slate-400'}`;
 
     const settleBtn = document.getElementById('friendModalSettleAllBtn');
@@ -1083,7 +1195,6 @@
       saveState();
       openFriendHistory(friendName);
     };
-
     openModal('modalFriendHistory');
   }
 
@@ -1128,16 +1239,7 @@
     const category = document.getElementById('qcCategory').value;
     const concept = document.getElementById('qcConcept').value.trim() || (ui.qcAccount === 'hucha_monedas' ? 'Monedas repetidas hucha' : category);
 
-    const tx = {
-      id: uid(),
-      date: todayISO(),
-      account: ui.qcAccount,
-      category,
-      concept,
-      amount,
-      validated: !ui.qcTicketData,
-      ticket: ui.qcTicketData
-    };
+    const tx = { id: uid(), date: todayISO(), account: ui.qcAccount, category, concept, amount, validated: !ui.qcTicketData, ticket: ui.qcTicketData };
     state.transactions.unshift(tx);
     evaluateSharedRulesForTx(tx);
 
@@ -1165,11 +1267,8 @@
   }
 
   function toggleQdFriend(f) {
-    if (ui.qdSelectedFriends.includes(f)) {
-      ui.qdSelectedFriends = ui.qdSelectedFriends.filter(x => x !== f);
-    } else {
-      ui.qdSelectedFriends.push(f);
-    }
+    if (ui.qdSelectedFriends.includes(f)) ui.qdSelectedFriends = ui.qdSelectedFriends.filter(x => x !== f);
+    else ui.qdSelectedFriends.push(f);
     renderDebtFriendChips();
   }
 
@@ -1190,15 +1289,7 @@
     const concept = document.getElementById('qdConcept').value.trim() || 'Cena / Plan compartido';
 
     ui.qdSelectedFriends.forEach(friend => {
-      state.debts.unshift({
-        id: uid(),
-        date,
-        friend,
-        direction: ui.qdDir,
-        amount,
-        concept,
-        settled: false
-      });
+      state.debts.unshift({ id: uid(), date, friend, direction: ui.qdDir, amount, concept, settled: false });
     });
 
     ui.qdSelectedFriends = [];
@@ -1221,11 +1312,11 @@
     saveState();
   }
 
-  // ==================== IMPORTADOR EXCEL ING ESPAÑA ====================
+  // ==================== IMPORTADORES ING Y HOMEBANK ====================
   function handleIngExcelUpload(e) {
     const file = e.target.files[0];
     if (!file) return;
-    if (typeof XLSX === 'undefined') return alert('La librería Excel aún está cargando, inténtalo en 2 segundos.');
+    if (typeof XLSX === 'undefined') return alert('La librería Excel aún está cargando.');
     const targetAcc = document.getElementById('ingTargetAccount').value;
     const autoRoundup = document.getElementById('ingAutoRoundup').checked;
 
@@ -1252,59 +1343,30 @@
           const r = rows[i];
           if (!r || r.length === 0) continue;
           const rawAmount = r[idxImp];
-          const amount = typeof rawAmount === 'number'
-            ? rawAmount
-            : parseFloat(String(rawAmount).replace(/\./g, '').replace(',', '.'));
+          const amount = typeof rawAmount === 'number' ? rawAmount : parseFloat(String(rawAmount).replace(/\./g, '').replace(',', '.'));
           if (isNaN(amount) || amount === 0) continue;
 
           let dateStr = todayISO();
           const rawDate = r[idxDate];
-          if (rawDate instanceof Date && !isNaN(rawDate)) {
-            dateStr = rawDate.toISOString().slice(0, 10);
-          } else if (typeof rawDate === 'string' && rawDate.includes('/')) {
+          if (rawDate instanceof Date && !isNaN(rawDate)) dateStr = rawDate.toISOString().slice(0, 10);
+          else if (typeof rawDate === 'string' && rawDate.includes('/')) {
             const [dd, mm, yyyy] = rawDate.split(' ')[0].split('/');
             if (yyyy && mm && dd) dateStr = `${yyyy}-${mm.padStart(2, '0')}-${dd.padStart(2, '0')}`;
-          } else if (typeof rawDate === 'string' && rawDate.includes('-')) {
-            dateStr = rawDate.slice(0, 10);
-          }
+          } else if (typeof rawDate === 'string' && rawDate.includes('-')) dateStr = rawDate.slice(0, 10);
 
           const category = String(r[idxSub] || r[idxCat] || 'Otros').trim();
           const concept = String(r[idxDesc] || category).trim();
 
-          const exists = state.transactions.some(t =>
-            t.account === targetAcc &&
-            t.date === dateStr &&
-            Math.abs(Number(t.amount) - amount) < 0.005 &&
-            t.concept.toLowerCase() === concept.toLowerCase()
-          );
+          const exists = state.transactions.some(t => t.account === targetAcc && t.date === dateStr && Math.abs(Number(t.amount) - amount) < 0.005 && t.concept.toLowerCase() === concept.toLowerCase());
           if (exists) continue;
 
-          const newTx = {
-            id: uid(),
-            date: dateStr,
-            account: targetAcc,
-            category,
-            concept,
-            amount,
-            validated: true,
-            ticket: null
-          };
+          const newTx = { id: uid(), date: dateStr, account: targetAcc, category, concept, amount, validated: true, ticket: null };
           state.transactions.push(newTx);
           imported++;
-
           autoDebts += evaluateSharedRulesForTx(newTx);
 
           if (autoRoundup && amount < 0 && (category.toLowerCase().includes('redondeo') || concept.toLowerCase().includes('redondeo'))) {
-            state.transactions.push({
-              id: uid(),
-              date: dateStr,
-              account: 'ing_ahorro',
-              category: 'Redondeo Ahorro',
-              concept: 'Abono Redondeo ING',
-              amount: Math.abs(amount),
-              validated: true,
-              ticket: null
-            });
+            state.transactions.push({ id: uid(), date: dateStr, account: 'ing_ahorro', category: 'Redondeo Ahorro', concept: 'Abono Redondeo ING', amount: Math.abs(amount), validated: true, ticket: null });
           }
         }
 
@@ -1312,21 +1374,17 @@
         detectRecurringFromTransactions(true);
         closeModal('modalIngExcel');
         saveState();
-        alert(`Importación ING completada: ${imported} movimientos nuevos y ${autoDebts} deudas compartidas generadas automáticamente.`);
-      } catch (err) {
-        alert('Error leyendo el Excel de ING: ' + err.message);
-      }
+        alert(`Importación ING completada: ${imported} movimientos nuevos y ${autoDebts} deudas compartidas generadas.`);
+      } catch (err) { alert('Error leyendo Excel ING: ' + err.message); }
     };
     reader.readAsArrayBuffer(file);
   }
 
-  // ==================== IMPORTADOR HOMEBANK ====================
   function handleHomeBankUpload(e) {
     const file = e.target.files[0];
     if (!file) return;
     const defAcc = document.getElementById('hbDefaultAccount').value;
     const reader = new FileReader();
-
     reader.onload = (evt) => {
       const text = evt.target.result;
       let imported = 0;
@@ -1343,59 +1401,42 @@
           else if (name.includes('moneda') || name.includes('hucha')) accMap[key] = 'hucha_monedas';
           else accMap[key] = 'ing_corriente';
         });
-
-        const catMap = {};
-        xml.querySelectorAll('cat').forEach(c => { catMap[c.getAttribute('key')] = c.getAttribute('name') || 'General'; });
-        const payMap = {};
-        xml.querySelectorAll('pay').forEach(p => { payMap[p.getAttribute('key')] = p.getAttribute('name') || ''; });
+        const catMap = {}; xml.querySelectorAll('cat').forEach(c => { catMap[c.getAttribute('key')] = c.getAttribute('name') || 'General'; });
+        const payMap = {}; xml.querySelectorAll('pay').forEach(p => { payMap[p.getAttribute('key')] = p.getAttribute('name') || ''; });
 
         xml.querySelectorAll('ope').forEach(o => {
           const julian = parseInt(o.getAttribute('date'));
           const dateObj = new Date(Date.UTC(1, 0, 1));
           dateObj.setUTCDate(dateObj.getUTCDate() + julian - 1);
           const dateStr = !isNaN(dateObj) ? dateObj.toISOString().slice(0, 10) : todayISO();
-
           const amount = parseFloat(o.getAttribute('amount') || '0');
           if (amount === 0) return;
           const account = accMap[o.getAttribute('account')] || defAcc;
           const category = catMap[o.getAttribute('category')] || 'HomeBank';
-          const payee = payMap[o.getAttribute('payee')] || '';
-          const wording = o.getAttribute('wording') || '';
-          const concept = [payee, wording].filter(Boolean).join(' - ') || category;
-
-          const exists = state.transactions.some(t => t.date === dateStr && Math.abs(t.amount - amount) < 0.005 && t.concept === concept);
-          if (!exists) {
+          const concept = [payMap[o.getAttribute('payee')], o.getAttribute('wording')].filter(Boolean).join(' - ') || category;
+          if (!state.transactions.some(t => t.date === dateStr && Math.abs(t.amount - amount) < 0.005 && t.concept === concept)) {
             state.transactions.push({ id: uid(), date: dateStr, account, category, concept, amount, validated: true, ticket: null });
             imported++;
           }
         });
       } else {
-        const lines = text.split(/\r?\n/).filter(Boolean);
-        lines.slice(1).forEach(line => {
+        text.split(/\r?\n/).filter(Boolean).slice(1).forEach(line => {
           const cols = line.split(';');
           if (cols.length < 6) return;
           const rawDate = cols[0].trim();
           let dateStr = rawDate;
-          if (rawDate.includes('-')) {
-            const p = rawDate.split('-');
-            if (p[0].length === 2) dateStr = `${p[2]}-${p[1]}-${p[0]}`;
-          } else if (rawDate.includes('/')) {
-            const p = rawDate.split('/');
-            if (p[0].length === 2) dateStr = `${p[2]}-${p[1]}-${p[0]}`;
-          }
+          if (rawDate.includes('-') && rawDate.split('-')[0].length === 2) { const p = rawDate.split('-'); dateStr = `${p[2]}-${p[1]}-${p[0]}`; }
+          else if (rawDate.includes('/') && rawDate.split('/')[0].length === 2) { const p = rawDate.split('/'); dateStr = `${p[2]}-${p[1]}-${p[0]}`; }
           const amount = parseFloat(cols[5].replace(',', '.'));
           if (isNaN(amount) || amount === 0) return;
           const concept = [cols[3], cols[4]].map(s => (s || '').trim()).filter(Boolean).join(' - ') || 'Movimiento HomeBank';
           const category = (cols[6] || 'HomeBank').trim();
-
-          const exists = state.transactions.some(t => t.date === dateStr && Math.abs(t.amount - amount) < 0.005 && t.concept === concept);
-          if (!exists) {
+          if (!state.transactions.some(t => t.date === dateStr && Math.abs(t.amount - amount) < 0.005 && t.concept === concept)) {
             state.transactions.push({ id: uid(), date: dateStr, account: defAcc, category, concept, amount, validated: true, ticket: null });
             imported++;
           }
         });
       }
-
       state.transactions.sort((a, b) => b.date.localeCompare(a.date));
       detectRecurringFromTransactions(true);
       closeModal('modalHomeBank');
@@ -1405,7 +1446,7 @@
     reader.readAsText(file);
   }
 
-  // ==================== TICKETS Y OCR ====================
+  // ==================== OCR Y EDICIÓN DE MOVIMIENTOS ====================
   function compressImage(file) {
     return new Promise((resolve) => {
       const reader = new FileReader();
@@ -1417,8 +1458,7 @@
           const scale = Math.min(1, maxW / img.width);
           canvas.width = img.width * scale;
           canvas.height = img.height * scale;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
           resolve(canvas.toDataURL('image/jpeg', 0.72));
         };
         img.src = e.target.result;
@@ -1432,25 +1472,20 @@
     if (!file) return;
     document.getElementById('ocrProgressBox').classList.remove('hidden');
     ui.ocrTicketData = await compressImage(file);
-
     try {
       if (typeof Tesseract !== 'undefined') {
         const res = await Tesseract.recognize(file, 'spa');
         const txt = res.data.text || '';
         const lines = txt.split('\n').map(l => l.trim()).filter(Boolean);
         if (lines.length > 0) document.getElementById('ocrConcept').value = lines[0].slice(0, 40);
-
         const matches = txt.match(/\d+[.,]\d{2}/g);
         if (matches) {
           const nums = matches.map(m => parseFloat(m.replace(',', '.'))).filter(n => !isNaN(n) && n < 5000);
           if (nums.length > 0) document.getElementById('ocrAmount').value = Math.max(...nums).toFixed(2);
         }
       }
-    } catch (err) {
-      console.warn('OCR warning:', err);
-    } finally {
-      document.getElementById('ocrProgressBox').classList.add('hidden');
-    }
+    } catch (err) { console.warn(err); }
+    finally { document.getElementById('ocrProgressBox').classList.add('hidden'); }
   }
 
   function saveOcrTransaction() {
@@ -1478,7 +1513,7 @@
     document.getElementById('editTxId').value = '';
     document.getElementById('editTxDate').value = todayISO();
     document.getElementById('editTxAmount').value = '';
-    document.getElementById('editTxAccount').value = 'ing_corriente';
+    document.getElementById('editTxAccount').value = document.getElementById('filterAccount').value !== 'all' ? document.getElementById('filterAccount').value : 'ing_corriente';
     document.getElementById('editTxCategory').value = 'Supermercados y alimentación';
     document.getElementById('editTxConcept').value = '';
     document.getElementById('editTxValidated').checked = true;
@@ -1512,7 +1547,6 @@
     const id = document.getElementById('editTxId').value;
     const amount = parseFloat(document.getElementById('editTxAmount').value);
     if (isNaN(amount) || amount === 0) return alert('Importe inválido.');
-
     const payload = {
       date: document.getElementById('editTxDate').value || todayISO(),
       account: document.getElementById('editTxAccount').value,
@@ -1522,7 +1556,6 @@
       validated: document.getElementById('editTxValidated').checked,
       ticket: ui.editTxTicketData
     };
-
     if (id) {
       const idx = state.transactions.findIndex(t => t.id === id);
       if (idx !== -1) state.transactions[idx] = { ...state.transactions[idx], ...payload };
@@ -1531,7 +1564,6 @@
       state.transactions.unshift(newTx);
       evaluateSharedRulesForTx(newTx);
     }
-
     closeModal('modalEditTx');
     saveState();
   }
@@ -1556,7 +1588,7 @@
     openModal('modalViewTicket');
   }
 
-  // ==================== CASH FLOW ====================
+  // ==================== CASH FLOW Y CRONOGRAMA DE VENCIMIENTOS ====================
   function detectRecurringFromTransactions(silent = false) {
     const step = parseInt(document.getElementById('cfRoundStep')?.value || '5');
     const utilityKeywords = ['luz', 'iberdrola', 'endesa', 'naturgy', 'agua', 'hidrogea', 'gas', 'teléfono', 'internet', 'digi', 'movistar', 'vodafone', 'orange', 'gasolina'];
@@ -1567,7 +1599,8 @@
       if (t.category.toLowerCase().includes('redondeo') || t.category.toLowerCase().includes('traspaso')) return;
       const key = t.concept.replace(/\d+/g, '').trim().slice(0, 26).toLowerCase();
       if (!key) return;
-      if (!groups[key]) groups[key] = { name: t.concept.slice(0, 28), amounts: [], category: t.category };
+      const day = parseInt((t.date || '').split('-')[2]) || 1;
+      if (!groups[key]) groups[key] = { name: t.concept.slice(0, 28), amounts: [], category: t.category, account: t.account, dayOfMonth: day };
       groups[key].amounts.push(Number(t.amount));
     });
 
@@ -1591,7 +1624,7 @@
           finalAmt = Math.round(avg * 100) / 100;
         }
 
-        detected.push({ id: uid(), name: g.name, amount: finalAmt, note, active: true });
+        detected.push({ id: uid(), name: g.name, amount: finalAmt, account: g.account || 'ing_corriente', dayOfMonth: g.dayOfMonth || 1, note, active: true });
       }
     });
 
@@ -1604,9 +1637,15 @@
 
   function addManualRecurring() {
     const name = document.getElementById('newRecName').value.trim();
-    const amount = parseFloat(document.getElementById('newRecAmount').value);
-    if (!name || isNaN(amount) || amount === 0) return;
-    state.recurring.push({ id: uid(), name, amount, note: 'Manual', active: true, manual: true });
+    const type = document.getElementById('newRecType').value;
+    const rawAmt = parseFloat(document.getElementById('newRecAmount').value);
+    const account = document.getElementById('newRecAccount').value;
+    const dayOfMonth = Math.min(31, Math.max(1, parseInt(document.getElementById('newRecDay').value) || 1));
+
+    if (!name || isNaN(rawAmt) || rawAmt <= 0) return alert('Introduce concepto e importe válido.');
+    const amount = type === 'expense' ? -Math.abs(rawAmt) : Math.abs(rawAmt);
+
+    state.recurring.push({ id: uid(), name, amount, account, dayOfMonth, note: `Día ${dayOfMonth} de cada mes`, active: true, manual: true });
     document.getElementById('newRecName').value = '';
     document.getElementById('newRecAmount').value = '';
     saveState();
@@ -1623,22 +1662,50 @@
     saveState();
   }
 
+  function buildUpcomingEvents(horizonDays, filterAccount = 'all') {
+    const events = [];
+    const start = new Date();
+    start.setHours(0, 0, 0, 0);
+
+    for (let offset = 0; offset <= horizonDays; offset++) {
+      const d = new Date(start.getTime() + offset * 86400000);
+      const dayNum = d.getDate();
+      const lastDayOfMonth = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+      const iso = d.toISOString().slice(0, 10);
+
+      (state.recurring || []).forEach(r => {
+        if (!r.active) return;
+        const rAcc = r.account || 'ing_corriente';
+        if (filterAccount !== 'all' && rAcc !== filterAccount) return;
+        const targetDay = Math.min(Number(r.dayOfMonth || 1), lastDayOfMonth);
+        if (dayNum === targetDay) {
+          events.push({
+            date: iso,
+            offset,
+            name: r.name,
+            amount: Number(r.amount),
+            account: rAcc
+          });
+        }
+      });
+    }
+    return events;
+  }
+
   // ==================== RENDERIZADO ====================
   function renderAll() {
     try {
-      renderAccountsAndKpis();
+      renderAccountsAndWeeklyRadar();
       renderChartsAndRecent();
       renderTransactions();
       renderDebts();
       renderCashFlow();
       renderSettings();
       updateSyncIndicators();
-    } catch (e) {
-      console.error('Render error:', e);
-    }
+    } catch (e) { console.error('Render error:', e); }
   }
 
-  function renderAccountsAndKpis() {
+  function renderAccountsAndWeeklyRadar() {
     let totalAll = 0, totalBank = 0;
     const grid = document.getElementById('accountsGrid');
     grid.innerHTML = ACCOUNTS_META.map(acc => {
@@ -1646,15 +1713,45 @@
       totalAll += bal;
       if (acc.id.startsWith('ing_')) totalBank += bal;
       return `
-        <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-800">
+        <div onclick="openAccountHistory('${acc.id}')" title="Clic para ver todos los movimientos de ${acc.name}" class="cursor-pointer p-2.5 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-800 hover:border-indigo-500 transition-all group">
           <div class="flex items-center justify-between text-xs text-slate-400">
-            <span class="truncate">${acc.name}</span><span>${acc.icon}</span>
+            <span class="truncate group-hover:text-indigo-400 font-medium">${acc.name}</span><span>${acc.icon}</span>
           </div>
           <div class="text-sm sm:text-base font-bold mt-1 ${acc.color}">${fmt(bal)}</div>
+          <div class="text-[10px] text-slate-400 mt-0.5">Ver historial →</div>
         </div>
       `;
     }).join('');
 
+    // Radar 7 días vista por cuenta
+    const radarAccounts = ['ing_corriente', 'ing_nocuenta', 'ing_ahorro', 'efectivo'];
+    const weekEvents = buildUpcomingEvents(7, 'all');
+    document.getElementById('weeklyRadarGrid').innerHTML = radarAccounts.map(accId => {
+      const meta = ACCOUNTS_META.find(a => a.id === accId);
+      const startBal = getAccountBalance(accId);
+      const accEvs = weekEvents.filter(e => e.account === accId);
+      const net7d = accEvs.reduce((s, e) => s + e.amount, 0);
+      const endBal = startBal + net7d;
+      const deficit = endBal < 0 ? Math.abs(endBal) : 0;
+
+      return `
+        <div onclick="setTab('cashflow')" class="cursor-pointer p-2.5 rounded-xl border ${deficit > 0 ? 'border-rose-500/50 bg-rose-500/5' : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-850'} hover:border-indigo-500 transition-colors">
+          <div class="flex items-center justify-between text-xs font-semibold">
+            <span>${meta.icon} ${meta.name}</span>
+            <span class="text-[11px] px-1.5 py-0.5 rounded-md ${deficit > 0 ? 'bg-rose-500/20 text-rose-500 font-bold' : 'bg-emerald-500/15 text-emerald-500'}">
+              ${deficit > 0 ? `⚠️ Traspasar ${fmt(deficit)}` : '✅ Cubierto'}
+            </span>
+          </div>
+          <div class="flex items-center justify-between text-[11px] text-slate-400 mt-1.5">
+            <span>Hoy: <b>${fmt(startBal)}</b></span>
+            <span>7 días: <b class="${net7d >= 0 ? 'text-emerald-500' : 'text-rose-500'}">${net7d >= 0 ? '+' : ''}${fmt(net7d)}</b></span>
+            <span>Final: <b class="${endBal >= 0 ? '' : 'text-rose-500'}">${fmt(endBal)}</b></span>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    // KPIs
     const curMonth = todayISO().slice(0, 7);
     let mInc = 0, mExp = 0, pendingTickets = 0;
     (state.transactions || []).forEach(t => {
@@ -1679,7 +1776,7 @@
     document.getElementById('kpiMonthExpense').textContent = fmt(mExp);
     document.getElementById('kpiPendingTickets').textContent = `${pendingTickets} pendiente(s) de validar`;
     document.getElementById('kpiDebtNet').textContent = (netDebt >= 0 ? '+' : '') + fmt(netDebt);
-    document.getElementById('kpiDebtNet').className = `text-xl sm:text-2xl font-bold mt-1 ${netDebt >= 0 ? 'text-emerald-500' : 'text-rose-500'}`;
+    document.getElementById('kpiDebtNet').className = `text-lg sm:text-2xl font-bold mt-1 ${netDebt >= 0 ? 'text-emerald-500' : 'text-rose-500'}`;
     document.getElementById('kpiDebtDetail').textContent = `Me deben ${fmt(oweMe)} · Debo ${fmt(iOwe)}`;
 
     const badge = document.getElementById('badgeDebtsSidebar');
@@ -1688,6 +1785,7 @@
   }
 
   function renderChartsAndRecent() {
+    // 1. Gráfico de Barras 6 Meses (con altura en píxeles explícita para que nunca colapse)
     const months = [];
     const now = new Date();
     for (let i = 5; i >= 0; i--) {
@@ -1705,19 +1803,20 @@
     }
     const maxVal = Math.max(100, ...months.flatMap(m => [m.inc, m.exp]));
     document.getElementById('chartSixMonths').innerHTML = months.map(m => {
-      const hInc = Math.round((m.inc / maxVal) * 100);
-      const hExp = Math.round((m.exp / maxVal) * 100);
+      const hInc = Math.max(m.inc > 0 ? 6 : 2, Math.round((m.inc / maxVal) * 120));
+      const hExp = Math.max(m.exp > 0 ? 6 : 2, Math.round((m.exp / maxVal) * 120));
       return `
-        <div class="flex-1 flex flex-col items-center gap-1 h-full justify-end">
-          <div class="w-full flex items-end justify-center gap-1 h-28">
-            <div style="height:${hInc}%" title="Ingresos: ${fmt(m.inc)}" class="w-2.5 sm:w-3.5 bg-emerald-500 rounded-t-sm transition-all"></div>
-            <div style="height:${hExp}%" title="Gastos: ${fmt(m.exp)}" class="w-2.5 sm:w-3.5 bg-rose-500 rounded-t-sm transition-all"></div>
+        <div class="flex-1 flex flex-col items-center gap-1 justify-end">
+          <div class="w-full flex items-end justify-center gap-1" style="height:125px">
+            <div style="height:${hInc}px" title="Ingresos ${m.label}: ${fmt(m.inc)}" class="w-3 bg-emerald-500 rounded-t-sm transition-all"></div>
+            <div style="height:${hExp}px" title="Gastos ${m.label}: ${fmt(m.exp)}" class="w-3 bg-rose-500 rounded-t-sm transition-all"></div>
           </div>
-          <span class="text-[10px] text-slate-400 uppercase">${m.label}</span>
+          <span class="text-[10px] text-slate-400 uppercase font-semibold">${m.label}</span>
         </div>
       `;
     }).join('');
 
+    // 2. Gráfico de Disco (Donut SVG) por Categorías de Gasto
     const curMonth = todayISO().slice(0, 7);
     const catMap = {};
     let totalCatExp = 0;
@@ -1728,27 +1827,58 @@
         totalCatExp += abs;
       }
     });
-    const topCats = Object.entries(catMap).sort((a, b) => b[1] - a[1]).slice(0, 3);
-    document.getElementById('topCategoriesBars').innerHTML = topCats.length === 0
-      ? '<div class="text-xs text-slate-400">Sin gastos registrados este mes.</div>'
-      : topCats.map(([cat, val]) => {
-          const pct = totalCatExp > 0 ? Math.round((val / totalCatExp) * 100) : 0;
-          return `
-            <div>
-              <div class="flex justify-between text-xs mb-0.5"><span class="truncate">${cat}</span><span class="font-semibold">${fmt(val)} (${pct}%)</span></div>
-              <div class="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden"><div style="width:${pct}%" class="h-full bg-indigo-500 rounded-full"></div></div>
-            </div>
-          `;
-        }).join('');
+    const topCats = Object.entries(catMap).sort((a, b) => b[1] - a[1]).slice(0, 5);
+    const donutBox = document.getElementById('donutChartContainer');
+    const legendBox = document.getElementById('donutLegendContainer');
 
-    const recent = (state.transactions || []).slice(0, 8);
+    if (topCats.length === 0 || totalCatExp === 0) {
+      donutBox.innerHTML = `<div class="w-28 h-28 rounded-full border-8 border-slate-200 dark:border-slate-800 flex items-center justify-center text-[11px] text-slate-400">Sin gastos</div>`;
+      legendBox.innerHTML = `<div class="text-xs text-slate-400">Registra gastos este mes para ver el gráfico de disco.</div>`;
+    } else {
+      let cumulative = 0;
+      const radius = 40;
+      const circumference = 2 * Math.PI * radius;
+      const circles = topCats.map(([cat, val], idx) => {
+        const pct = val / totalCatExp;
+        const dash = pct * circumference;
+        const offset = -cumulative * circumference;
+        cumulative += pct;
+        const color = DONUT_COLORS[idx % DONUT_COLORS.length];
+        return `<circle r="${radius}" cx="50" cy="50" fill="transparent" stroke="${color}" stroke-width="14" stroke-dasharray="${dash} ${circumference}" stroke-dashoffset="${offset}" transform="rotate(-90 50 50)"></circle>`;
+      }).join('');
+
+      donutBox.innerHTML = `
+        <svg viewBox="0 0 100 100" class="w-28 h-28">${circles}</svg>
+        <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+          <span class="text-[9px] text-slate-400">TOTAL</span>
+          <span class="text-[11px] font-bold">${Math.round(totalCatExp)} €</span>
+        </div>
+      `;
+
+      legendBox.innerHTML = topCats.map(([cat, val], idx) => {
+        const pct = Math.round((val / totalCatExp) * 100);
+        const color = DONUT_COLORS[idx % DONUT_COLORS.length];
+        return `
+          <div class="flex items-center justify-between gap-1.5">
+            <span class="flex items-center gap-1.5 truncate">
+              <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background:${color}"></span>
+              <span class="truncate text-[11px]">${cat}</span>
+            </span>
+            <span class="text-[11px] font-bold shrink-0">${pct}%</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 3. Actividad reciente
+    const recent = (state.transactions || []).slice(0, 6);
     document.getElementById('recentTransactionsList').innerHTML = recent.map(t => {
       const acc = ACCOUNTS_META.find(a => a.id === t.account)?.name || t.account;
       return `
         <div class="p-2 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/70 dark:border-slate-800 flex items-center justify-between gap-2">
           <div class="min-w-0">
             <div class="text-xs font-semibold truncate">${t.concept}</div>
-            <div class="text-[10px] text-slate-400">${t.date} · ${acc} ${t.ticket ? '· 📎' : ''}</div>
+            <div class="text-[10px] text-slate-400">${t.date} · ${acc}</div>
           </div>
           <div class="text-xs font-bold shrink-0 ${t.amount >= 0 ? 'text-emerald-500' : 'text-rose-500'}">${t.amount >= 0 ? '+' : ''}${fmt(t.amount)}</div>
         </div>
@@ -1757,6 +1887,17 @@
   }
 
   function renderTransactions() {
+    // Tabs rápidas por cuenta
+    const fAccEl = document.getElementById('filterAccount');
+    const curAcc = fAccEl.value;
+    const tabsBox = document.getElementById('accountQuickTabs');
+    const allTabs = [{ id: 'all', name: 'Todas', icon: '📋' }, ...ACCOUNTS_META];
+    tabsBox.innerHTML = allTabs.map(a => {
+      const active = curAcc === a.id;
+      const balTxt = a.id === 'all' ? '' : ` (${fmt(getAccountBalance(a.id))})`;
+      return `<button type="button" onclick="document.getElementById('filterAccount').value='${a.id}'; renderTransactions();" class="px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors ${active ? 'bg-indigo-600 text-white' : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-300'}">${a.icon} ${a.name}${balTxt}</button>`;
+    }).join('');
+
     const catSel = document.getElementById('filterCategory');
     const curCat = catSel.value;
     const cats = [...new Set((state.transactions || []).map(t => t.category))].sort();
@@ -1764,12 +1905,11 @@
     if (cats.includes(curCat)) catSel.value = curCat;
 
     const q = document.getElementById('filterSearch').value.toLowerCase();
-    const fAcc = document.getElementById('filterAccount').value;
     const fCat = catSel.value;
     const fVal = document.getElementById('filterValidation').value;
 
     const filtered = (state.transactions || []).filter(t => {
-      if (fAcc !== 'all' && t.account !== fAcc) return false;
+      if (curAcc !== 'all' && t.account !== curAcc) return false;
       if (fCat !== 'all' && t.category !== fCat) return false;
       if (fVal === 'validated' && !t.validated) return false;
       if (fVal === 'pending' && t.validated) return false;
@@ -1779,6 +1919,8 @@
     });
 
     document.getElementById('txEmptyState').classList.toggle('hidden', filtered.length > 0);
+
+    // Tabla PC
     document.getElementById('transactionsTableBody').innerHTML = filtered.slice(0, 150).map(t => {
       const acc = ACCOUNTS_META.find(a => a.id === t.account)?.name || t.account;
       return `
@@ -1791,14 +1933,35 @@
             <button type="button" onclick="toggleTxValidated('${t.id}')" class="px-2 py-0.5 rounded-full text-[11px] font-semibold ${t.validated ? 'bg-emerald-500/15 text-emerald-500' : 'bg-amber-500/15 text-amber-500'}">
               ${t.validated ? '✅ Validado' : '⏳ Pendiente'}
             </button>
-            ${t.ticket ? `<button type="button" onclick="viewTicket('${t.id}')" title="Ver ticket adjunto" class="ml-1 px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-400 text-[11px]">📎 Ver</button>` : ''}
+            ${t.ticket ? `<button type="button" onclick="viewTicket('${t.id}')" class="ml-1 px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-400 text-[11px]">📎 Ver</button>` : ''}
           </td>
           <td class="py-2 px-3 text-right whitespace-nowrap font-bold ${t.amount >= 0 ? 'text-emerald-500' : 'text-rose-500'}">${t.amount >= 0 ? '+' : ''}${fmt(t.amount)}</td>
           <td class="py-2 px-3 text-right whitespace-nowrap space-x-1">
-            <button type="button" onclick="openEditTxModal('${t.id}')" class="p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700" title="Editar">✏️</button>
-            <button type="button" onclick="deleteTx('${t.id}')" class="p-1 rounded hover:bg-rose-500/20 text-rose-500" title="Eliminar">🗑️</button>
+            <button type="button" onclick="openEditTxModal('${t.id}')" class="p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700">✏️</button>
+            <button type="button" onclick="deleteTx('${t.id}')" class="p-1 rounded hover:bg-rose-500/20 text-rose-500">🗑️</button>
           </td>
         </tr>
+      `;
+    }).join('');
+
+    // Tarjetas Móvil Pocket
+    document.getElementById('transactionsMobileCards').innerHTML = filtered.slice(0, 80).map(t => {
+      const acc = ACCOUNTS_META.find(a => a.id === t.account)?.name || t.account;
+      return `
+        <div class="p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2">
+          <div class="min-w-0">
+            <div class="text-xs font-bold truncate">${t.concept}</div>
+            <div class="text-[11px] text-slate-400">${t.date} · ${acc}</div>
+            <div class="mt-1 flex items-center gap-1.5">
+              <button type="button" onclick="toggleTxValidated('${t.id}')" class="px-2 py-0.5 rounded-full text-[10px] font-semibold ${t.validated ? 'bg-emerald-500/15 text-emerald-500' : 'bg-amber-500/15 text-amber-500'}">${t.validated ? '✅ Validado' : '⏳ Pendiente'}</button>
+              ${t.ticket ? `<button type="button" onclick="viewTicket('${t.id}')" class="px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-400 text-[10px]">📎 Ticket</button>` : ''}
+            </div>
+          </div>
+          <div class="text-right shrink-0">
+            <div class="text-sm font-bold ${t.amount >= 0 ? 'text-emerald-500' : 'text-rose-500'}">${t.amount >= 0 ? '+' : ''}${fmt(t.amount)}</div>
+            <button type="button" onclick="openEditTxModal('${t.id}')" class="text-[11px] text-slate-400 hover:underline mt-1">Editar</button>
+          </div>
+        </div>
       `;
     }).join('');
   }
@@ -1812,7 +1975,7 @@
         <div onclick="openFriendHistory('${name}')" class="cursor-pointer p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-indigo-500 transition-all shadow-sm flex items-center justify-between">
           <div>
             <div class="font-bold text-sm flex items-center gap-1.5"><span>👤</span><span>${name}</span></div>
-            <div class="text-[11px] text-slate-400 mt-0.5">${friendDebts.length} mov. · Clic para historial</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">${friendDebts.length} mov. · Ver historial</div>
           </div>
           <div class="text-right">
             <div class="text-sm font-bold ${pendingNet > 0 ? 'text-emerald-500' : pendingNet < 0 ? 'text-rose-500' : 'text-slate-400'}">
@@ -1841,9 +2004,7 @@
               </div>
               <div class="flex items-center gap-2 shrink-0">
                 <span class="text-xs font-bold ${d.direction === 'owe_me' ? 'text-emerald-500' : 'text-rose-500'}">${d.direction === 'owe_me' ? '+' : '-'}${fmt(d.amount)}</span>
-                <button type="button" onclick="toggleDebtSettled('${d.id}')" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold ${d.settled ? 'bg-slate-200 dark:bg-slate-700' : 'bg-emerald-600 text-white'}">
-                  ${d.settled ? 'Reabrir' : 'Saldar'}
-                </button>
+                <button type="button" onclick="toggleDebtSettled('${d.id}')" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold ${d.settled ? 'bg-slate-200 dark:bg-slate-700' : 'bg-emerald-600 text-white'}">${d.settled ? 'Reabrir' : 'Saldar'}</button>
                 <button type="button" onclick="deleteDebt('${d.id}')" class="p-1 text-rose-500 hover:bg-rose-500/10 rounded">✕</button>
               </div>
             </div>
@@ -1859,47 +2020,73 @@
       else fExp += Math.abs(Number(r.amount));
     });
 
-    const incVar = document.getElementById('cfIncludeVariable')?.checked;
-    const varEst = incVar ? 250 : 0;
-    const monthlyNet = fInc - fExp - varEst;
-    const currentLiquidity = getAccountBalance('ing_corriente') + getAccountBalance('ing_ahorro') + getAccountBalance('ing_nocuenta');
+    const monthlyNet = fInc - fExp;
+    const bankLiquid = getAccountBalance('ing_corriente') + getAccountBalance('ing_ahorro') + getAccountBalance('ing_nocuenta');
 
     document.getElementById('cfFixedIncome').textContent = fmt(fInc);
     document.getElementById('cfFixedExpense').textContent = fmt(fExp);
     document.getElementById('cfMonthlySave').textContent = (monthlyNet >= 0 ? '+' : '') + fmt(monthlyNet);
     document.getElementById('cfMonthlySave').className = `text-lg font-bold mt-0.5 ${monthlyNet >= 0 ? 'text-indigo-500' : 'text-rose-500'}`;
-    document.getElementById('cfSixMonthsProj').textContent = fmt(currentLiquidity + monthlyNet * 6);
+    document.getElementById('cfThirtyDaysProj').textContent = fmt(bankLiquid + monthlyNet);
 
-    document.getElementById('recurringItemsList').innerHTML = (state.recurring || []).map(r => `
-      <div class="p-2 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 ${!r.active ? 'opacity-50' : ''}">
-        <div class="flex items-center gap-2 min-w-0">
-          <input type="checkbox" ${r.active ? 'checked' : ''} onchange="toggleRecurring('${r.id}')" class="rounded" />
-          <div class="truncate">
-            <div class="text-xs font-semibold truncate">${r.name}</div>
-            <div class="text-[10px] text-slate-400">${r.note || ''}</div>
+    // Lista de partidas recurrentes
+    document.getElementById('recurringItemsList').innerHTML = (state.recurring || []).length === 0
+      ? '<div class="text-xs text-slate-400 py-6 text-center">No hay partidas recurrentes aún. Añade una arriba o pulsa Detectar del banco.</div>'
+      : state.recurring.map(r => {
+          const accName = ACCOUNTS_META.find(a => a.id === (r.account || 'ing_corriente'))?.name || 'ING Corriente';
+          return `
+            <div class="p-2 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 ${!r.active ? 'opacity-50' : ''}">
+              <div class="flex items-center gap-2 min-w-0">
+                <input type="checkbox" ${r.active ? 'checked' : ''} onchange="toggleRecurring('${r.id}')" class="rounded" />
+                <div class="truncate">
+                  <div class="text-xs font-semibold truncate">${r.name}</div>
+                  <div class="text-[10px] text-slate-400">Día ${r.dayOfMonth || 1} · ${accName} · ${r.note || ''}</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0">
+                <span class="text-xs font-bold ${r.amount >= 0 ? 'text-emerald-500' : 'text-rose-500'}">${fmt(r.amount)}</span>
+                <button type="button" onclick="deleteRecurring('${r.id}')" class="text-slate-400 hover:text-rose-500 text-xs">✕</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+    // Cronograma día a día por cuenta
+    const selAcc = document.getElementById('cfTimelineAccount').value;
+    const days = parseInt(document.getElementById('cfTimelineDays').value || '30');
+    const events = buildUpcomingEvents(days, selAcc);
+
+    // Saldos acumulados por cuenta para simular cada fecha
+    const runningBalances = {};
+    ACCOUNTS_META.forEach(a => { runningBalances[a.id] = getAccountBalance(a.id); });
+
+    const timelineBox = document.getElementById('cfTimelineList');
+    if (events.length === 0) {
+      timelineBox.innerHTML = `<div class="text-xs text-slate-400 py-8 text-center">No hay vencimientos programados en los próximos ${days} días para esta cuenta.</div>`;
+    } else {
+      timelineBox.innerHTML = events.map(ev => {
+        runningBalances[ev.account] += ev.amount;
+        const postBal = runningBalances[ev.account];
+        const accMeta = ACCOUNTS_META.find(a => a.id === ev.account);
+        const isDanger = postBal < 0;
+
+        return `
+          <div class="p-2.5 rounded-xl border ${isDanger ? 'border-rose-500/50 bg-rose-500/10' : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-850'} flex items-center justify-between gap-2 text-xs">
+            <div class="min-w-0">
+              <div class="font-bold flex items-center gap-1.5">
+                <span class="text-slate-400 font-mono text-[11px]">${ev.date}</span>
+                <span class="truncate">${ev.name}</span>
+              </div>
+              <div class="text-[11px] text-slate-400">${accMeta?.icon || ''} ${accMeta?.name || ev.account} ${isDanger ? '· ⚠️ Falta liquidez, hacer traspaso' : ''}</div>
+            </div>
+            <div class="text-right shrink-0">
+              <div class="font-bold ${ev.amount >= 0 ? 'text-emerald-500' : 'text-rose-500'}">${ev.amount >= 0 ? '+' : ''}${fmt(ev.amount)}</div>
+              <div class="text-[10px] ${isDanger ? 'text-rose-500 font-bold' : 'text-slate-400'}">Saldo tras cargo: ${fmt(postBal)}</div>
+            </div>
           </div>
-        </div>
-        <div class="flex items-center gap-2 shrink-0">
-          <span class="text-xs font-bold ${r.amount >= 0 ? 'text-emerald-500' : 'text-rose-500'}">${fmt(r.amount)}</span>
-          <button type="button" onclick="deleteRecurring('${r.id}')" class="text-slate-400 hover:text-rose-500 text-xs">✕</button>
-        </div>
-      </div>
-    `).join('');
-
-    const projRows = [];
-    for (let m = 1; m <= 6; m++) {
-      const d = new Date();
-      d.setMonth(d.getMonth() + m);
-      const label = d.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
-      const bal = currentLiquidity + monthlyNet * m;
-      projRows.push(`
-        <div class="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-850 text-xs">
-          <span class="capitalize text-slate-400">${label}</span>
-          <span class="font-bold ${bal >= 0 ? 'text-sky-500' : 'text-rose-500'}">${fmt(bal)}</span>
-        </div>
-      `);
+        `;
+      }).join('');
     }
-    document.getElementById('cfProjectionTable').innerHTML = projRows.join('');
   }
 
   function renderSettings() {
@@ -1960,11 +2147,8 @@
     if (!file) return;
     const r = new FileReader();
     r.onload = (ev) => {
-      try {
-        state = { ...state, ...JSON.parse(ev.target.result) };
-        saveState();
-        alert('Copia de seguridad restaurada.');
-      } catch (err) { alert('Archivo JSON inválido.'); }
+      try { state = { ...state, ...JSON.parse(ev.target.result) }; saveState(); alert('Copia restaurada.'); }
+      catch (err) { alert('Archivo JSON inválido.'); }
     };
     r.readAsText(file);
   }
@@ -2010,7 +2194,7 @@
   function saveFirebaseConfig() {
     const raw = document.getElementById('fbConfigTextarea').value;
     const cfg = parseFirebaseConfigText(raw);
-    if (!cfg || !cfg.apiKey) return alert('No se pudo leer el firebaseConfig. Asegúrate de copiarlo completo.');
+    if (!cfg || !cfg.apiKey) return alert('No se pudo leer el firebaseConfig.');
     localStorage.setItem(FB_CFG_KEY, JSON.stringify(cfg));
     initFirebaseFromStorage();
     alert('Configuración guardada. Pulsa "Iniciar sesión con Google".');
@@ -2047,9 +2231,7 @@
                 renderAll();
                 isApplyingRemote = false;
               }
-            } else {
-              saveState();
-            }
+            } else { saveState(); }
             updateSyncIndicators();
           });
         } else {
@@ -2064,20 +2246,17 @@
   async function firebaseGoogleLogin() {
     if (!fbAuth) return alert('Primero pega y guarda tu firebaseConfig abajo.');
     const { GoogleAuthProvider, signInWithPopup } = window._fbModules;
-    try {
-      await signInWithPopup(fbAuth, new GoogleAuthProvider());
-      closeModal('modalFirebase');
-    } catch (e) { alert('Error en login Google: ' + e.message); }
+    try { await signInWithPopup(fbAuth, new GoogleAuthProvider()); closeModal('modalFirebase'); }
+    catch (e) { alert('Error en login Google: ' + e.message); }
   }
 
-  // ==================== ARRANQUE INMEDIATO ====================
-  applySavedTheme();
+  // ==================== ARRANQUE ====================
+  initThemeFromDevice();
   loadState();
   applyViewMode();
   renderAll();
 </script>
 
-<!-- MÓDULOS FIREBASE EN PARALELO AL FINAL -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
