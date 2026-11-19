@@ -32,16 +32,18 @@
     .sidebar-collapsed .nav-btn { justify-content: center; padding-left: 0; padding-right: 0; }
 
     /* ==================== MODO POCKET MÓVIL FORZADO ==================== */
+    .pocket-only { display: none; }
     body.pocket-mode #desktopSidebar { display: none !important; }
     body.pocket-mode #mobileBottomNav { display: flex !important; }
-    body.pocket-mode #mainContent { padding-bottom: 4.75rem !important; max-width: 540px; margin: 0 auto; width: 100%; }
+    body.pocket-mode #mainContent { padding-bottom: 5rem !important; max-width: 540px; margin: 0 auto; width: 100%; }
     body.pocket-mode .desktop-only-table { display: none !important; }
     body.pocket-mode .mobile-cards-list { display: block !important; }
     body.pocket-mode .pocket-hide { display: none !important; }
     body.pocket-mode .pocket-only { display: block !important; }
+    body.pocket-mode .pocket-only.grid { display: grid !important; }
     body.pocket-mode .pocket-grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
     body.pocket-mode .pocket-stack { grid-template-columns: minmax(0, 1fr) !important; }
-    .pocket-only { display: none; }
+    body.pocket-mode #cfTreasuryTableBody { max-height: none !important; }
   </style>
 </head>
 <body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans antialiased">
@@ -120,8 +122,8 @@
   <div class="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
 
     <!-- BARRA SUPERIOR -->
-    <header class="h-14 px-4 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 shrink-0">
-      <div class="flex items-center gap-2.5 min-w-0">
+    <header class="h-14 px-3 sm:px-4 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 shrink-0">
+      <div class="flex items-center gap-2 min-w-0">
         <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold shrink-0 md:hidden">F</div>
         <h1 id="pageTitle" class="font-bold text-base sm:text-lg truncate">Resumen General</h1>
       </div>
@@ -154,17 +156,17 @@
     <main id="mainContent" class="flex-1 overflow-y-auto custom-scroll p-3 sm:p-5 pb-20 md:pb-5">
 
       <!-- ==================== VISTA 1: RESUMEN GENERAL ==================== -->
-      <section id="view-dashboard" class="space-y-4 max-w-7xl mx-auto">
-        <!-- ACCESOS RÁPIDOS DE DÍA A DÍA EN MÓVIL -->
-        <div id="pocketQuickBar" class="pocket-only grid-cols-3 gap-2">
-          <button type="button" onclick="openNewTxModal()" class="p-2.5 rounded-2xl bg-indigo-600 text-white flex flex-col items-center justify-center gap-1 shadow-sm">
-            <span class="text-lg">✍️</span><span class="text-[11px] font-bold">Manual</span>
+      <section id="view-dashboard" class="space-y-3 max-w-7xl mx-auto">
+        <!-- ACCESOS RÁPIDOS DE DÍA A DÍA EN MÓVIL (3 BOTONES COMPACTOS EN FILA) -->
+        <div id="pocketQuickBar" class="pocket-only grid-cols-3 gap-2 w-full">
+          <button type="button" onclick="openNewTxModal()" class="w-full py-2 px-2 rounded-xl bg-indigo-600 text-white flex items-center justify-center gap-1.5 shadow-sm">
+            <span class="text-sm">✍️</span><span class="text-xs font-bold">Manual</span>
           </button>
-          <button type="button" onclick="openModal('modalOcr')" class="p-2.5 rounded-2xl bg-sky-600 text-white flex flex-col items-center justify-center gap-1 shadow-sm">
-            <span class="text-lg">📸</span><span class="text-[11px] font-bold">Ticket OCR</span>
+          <button type="button" onclick="openModal('modalOcr')" class="w-full py-2 px-2 rounded-xl bg-sky-600 text-white flex items-center justify-center gap-1.5 shadow-sm">
+            <span class="text-sm">📸</span><span class="text-xs font-bold">Ticket</span>
           </button>
-          <button type="button" onclick="openModal('modalQuickDebt')" class="p-2.5 rounded-2xl bg-amber-500 text-slate-950 flex flex-col items-center justify-center gap-1 shadow-sm">
-            <span class="text-lg">🤝</span><span class="text-[11px] font-bold">Deuda</span>
+          <button type="button" onclick="openModal('modalQuickDebt')" class="w-full py-2 px-2 rounded-xl bg-amber-500 text-slate-950 flex items-center justify-center gap-1.5 shadow-sm">
+            <span class="text-sm">🤝</span><span class="text-xs font-bold">Deuda</span>
           </button>
         </div>
 
@@ -193,28 +195,28 @@
         </div>
 
         <!-- MIS CUENTAS Y HUCHAS (CON FECHA DE ÚLTIMO DATO) -->
-        <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-          <div class="flex items-center justify-between mb-2.5">
+        <div class="bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div class="flex items-center justify-between mb-2">
             <div>
               <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Saldo de Cuentas y Huchas</h2>
-              <p class="text-[11px] text-slate-400">Se muestra la fecha del último movimiento registrado en cada cuenta.</p>
+              <p class="text-[11px] text-slate-400">Fecha del último movimiento registrado en cada cuenta.</p>
             </div>
             <button type="button" onclick="openModal('modalAdjustAccounts')" class="text-xs text-indigo-500 hover:underline font-medium shrink-0">Ajustar saldos</button>
           </div>
-          <div id="accountsGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 pocket-grid-2 gap-2.5"></div>
+          <div id="accountsGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 pocket-grid-2 gap-2"></div>
         </div>
 
         <!-- PREVISIÓN PRÓXIMOS DÍAS -->
-        <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-2.5">
+        <div class="bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-2">
           <div class="flex items-center justify-between gap-2">
             <div>
               <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Previsión Próximos Días</h3>
-              <p class="text-[11px] text-slate-400">Entradas y salidas previstas y cómo queda el saldo.</p>
+              <p class="text-[11px] text-slate-400">Saldo previsto a 7 días y próximos movimientos.</p>
             </div>
-            <button type="button" onclick="setTab('cashflow')" class="text-xs text-indigo-500 hover:underline font-semibold shrink-0">Tabla completa →</button>
+            <button type="button" onclick="setTab('cashflow')" class="text-xs text-indigo-500 hover:underline font-semibold shrink-0">Ver previsión →</button>
           </div>
-          <div id="weeklyRadarGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 pocket-stack gap-2.5"></div>
-          <div id="pocketForecastFeed" class="pocket-only pt-2 border-t border-slate-100 dark:border-slate-800 space-y-1.5"></div>
+          <div id="weeklyRadarGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 pocket-stack gap-2"></div>
+          <div id="pocketForecastFeed" class="pocket-only pt-1.5 border-t border-slate-100 dark:border-slate-800 space-y-1"></div>
         </div>
 
         <!-- GRÁFICOS Y ÚLTIMOS MOVIMIENTOS (SOLO EN PC / ESCRITORIO) -->
@@ -349,14 +351,14 @@
           </div>
         </div>
 
-        <!-- ALTA DE PARTIDAS RECURRENTES -->
-        <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800">
+        <!-- ALTA DE PARTIDAS RECURRENTES (SOLO PC) -->
+        <div class="pocket-hide bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800">
           <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
             <div>
               <h3 class="font-bold text-sm">Programar Ingreso o Gasto Recurrente</h3>
               <p class="text-[11px] text-slate-400">Define en qué cuenta entra o sale, qué día del mes cae y su importe para construir la tabla de tesorería.</p>
             </div>
-            <div class="pocket-hide flex items-center gap-1.5">
+            <div class="flex items-center gap-1.5">
               <select id="cfRoundStep" onchange="detectRecurringFromTransactions()" class="px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[11px]">
                 <option value="1">Suministros alza: +1 €</option>
                 <option value="5" selected>Suministros alza: +5 €</option>
@@ -385,26 +387,26 @@
         </div>
 
         <!-- TABLA PRINCIPAL DE PREVISIONES POR CUENTA -->
-        <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+        <div class="bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-2.5">
           <div class="flex flex-wrap items-center justify-between gap-2">
             <div>
-              <h3 class="font-bold text-sm">Cuadro de Previsiones y Saldo Diario por Cuenta</h3>
-              <p class="text-[11px] text-slate-400">Cada fila muestra la fecha, el movimiento previsto, entradas (Debe), salidas (Haber) y el saldo resultante.</p>
+              <h3 class="font-bold text-sm">Cuadro de Previsiones</h3>
+              <p class="text-[11px] text-slate-400">Entradas, salidas y saldo previsto por cuenta.</p>
             </div>
-            <div class="flex flex-wrap items-center gap-1.5">
-              <select id="cfTimelineAccount" onchange="renderCashFlow()" class="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold">
+            <div class="flex items-center gap-1.5 w-full sm:w-auto">
+              <select id="cfTimelineAccount" onchange="renderCashFlow()" class="flex-1 sm:flex-initial px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold">
                 <option value="ing_corriente">🧡 ING Corriente</option>
                 <option value="ing_ahorro">💰 ING Ahorro</option>
                 <option value="ing_nocuenta">💳 ING NoCuenta</option>
                 <option value="efectivo">💵 Efectivo</option>
                 <option value="hucha_monedas">🪙 Hucha Colección</option>
-                <option value="all">📋 Todas las cuentas (Consolidado)</option>
+                <option value="all">📋 Todas las cuentas</option>
               </select>
               <select id="cfTimelineDays" onchange="renderCashFlow()" class="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs">
-                <option value="7">Próximos 7 días</option>
-                <option value="15" selected>Próximos 15 días</option>
-                <option value="30">Próximos 30 días</option>
-                <option value="60">Próximos 60 días</option>
+                <option value="7">7 días</option>
+                <option value="15" selected>15 días</option>
+                <option value="30">30 días</option>
+                <option value="60">60 días</option>
               </select>
               <label class="pocket-hide flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs cursor-pointer">
                 <input id="cfShowEmptyDays" type="checkbox" onchange="renderCashFlow()" class="rounded" />
@@ -417,11 +419,11 @@
             <table class="w-full text-left border-collapse text-xs">
               <thead>
                 <tr class="bg-slate-800 text-white">
-                  <th class="py-2 px-3 font-semibold border-r border-slate-700 w-24">Fecha</th>
-                  <th class="py-2 px-3 font-semibold border-r border-slate-700">Concepto</th>
-                  <th class="py-2 px-3 font-semibold border-r border-slate-700 text-right w-24">Debe (+)</th>
-                  <th class="py-2 px-3 font-semibold border-r border-slate-700 text-right w-24">Haber (-)</th>
-                  <th class="py-2 px-3 font-semibold text-right w-28">Saldo</th>
+                  <th class="py-2 px-2.5 font-semibold border-r border-slate-700">Fecha</th>
+                  <th class="py-2 px-2.5 font-semibold border-r border-slate-700">Concepto</th>
+                  <th class="py-2 px-2.5 font-semibold border-r border-slate-700 text-right pocket-hide">Debe</th>
+                  <th class="py-2 px-2.5 font-semibold border-r border-slate-700 text-right pocket-hide">Haber</th>
+                  <th class="py-2 px-2.5 font-semibold text-right">Saldo</th>
                 </tr>
               </thead>
               <tbody id="cfTreasuryTableBody" class="divide-y divide-slate-200 dark:divide-slate-800"></tbody>
@@ -429,8 +431,8 @@
           </div>
         </div>
 
-        <!-- PARTIDAS RECURRENTES PROGRAMADAS -->
-        <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800">
+        <!-- PARTIDAS RECURRENTES PROGRAMADAS (SOLO PC) -->
+        <div class="pocket-hide bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800">
           <h3 class="font-bold text-sm mb-2">Partidas Recurrentes Programadas (Activar / Desactivar / Eliminar)</h3>
           <div id="recurringItemsList" class="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-60 overflow-y-auto custom-scroll pr-1"></div>
         </div>
@@ -1019,13 +1021,18 @@
   function setTab(tab) {
     ui.tab = tab;
     const titles = {
-      dashboard: ui.viewMode === 'mobile' ? 'Saldos y Previsión' : 'Resumen General',
+      dashboard: ui.viewMode === 'mobile' ? 'Saldos' : 'Resumen General',
       transactions: 'Movimientos por Cuenta',
       debts: 'Deudas & Amigos',
       cashflow: 'Previsiones Cash Flow',
       settings: 'Ajustes y Reglas'
     };
     document.getElementById('pageTitle').textContent = titles[tab] || 'FinanzERP';
+
+    if (ui.viewMode === 'mobile' && tab === 'cashflow') {
+      const daysSel = document.getElementById('cfTimelineDays');
+      if (daysSel && daysSel.value === '15') daysSel.value = '7';
+    }
 
     ['dashboard', 'transactions', 'debts', 'cashflow', 'settings'].forEach(t => {
       const el = document.getElementById('view-' + t);
@@ -1900,7 +1907,9 @@
       `;
     }).join('');
 
-    const radarAccounts = ['ing_corriente', 'ing_nocuenta', 'ing_ahorro', 'efectivo'];
+    const radarAccounts = ui.viewMode === 'mobile'
+      ? ['ing_corriente', 'efectivo']
+      : ['ing_corriente', 'ing_nocuenta', 'ing_ahorro', 'efectivo'];
     const weekEvents = buildUpcomingEvents(7, 'all');
     document.getElementById('weeklyRadarGrid').innerHTML = radarAccounts.map(accId => {
       const meta = ACCOUNTS_META.find(a => a.id === accId);
@@ -1927,19 +1936,18 @@
       `;
     }).join('');
 
-    // Lista compacta de próximos movimientos previstos para móvil
     const pocketFeed = document.getElementById('pocketForecastFeed');
     if (pocketFeed) {
-      const nextEvs = buildUpcomingEvents(15, 'all').filter(e => e.offset >= 1).slice(0, 6);
+      const nextEvs = buildUpcomingEvents(10, 'all').filter(e => e.offset >= 1).slice(0, 4);
       if (nextEvs.length === 0) {
-        pocketFeed.innerHTML = `<div class="text-[11px] text-slate-400 py-1">Sin movimientos recurrentes programados en los próximos 15 días.</div>`;
+        pocketFeed.innerHTML = `<div class="text-[11px] text-slate-400 py-0.5">Sin movimientos previstos en los próximos días.</div>`;
       } else {
         pocketFeed.innerHTML = nextEvs.map(ev => {
           const accShort = ACCOUNTS_META.find(a => a.id === ev.account)?.name || ev.account;
           return `
             <div onclick="document.getElementById('cfTimelineAccount').value='${ev.account}'; setTab('cashflow');" class="cursor-pointer flex items-center justify-between gap-2 py-1 px-2 rounded-lg bg-slate-50 dark:bg-slate-850 text-xs">
               <div class="truncate">
-                <span class="font-mono text-[10px] text-slate-400 mr-1.5">${formatEsDate(ev.date)}</span>
+                <span class="font-mono text-[10px] text-slate-400 mr-1">${formatEsDate(ev.date).slice(0, 5)}</span>
                 <span class="font-semibold">${ev.name}</span>
                 <span class="text-[10px] text-slate-400">· ${accShort}</span>
               </div>
@@ -2150,7 +2158,7 @@
       `;
     }).join('');
 
-    document.getElementById('transactionsMobileCards').innerHTML = filtered.slice(0, 80).map(t => {
+    document.getElementById('transactionsMobileCards').innerHTML = filtered.slice(0, 60).map(t => {
       const acc = ACCOUNTS_META.find(a => a.id === t.account)?.name || t.account;
       return `
         <div class="p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2">
@@ -2228,7 +2236,7 @@
     const monthlyNet = fInc - fExp;
     const selAcc = document.getElementById('cfTimelineAccount').value;
     const days = parseInt(document.getElementById('cfTimelineDays').value || '15');
-    const showEmpty = document.getElementById('cfShowEmptyDays')?.checked;
+    const showEmpty = ui.viewMode !== 'mobile' && !!document.getElementById('cfShowEmptyDays')?.checked;
 
     const startBal = selAcc === 'all'
       ? ACCOUNTS_META.reduce((s, a) => s + getAccountBalance(a.id), 0)
@@ -2246,11 +2254,11 @@
 
     rowsHtml.push(`
       <tr class="bg-emerald-500/10 font-bold">
-        <td class="py-2 px-3 border-r border-slate-200 dark:border-slate-800 font-mono text-[11px]">${formatEsDate(todayISO())}</td>
-        <td class="py-2 px-3 border-r border-slate-200 dark:border-slate-800">Saldo inicial</td>
-        <td class="py-2 px-3 border-r border-slate-200 dark:border-slate-800 text-right text-emerald-600 dark:text-emerald-400">${fmt(startBal)}</td>
-        <td class="py-2 px-3 border-r border-slate-200 dark:border-slate-800 text-right text-slate-400">- €</td>
-        <td class="py-2 px-3 text-right ${running < 0 ? 'bg-rose-500/20 text-rose-500' : ''}">${fmt(running)}</td>
+        <td class="py-2 px-2.5 border-r border-slate-200 dark:border-slate-800 font-mono text-[11px]">${formatEsDate(todayISO())}</td>
+        <td class="py-2 px-2.5 border-r border-slate-200 dark:border-slate-800">Saldo inicial</td>
+        <td class="py-2 px-2.5 border-r border-slate-200 dark:border-slate-800 text-right text-emerald-600 dark:text-emerald-400 pocket-hide">${fmt(startBal)}</td>
+        <td class="py-2 px-2.5 border-r border-slate-200 dark:border-slate-800 text-right text-slate-400 pocket-hide">- €</td>
+        <td class="py-2 px-2.5 text-right ${running < 0 ? 'bg-rose-500/20 text-rose-500' : ''}">${fmt(running)}</td>
       </tr>
     `);
 
@@ -2266,11 +2274,11 @@
         if (showEmpty) {
           rowsHtml.push(`
             <tr class="text-slate-400">
-              <td class="py-1.5 px-3 border-r border-slate-200 dark:border-slate-800 font-mono text-[11px]">${formatEsDate(iso)}</td>
-              <td class="py-1.5 px-3 border-r border-slate-200 dark:border-slate-800">Movimientos</td>
-              <td class="py-1.5 px-3 border-r border-slate-200 dark:border-slate-800 text-right">- €</td>
-              <td class="py-1.5 px-3 border-r border-slate-200 dark:border-slate-800 text-right">- €</td>
-              <td class="py-1.5 px-3 text-right font-semibold ${running < 0 ? 'bg-rose-500/20 text-rose-500' : 'text-slate-700 dark:text-slate-200'}">${fmt(running)}</td>
+              <td class="py-1.5 px-2.5 border-r border-slate-200 dark:border-slate-800 font-mono text-[11px]">${formatEsDate(iso)}</td>
+              <td class="py-1.5 px-2.5 border-r border-slate-200 dark:border-slate-800">Movimientos</td>
+              <td class="py-1.5 px-2.5 border-r border-slate-200 dark:border-slate-800 text-right pocket-hide">- €</td>
+              <td class="py-1.5 px-2.5 border-r border-slate-200 dark:border-slate-800 text-right pocket-hide">- €</td>
+              <td class="py-1.5 px-2.5 text-right font-semibold ${running < 0 ? 'bg-rose-500/20 text-rose-500' : 'text-slate-700 dark:text-slate-200'}">${fmt(running)}</td>
             </tr>
           `);
         }
@@ -2285,11 +2293,11 @@
 
           rowsHtml.push(`
             <tr class="hover:bg-slate-50 dark:hover:bg-slate-850/70">
-              <td class="py-2 px-3 border-r border-slate-200 dark:border-slate-800 font-mono text-[11px]">${formatEsDate(iso)}</td>
-              <td class="py-2 px-3 border-r border-slate-200 dark:border-slate-800 font-medium">${ev.name}<span class="text-[10px] text-slate-400">${accLabel}</span></td>
-              <td class="py-2 px-3 border-r border-slate-200 dark:border-slate-800 text-right font-semibold ${debeVal > 0 ? 'text-emerald-500' : 'text-slate-400'}">${debeVal > 0 ? fmt(debeVal) : '- €'}</td>
-              <td class="py-2 px-3 border-r border-slate-200 dark:border-slate-800 text-right font-semibold ${haberVal > 0 ? 'text-rose-500' : 'text-slate-400'}">${haberVal > 0 ? fmt(haberVal) : '- €'}</td>
-              <td class="py-2 px-3 text-right ${negCell}">${fmt(running)}</td>
+              <td class="py-2 px-2.5 border-r border-slate-200 dark:border-slate-800 font-mono text-[11px]">${formatEsDate(iso)}</td>
+              <td class="py-2 px-2.5 border-r border-slate-200 dark:border-slate-800 font-medium">${ev.name}<span class="text-[10px] text-slate-400">${accLabel}</span></td>
+              <td class="py-2 px-2.5 border-r border-slate-200 dark:border-slate-800 text-right font-semibold pocket-hide ${debeVal > 0 ? 'text-emerald-500' : 'text-slate-400'}">${debeVal > 0 ? fmt(debeVal) : '- €'}</td>
+              <td class="py-2 px-2.5 border-r border-slate-200 dark:border-slate-800 text-right font-semibold pocket-hide ${haberVal > 0 ? 'text-rose-500' : 'text-slate-400'}">${haberVal > 0 ? fmt(haberVal) : '- €'}</td>
+              <td class="py-2 px-2.5 text-right ${negCell}">${fmt(running)}</td>
             </tr>
           `);
         });
@@ -2510,7 +2518,7 @@
   initThemeFromDevice();
   loadState();
   applyViewMode();
-  renderAll();
+  setTab('dashboard');
 </script>
 
 <script type="module">
