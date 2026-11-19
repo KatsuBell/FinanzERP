@@ -133,12 +133,10 @@
           <span>🍽️</span><span class="hidden sm:inline pocket-hide">+ Cena / Deuda</span><span class="sm:hidden">+ Deuda</span>
         </button>
 
-        <!-- ÚNICO BOTÓN DE MODO CLARO / OSCURO -->
         <button type="button" id="headerThemeBtn" onclick="toggleTheme()" title="Cambiar Modo Claro / Oscuro" class="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-medium border border-slate-200 dark:border-slate-700">
           ☀️
         </button>
 
-        <!-- BOTÓN ALTERNAR VISTA PC / POCKET MÓVIL -->
         <button type="button" id="btnViewMode" onclick="toggleViewMode()" title="Alternar entre Vista PC completa y Vista Pocket Móvil" class="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-semibold border border-slate-200 dark:border-slate-700">
           💻 PC
         </button>
@@ -207,12 +205,12 @@
               <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Radar de Liquidez · Próximos 7 Días por Cuenta</h3>
               <p class="text-[11px] text-slate-400">Comprueba si tienes saldo suficiente o si necesitas traspasar dinero antes de que pasen recibos.</p>
             </div>
-            <button type="button" onclick="setTab('cashflow')" class="text-xs text-indigo-500 hover:underline font-semibold shrink-0">Ver calendario 30 días →</button>
+            <button type="button" onclick="setTab('cashflow')" class="text-xs text-indigo-500 hover:underline font-semibold shrink-0">Ver tabla de previsiones →</button>
           </div>
           <div id="weeklyRadarGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 pocket-stack gap-2.5"></div>
         </div>
 
-        <!-- GRÁFICOS (BARRAS + DISCO) Y ACTIVIDAD RECIENTE -->
+        <!-- GRÁFICOS (BARRAS + DISCO INTERACTIVO) Y ACTIVIDAD RECIENTE -->
         <div class="grid grid-cols-1 lg:grid-cols-12 pocket-stack gap-4">
           <div class="lg:col-span-5 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
             <div class="flex items-center justify-between mb-2">
@@ -226,10 +224,13 @@
           </div>
 
           <div class="lg:col-span-4 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
-            <h3 class="font-bold text-sm mb-2">Distribución de Gastos (Disco)</h3>
+            <div class="flex items-center justify-between gap-2 mb-2">
+              <h3 class="font-bold text-sm">Distribución de Gastos (Disco)</h3>
+              <span id="donutSelectedBadge" class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-400 truncate max-w-[170px]">Pasa o pulsa un sector</span>
+            </div>
             <div class="flex items-center gap-3 my-auto">
               <div id="donutChartContainer" class="w-32 h-32 shrink-0 flex items-center justify-center relative"></div>
-              <div id="donutLegendContainer" class="flex-1 space-y-1.5 text-xs overflow-hidden"></div>
+              <div id="donutLegendContainer" class="flex-1 space-y-1 text-xs overflow-hidden"></div>
             </div>
           </div>
 
@@ -320,32 +321,33 @@
         </div>
       </section>
 
-      <!-- ==================== VISTA 4: PREVISIONES CASH FLOW ==================== -->
+      <!-- ==================== VISTA 4: PREVISIONES CASH FLOW (ESTILO CUADRO DE TESORERÍA) ==================== -->
       <section id="view-cashflow" class="hidden space-y-3 max-w-7xl mx-auto">
         <div class="grid grid-cols-2 lg:grid-cols-4 pocket-grid-2 gap-3">
           <div class="bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800">
-            <div class="text-[11px] text-slate-400">Ingresos Fijos / Mes</div>
+            <div class="text-[11px] text-slate-400">Entradas Previstas / Mes</div>
             <div id="cfFixedIncome" class="text-lg font-bold text-emerald-500 mt-0.5">0,00 €</div>
           </div>
           <div class="bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800">
-            <div class="text-[11px] text-slate-400">Recibos y Suministros / Mes</div>
+            <div class="text-[11px] text-slate-400">Salidas Previstas / Mes</div>
             <div id="cfFixedExpense" class="text-lg font-bold text-rose-500 mt-0.5">0,00 €</div>
           </div>
           <div class="bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800">
-            <div class="text-[11px] text-slate-400">Ahorro Fijo Mensual</div>
+            <div class="text-[11px] text-slate-400">Flujo Neto Mensual</div>
             <div id="cfMonthlySave" class="text-lg font-bold text-indigo-500 mt-0.5">0,00 €</div>
           </div>
           <div class="bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800">
-            <div class="text-[11px] text-slate-400">Liquidez Bancos a 30 Días</div>
+            <div class="text-[11px] text-slate-400">Saldo Proyectado (30d)</div>
             <div id="cfThirtyDaysProj" class="text-lg font-bold text-sky-500 mt-0.5">0,00 €</div>
           </div>
         </div>
 
+        <!-- ALTA DE PARTIDAS RECURRENTES -->
         <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800">
           <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
             <div>
               <h3 class="font-bold text-sm">Programar Ingreso o Gasto Recurrente</h3>
-              <p class="text-[11px] text-slate-400">Indica en qué cuenta entra o sale y qué día del mes suele cargarse para calcular tu liquidez futura.</p>
+              <p class="text-[11px] text-slate-400">Define en qué cuenta entra o sale, qué día del mes cae y su importe para construir la tabla de tesorería.</p>
             </div>
             <div class="flex items-center gap-1.5">
               <select id="cfRoundStep" onchange="detectRecurringFromTransactions()" class="px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[11px]">
@@ -358,10 +360,10 @@
           </div>
 
           <div class="grid grid-cols-2 sm:grid-cols-12 gap-2">
-            <input id="newRecName" type="text" placeholder="Concepto (ej. Gimnasio, Luz, Nómina...)" class="col-span-2 sm:col-span-3 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs" />
+            <input id="newRecName" type="text" placeholder="Concepto (ej. Nómina, Luz, Gimnasio...)" class="col-span-2 sm:col-span-3 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs" />
             <select id="newRecType" class="col-span-1 sm:col-span-2 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs">
-              <option value="expense">Gasto (-)</option>
-              <option value="income">Ingreso (+)</option>
+              <option value="income">Debe / Entrada (+)</option>
+              <option value="expense">Haber / Salida (-)</option>
             </select>
             <input id="newRecAmount" type="number" step="0.01" placeholder="Importe €" class="col-span-1 sm:col-span-2 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold" />
             <select id="newRecAccount" class="col-span-1 sm:col-span-2 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs">
@@ -370,40 +372,60 @@
               <option value="ing_ahorro">ING Ahorro</option>
               <option value="efectivo">Efectivo</option>
             </select>
-            <input id="newRecDay" type="number" min="1" max="31" value="1" title="Día del mes en que ocurre (1 a 31)" placeholder="Día (1-31)" class="col-span-1 sm:col-span-1 px-2 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-center" />
+            <input id="newRecDay" type="number" min="1" max="31" value="1" title="Día del mes en que ocurre (1 a 31)" placeholder="Día" class="col-span-1 sm:col-span-1 px-2 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-center" />
             <button type="button" onclick="addManualRecurring()" class="col-span-2 sm:col-span-2 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold">+ Añadir Previsión</button>
           </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 pocket-stack gap-3">
-          <div class="lg:col-span-5 bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-col">
-            <h3 class="font-bold text-sm mb-2">Partidas Programadas (Activas)</h3>
-            <div id="recurringItemsList" class="space-y-1.5 max-h-72 overflow-y-auto custom-scroll pr-1"></div>
+        <!-- TABLA PRINCIPAL DE PREVISIONES POR CUENTA (ESTILO TESORERÍA CON FECHA, CONCEPTO, DEBE, HABER, SALDO) -->
+        <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h3 class="font-bold text-sm">Cuadro de Previsiones y Saldo Diario por Cuenta</h3>
+              <p class="text-[11px] text-slate-400">Cada fila muestra la fecha, el movimiento previsto, entradas (Debe), salidas (Haber) y el saldo resultante.</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-1.5">
+              <select id="cfTimelineAccount" onchange="renderCashFlow()" class="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold">
+                <option value="ing_corriente">🧡 ING Corriente</option>
+                <option value="ing_ahorro">💰 ING Ahorro</option>
+                <option value="ing_nocuenta">💳 ING NoCuenta</option>
+                <option value="efectivo">💵 Efectivo</option>
+                <option value="hucha_monedas">🪙 Hucha Colección</option>
+                <option value="all">📋 Todas las cuentas (Consolidado)</option>
+              </select>
+              <select id="cfTimelineDays" onchange="renderCashFlow()" class="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs">
+                <option value="7">Próximos 7 días</option>
+                <option value="15">Próximos 15 días</option>
+                <option value="30" selected>Próximos 30 días</option>
+                <option value="60">Próximos 60 días</option>
+              </select>
+              <label class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs cursor-pointer">
+                <input id="cfShowEmptyDays" type="checkbox" onchange="renderCashFlow()" class="rounded" />
+                Mostrar días sin movimientos
+              </label>
+            </div>
           </div>
 
-          <div class="lg:col-span-7 bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-col">
-            <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
-              <div>
-                <h3 class="font-bold text-sm">Cronograma de Vencimientos y Saldo por Fecha</h3>
-                <p class="text-[11px] text-slate-400">Simula día a día cómo queda el saldo de la cuenta tras cada cargo.</p>
-              </div>
-              <div class="flex items-center gap-1.5">
-                <select id="cfTimelineAccount" onchange="renderCashFlow()" class="px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold">
-                  <option value="all">Todas las cuentas</option>
-                  <option value="ing_corriente">ING Corriente</option>
-                  <option value="ing_nocuenta">ING NoCuenta</option>
-                  <option value="ing_ahorro">ING Ahorro</option>
-                  <option value="efectivo">Efectivo</option>
-                </select>
-                <select id="cfTimelineDays" onchange="renderCashFlow()" class="px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs">
-                  <option value="7">7 días</option>
-                  <option value="30" selected>30 días</option>
-                  <option value="60">60 días</option>
-                </select>
-              </div>
-            </div>
-            <div id="cfTimelineList" class="space-y-1.5 max-h-72 overflow-y-auto custom-scroll pr-1"></div>
+          <div class="overflow-x-auto custom-scroll rounded-xl border border-slate-200 dark:border-slate-800">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="bg-slate-800 text-white">
+                  <th class="py-2 px-3 font-semibold border-r border-slate-700 w-28">Fecha</th>
+                  <th class="py-2 px-3 font-semibold border-r border-slate-700">Concepto</th>
+                  <th class="py-2 px-3 font-semibold border-r border-slate-700 text-right w-28">Debe (+)</th>
+                  <th class="py-2 px-3 font-semibold border-r border-slate-700 text-right w-28">Haber (-)</th>
+                  <th class="py-2 px-3 font-semibold text-right w-32">Saldo</th>
+                </tr>
+              </thead>
+              <tbody id="cfTreasuryTableBody" class="divide-y divide-slate-200 dark:divide-slate-800"></tbody>
+            </table>
           </div>
+        </div>
+
+        <!-- PARTIDAS RECURRENTES PROGRAMADAS -->
+        <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800">
+          <h3 class="font-bold text-sm mb-2">Partidas Recurrentes Programadas (Activar / Desactivar / Eliminar)</h3>
+          <div id="recurringItemsList" class="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-60 overflow-y-auto custom-scroll pr-1"></div>
         </div>
       </section>
 
@@ -533,7 +555,7 @@
         <button type="button" onclick="addQcAmount(20)" class="py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-xs font-semibold">+20€</button>
         <button type="button" onclick="document.getElementById('qcAmount').value=''" class="py-1.5 rounded-lg bg-rose-500/15 text-rose-500 text-xs font-semibold">C</button>
       </div>
-      <div id="qcQuickCoins" class="hidden grid grid-cols-4 gap-1.5 mt-2">
+      <div id="qcQuickCoins" class="hidden grid-cols-4 gap-1.5 mt-2">
         <button type="button" onclick="addQcAmount(2)" class="py-1.5 rounded-lg bg-amber-500/20 text-amber-500 text-xs font-bold">+2,00 €</button>
         <button type="button" onclick="addQcAmount(1)" class="py-1.5 rounded-lg bg-amber-500/20 text-amber-500 text-xs font-bold">+1,00 €</button>
         <button type="button" onclick="addQcAmount(0.5)" class="py-1.5 rounded-lg bg-amber-500/20 text-amber-500 text-xs font-bold">+0,50 €</button>
@@ -684,7 +706,7 @@
       <input id="ocrFileInput" type="file" accept="image/*" onchange="handleOcrFile(event)" class="hidden" />
     </label>
 
-    <div id="ocrProgressBox" class="hidden text-center text-xs text-sky-400 py-1">⏳ Analizando texto del ticket con OCR...</div>
+    <div id="ocrProgressBox" class="hidden text-center text-xs text-sky-400 py-1">⏳ Procesando imagen y leyendo ticket con OCR...</div>
 
     <div class="grid grid-cols-2 gap-2">
       <div>
@@ -840,7 +862,7 @@
     { id: 'ing_ahorro', name: 'ING Ahorro', icon: '💰', color: 'text-amber-500' },
     { id: 'ing_nocuenta', name: 'ING NoCuenta', icon: '💳', color: 'text-sky-500' },
     { id: 'efectivo', name: 'Efectivo', icon: '💵', color: 'text-emerald-500' },
-    { id: 'hucha_monedas', name: 'Hucha Colección', icon: '🪙', color: 'text-yellow-400' }
+    { id: 'hucha_monedas', name: 'Hucha Colección', icon: '🪙', color: 'text-amber-400' }
   ];
 
   const DONUT_COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ec4899', '#06b6d4', '#8b5cf6'];
@@ -872,7 +894,8 @@
     qdDir: 'i_owe',
     qdSelectedFriends: [],
     ocrTicketData: null,
-    editTxTicketData: null
+    editTxTicketData: null,
+    donutSelected: null
   };
 
   let fbAuth = null, fbDb = null, fbUser = null, fbUnsub = null, isApplyingRemote = false;
@@ -1445,7 +1468,7 @@
     reader.readAsText(file);
   }
 
-  // ==================== OCR Y EDICIÓN DE MOVIMIENTOS ====================
+  // ==================== OCR MEJORADO Y EDICIÓN DE MOVIMIENTOS ====================
   function compressImage(file) {
     return new Promise((resolve) => {
       const reader = new FileReader();
@@ -1453,12 +1476,12 @@
         const img = new Image();
         img.onload = () => {
           const canvas = document.createElement('canvas');
-          const maxW = 900;
+          const maxW = 1000;
           const scale = Math.min(1, maxW / img.width);
           canvas.width = img.width * scale;
           canvas.height = img.height * scale;
           canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-          resolve(canvas.toDataURL('image/jpeg', 0.72));
+          resolve(canvas.toDataURL('image/jpeg', 0.78));
         };
         img.src = e.target.result;
       };
@@ -1466,25 +1489,150 @@
     });
   }
 
+  function createHighContrastOcrCanvas(img) {
+    const canvas = document.createElement('canvas');
+    const targetW = Math.min(1600, Math.max(900, img.width));
+    const scale = targetW / img.width;
+    canvas.width = Math.round(img.width * scale);
+    canvas.height = Math.round(img.height * scale);
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const d = imgData.data;
+    for (let i = 0; i < d.length; i += 4) {
+      let gray = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
+      // Aumentar contraste para tickets térmicos claros
+      gray = (gray - 128) * 1.45 + 128;
+      gray = Math.max(0, Math.min(255, gray));
+      d[i] = d[i + 1] = d[i + 2] = gray;
+    }
+    ctx.putImageData(imgData, 0, 0);
+    return canvas;
+  }
+
+  function parseOcrTextFields(rawText) {
+    const lines = rawText.split(/\r?\n/).map(l => l.replace(/\s+/g, ' ').trim()).filter(Boolean);
+    let concept = '';
+    let amount = null;
+    let dateIso = null;
+
+    // 1. Buscar fecha (DD/MM/AAAA, DD-MM-AAAA, DD/MM/AA o AAAA-MM-DD)
+    const fullText = rawText.replace(/\s+/g, ' ');
+    const dateMatch1 = fullText.match(/\b(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})\b/);
+    if (dateMatch1) {
+      const dd = dateMatch1[1].padStart(2, '0');
+      const mm = dateMatch1[2].padStart(2, '0');
+      let yyyy = dateMatch1[3];
+      if (yyyy.length === 2) yyyy = '20' + yyyy;
+      if (Number(mm) >= 1 && Number(mm) <= 12 && Number(dd) >= 1 && Number(dd) <= 31) {
+        dateIso = `${yyyy}-${mm}-${dd}`;
+      }
+    } else {
+      const dateMatch2 = fullText.match(/\b(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})\b/);
+      if (dateMatch2) {
+        dateIso = `${dateMatch2[1]}-${dateMatch2[2].padStart(2, '0')}-${dateMatch2[3].padStart(2, '0')}`;
+      }
+    }
+
+    // 2. Buscar importe (priorizar líneas con TOTAL / IMPORTE / PAGAR / EUR)
+    const parseEuroNum = (str) => {
+      const clean = str.replace(/[^\d.,]/g, '');
+      if (!clean) return NaN;
+      // Si tiene coma y punto, el último separador suele ser decimal
+      if (clean.includes(',') && clean.includes('.')) {
+        if (clean.lastIndexOf(',') > clean.lastIndexOf('.')) {
+          return parseFloat(clean.replace(/\./g, '').replace(',', '.'));
+        }
+        return parseFloat(clean.replace(/,/g, ''));
+      }
+      if (clean.includes(',')) {
+        const parts = clean.split(',');
+        if (parts[parts.length - 1].length === 2) {
+          return parseFloat(clean.replace(/\./g, '').replace(',', '.'));
+        }
+        return parseFloat(clean.replace(/,/g, ''));
+      }
+      return parseFloat(clean);
+    };
+
+    const totalLines = lines.filter(l => /\b(total|importe|a pagar|pagar|cobro|eur|€)\b/i.test(l));
+    for (let i = totalLines.length - 1; i >= 0; i--) {
+      const nums = totalLines[i].match(/\d{1,5}(?:[.,]\d{1,2})?/g);
+      if (nums) {
+        const valid = nums.map(parseEuroNum).filter(n => !isNaN(n) && n > 0 && n < 10000);
+        if (valid.length > 0) {
+          amount = valid[valid.length - 1];
+          break;
+        }
+      }
+    }
+    if (amount === null) {
+      const allDec = fullText.match(/\b\d{1,4}[.,]\d{2}\b/g);
+      if (allDec) {
+        const nums = allDec.map(parseEuroNum).filter(n => !isNaN(n) && n > 0 && n < 10000);
+        if (nums.length > 0) amount = Math.max(...nums);
+      }
+    }
+
+    // 3. Buscar nombre del comercio en las primeras líneas útiles
+    const skipWords = /^(ticket|factura|simplificada|recibo|gracias|nif|cif|tel|tlf|fecha|hora|iva|base|total|su\s*ticket)/i;
+    for (const line of lines.slice(0, 8)) {
+      if (line.length < 3 || line.length > 45) continue;
+      if (skipWords.test(line)) continue;
+      if (/^[\d\s.,:/-]+$/.test(line)) continue;
+      concept = line.slice(0, 42);
+      break;
+    }
+
+    return { concept, amount, dateIso };
+  }
+
   async function handleOcrFile(e) {
     const file = e.target.files[0];
     if (!file) return;
-    document.getElementById('ocrProgressBox').classList.remove('hidden');
-    ui.ocrTicketData = await compressImage(file);
+    const prog = document.getElementById('ocrProgressBox');
+    prog.textContent = '⏳ Procesando imagen y leyendo ticket con OCR...';
+    prog.classList.remove('hidden');
+
     try {
+      ui.ocrTicketData = await compressImage(file);
+      const dataUrl = await new Promise((resolve) => {
+        const r = new FileReader();
+        r.onload = () => resolve(r.result);
+        r.readAsDataURL(file);
+      });
+      const img = await new Promise((resolve, reject) => {
+        const im = new Image();
+        im.onload = () => resolve(im);
+        im.onerror = reject;
+        im.src = dataUrl;
+      });
+      const procCanvas = createHighContrastOcrCanvas(img);
+
       if (typeof Tesseract !== 'undefined') {
-        const res = await Tesseract.recognize(file, 'spa');
+        const res = await Tesseract.recognize(procCanvas, 'spa', {
+          logger: (m) => {
+            if (m.status === 'recognizing text' && typeof m.progress === 'number') {
+              prog.textContent = `⏳ Leyendo ticket... ${Math.round(m.progress * 100)}%`;
+            }
+          }
+        });
         const txt = res.data.text || '';
-        const lines = txt.split('\n').map(l => l.trim()).filter(Boolean);
-        if (lines.length > 0) document.getElementById('ocrConcept').value = lines[0].slice(0, 40);
-        const matches = txt.match(/\d+[.,]\d{2}/g);
-        if (matches) {
-          const nums = matches.map(m => parseFloat(m.replace(',', '.'))).filter(n => !isNaN(n) && n < 5000);
-          if (nums.length > 0) document.getElementById('ocrAmount').value = Math.max(...nums).toFixed(2);
+        const parsed = parseOcrTextFields(txt);
+        if (parsed.concept) document.getElementById('ocrConcept').value = parsed.concept;
+        if (parsed.amount !== null && !isNaN(parsed.amount)) document.getElementById('ocrAmount').value = parsed.amount.toFixed(2);
+        if (parsed.dateIso) document.getElementById('ocrDate').value = parsed.dateIso;
+        if (!parsed.concept && parsed.amount === null) {
+          prog.textContent = '⚠️ No se pudo leer texto claro; revisa o rellena los campos manualmente.';
+          setTimeout(() => prog.classList.add('hidden'), 3500);
+          return;
         }
       }
-    } catch (err) { console.warn(err); }
-    finally { document.getElementById('ocrProgressBox').classList.add('hidden'); }
+    } catch (err) {
+      console.warn('OCR error:', err);
+    } finally {
+      if (!prog.textContent.startsWith('⚠️')) prog.classList.add('hidden');
+    }
   }
 
   function saveOcrTransaction() {
@@ -1503,6 +1651,8 @@
     state.transactions.unshift(tx);
     evaluateSharedRulesForTx(tx);
     ui.ocrTicketData = null;
+    document.getElementById('ocrAmount').value = '';
+    document.getElementById('ocrConcept').value = '';
     closeModal('modalOcr');
     saveState();
   }
@@ -1587,7 +1737,7 @@
     openModal('modalViewTicket');
   }
 
-  // ==================== CASH FLOW Y CRONOGRAMA DE VENCIMIENTOS ====================
+  // ==================== CASH FLOW Y TABLA DE TESORERÍA ====================
   function detectRecurringFromTransactions(silent = false) {
     const step = parseInt(document.getElementById('cfRoundStep')?.value || '5');
     const utilityKeywords = ['luz', 'iberdrola', 'endesa', 'naturgy', 'agua', 'hidrogea', 'gas', 'teléfono', 'internet', 'digi', 'movistar', 'vodafone', 'orange', 'gasolina'];
@@ -1691,6 +1841,18 @@
     return events;
   }
 
+  function formatEsDate(isoStr) {
+    if (!isoStr || !isoStr.includes('-')) return isoStr;
+    const [y, m, d] = isoStr.split('-');
+    return `${d}/${m}/${y}`;
+  }
+
+  function selectDonutSlice(catName, amount, pct) {
+    ui.donutSelected = { catName, amount, pct };
+    const badge = document.getElementById('donutSelectedBadge');
+    if (badge) badge.textContent = `${catName}: ${fmt(amount)} (${pct}%)`;
+  }
+
   // ==================== RENDERIZADO ====================
   function renderAll() {
     try {
@@ -1733,7 +1895,7 @@
       const deficit = endBal < 0 ? Math.abs(endBal) : 0;
 
       return `
-        <div onclick="setTab('cashflow')" class="cursor-pointer p-2.5 rounded-xl border ${deficit > 0 ? 'border-rose-500/50 bg-rose-500/5' : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-850'} hover:border-indigo-500 transition-colors">
+        <div onclick="document.getElementById('cfTimelineAccount').value='${accId}'; setTab('cashflow');" class="cursor-pointer p-2.5 rounded-xl border ${deficit > 0 ? 'border-rose-500/50 bg-rose-500/5' : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-850'} hover:border-indigo-500 transition-colors">
           <div class="flex items-center justify-between text-xs font-semibold">
             <span>${meta.icon} ${meta.name}</span>
             <span class="text-[11px] px-1.5 py-0.5 rounded-md ${deficit > 0 ? 'bg-rose-500/20 text-rose-500 font-bold' : 'bg-emerald-500/15 text-emerald-500'}">
@@ -1825,41 +1987,54 @@
     const topCats = Object.entries(catMap).sort((a, b) => b[1] - a[1]).slice(0, 5);
     const donutBox = document.getElementById('donutChartContainer');
     const legendBox = document.getElementById('donutLegendContainer');
+    const badge = document.getElementById('donutSelectedBadge');
 
     if (topCats.length === 0 || totalCatExp === 0) {
       donutBox.innerHTML = `<div class="w-28 h-28 rounded-full border-8 border-slate-200 dark:border-slate-800 flex items-center justify-center text-[11px] text-slate-400">Sin gastos</div>`;
       legendBox.innerHTML = `<div class="text-xs text-slate-400">Registra gastos este mes para ver el gráfico de disco.</div>`;
+      if (badge) badge.textContent = 'Sin gastos este mes';
     } else {
       let cumulative = 0;
       const radius = 40;
       const circumference = 2 * Math.PI * radius;
       const circles = topCats.map(([cat, val], idx) => {
-        const pct = val / totalCatExp;
-        const dash = pct * circumference;
+        const pct = Math.round((val / totalCatExp) * 100);
+        const frac = val / totalCatExp;
+        const dash = frac * circumference;
         const offset = -cumulative * circumference;
-        cumulative += pct;
+        cumulative += frac;
         const color = DONUT_COLORS[idx % DONUT_COLORS.length];
-        return `<circle r="${radius}" cx="50" cy="50" fill="transparent" stroke="${color}" stroke-width="14" stroke-dasharray="${dash} ${circumference}" stroke-dashoffset="${offset}" transform="rotate(-90 50 50)"></circle>`;
+        const safeCat = cat.replace(/'/g, "\\'");
+        return `<circle r="${radius}" cx="50" cy="50" fill="transparent" stroke="${color}" stroke-width="14" stroke-dasharray="${dash} ${circumference}" stroke-dashoffset="${offset}" transform="rotate(-90 50 50)" class="cursor-pointer hover:opacity-80 transition-opacity" onmouseenter="selectDonutSlice('${safeCat}', ${val}, ${pct})" onclick="selectDonutSlice('${safeCat}', ${val}, ${pct})"><title>${cat}: ${fmt(val)} (${pct}%)</title></circle>`;
       }).join('');
 
       donutBox.innerHTML = `
         <svg viewBox="0 0 100 100" class="w-28 h-28">${circles}</svg>
         <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
           <span class="text-[9px] text-slate-400">TOTAL</span>
-          <span class="text-[11px] font-bold">${Math.round(totalCatExp)} €</span>
+          <span class="text-[11px] font-bold">${fmt(totalCatExp)}</span>
         </div>
       `;
+
+      if (ui.donutSelected && catMap[ui.donutSelected.catName] !== undefined) {
+        const selVal = catMap[ui.donutSelected.catName];
+        const selPct = Math.round((selVal / totalCatExp) * 100);
+        if (badge) badge.textContent = `${ui.donutSelected.catName}: ${fmt(selVal)} (${selPct}%)`;
+      } else if (badge) {
+        badge.textContent = 'Pasa o pulsa un sector';
+      }
 
       legendBox.innerHTML = topCats.map(([cat, val], idx) => {
         const pct = Math.round((val / totalCatExp) * 100);
         const color = DONUT_COLORS[idx % DONUT_COLORS.length];
+        const safeCat = cat.replace(/'/g, "\\'");
         return `
-          <div class="flex items-center justify-between gap-1.5">
+          <div onmouseenter="selectDonutSlice('${safeCat}', ${val}, ${pct})" onclick="selectDonutSlice('${safeCat}', ${val}, ${pct})" class="cursor-pointer flex items-center justify-between gap-1.5 py-0.5 px-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800">
             <span class="flex items-center gap-1.5 truncate">
               <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background:${color}"></span>
               <span class="truncate text-[11px]">${cat}</span>
             </span>
-            <span class="text-[11px] font-bold shrink-0">${pct}%</span>
+            <span class="text-[11px] font-bold shrink-0">${fmt(val)}</span>
           </div>
         `;
       }).join('');
@@ -2012,16 +2187,87 @@
     });
 
     const monthlyNet = fInc - fExp;
-    const bankLiquid = getAccountBalance('ing_corriente') + getAccountBalance('ing_ahorro') + getAccountBalance('ing_nocuenta');
+    const selAcc = document.getElementById('cfTimelineAccount').value;
+    const days = parseInt(document.getElementById('cfTimelineDays').value || '30');
+    const showEmpty = document.getElementById('cfShowEmptyDays')?.checked;
+
+    const startBal = selAcc === 'all'
+      ? ACCOUNTS_META.reduce((s, a) => s + getAccountBalance(a.id), 0)
+      : getAccountBalance(selAcc);
+
+    const events = buildUpcomingEvents(days, selAcc);
+    const eventsByDate = {};
+    events.forEach(ev => {
+      if (!eventsByDate[ev.date]) eventsByDate[ev.date] = [];
+      eventsByDate[ev.date].push(ev);
+    });
+
+    let running = startBal;
+    const rowsHtml = [];
+
+    // Fila inicial de saldo actual
+    rowsHtml.push(`
+      <tr class="bg-emerald-500/10 font-bold">
+        <td class="py-2 px-3 border-r border-slate-200 dark:border-slate-800 font-mono text-[11px]">${formatEsDate(todayISO())}</td>
+        <td class="py-2 px-3 border-r border-slate-200 dark:border-slate-800">Saldo inicial</td>
+        <td class="py-2 px-3 border-r border-slate-200 dark:border-slate-800 text-right text-emerald-600 dark:text-emerald-400">${fmt(startBal)}</td>
+        <td class="py-2 px-3 border-r border-slate-200 dark:border-slate-800 text-right text-slate-400">- €</td>
+        <td class="py-2 px-3 text-right ${running < 0 ? 'bg-rose-500/20 text-rose-500' : ''}">${fmt(running)}</td>
+      </tr>
+    `);
+
+    const start = new Date();
+    start.setHours(0, 0, 0, 0);
+
+    for (let offset = 1; offset <= days; offset++) {
+      const d = new Date(start.getTime() + offset * 86400000);
+      const iso = d.toISOString().slice(0, 10);
+      const dayEvs = eventsByDate[iso] || [];
+
+      if (dayEvs.length === 0) {
+        if (showEmpty) {
+          rowsHtml.push(`
+            <tr class="text-slate-400">
+              <td class="py-1.5 px-3 border-r border-slate-200 dark:border-slate-800 font-mono text-[11px]">${formatEsDate(iso)}</td>
+              <td class="py-1.5 px-3 border-r border-slate-200 dark:border-slate-800">Movimientos</td>
+              <td class="py-1.5 px-3 border-r border-slate-200 dark:border-slate-800 text-right">- €</td>
+              <td class="py-1.5 px-3 border-r border-slate-200 dark:border-slate-800 text-right">- €</td>
+              <td class="py-1.5 px-3 text-right font-semibold ${running < 0 ? 'bg-rose-500/20 text-rose-500' : 'text-slate-700 dark:text-slate-200'}">${fmt(running)}</td>
+            </tr>
+          `);
+        }
+      } else {
+        dayEvs.forEach(ev => {
+          const isDebe = ev.amount >= 0;
+          const debeVal = isDebe ? Math.abs(ev.amount) : 0;
+          const haberVal = !isDebe ? Math.abs(ev.amount) : 0;
+          running += ev.amount;
+          const accLabel = selAcc === 'all' ? ` [${ACCOUNTS_META.find(a => a.id === ev.account)?.name || ev.account}]` : '';
+          const negCell = running < 0 ? 'bg-rose-500/25 text-rose-500 font-extrabold' : 'font-bold';
+
+          rowsHtml.push(`
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-850/70">
+              <td class="py-2 px-3 border-r border-slate-200 dark:border-slate-800 font-mono text-[11px]">${formatEsDate(iso)}</td>
+              <td class="py-2 px-3 border-r border-slate-200 dark:border-slate-800 font-medium">${ev.name}<span class="text-[10px] text-slate-400">${accLabel}</span></td>
+              <td class="py-2 px-3 border-r border-slate-200 dark:border-slate-800 text-right font-semibold ${debeVal > 0 ? 'text-emerald-500' : 'text-slate-400'}">${debeVal > 0 ? fmt(debeVal) : '- €'}</td>
+              <td class="py-2 px-3 border-r border-slate-200 dark:border-slate-800 text-right font-semibold ${haberVal > 0 ? 'text-rose-500' : 'text-slate-400'}">${haberVal > 0 ? fmt(haberVal) : '- €'}</td>
+              <td class="py-2 px-3 text-right ${negCell}">${fmt(running)}</td>
+            </tr>
+          `);
+        });
+      }
+    }
+
+    document.getElementById('cfTreasuryTableBody').innerHTML = rowsHtml.join('');
 
     document.getElementById('cfFixedIncome').textContent = fmt(fInc);
     document.getElementById('cfFixedExpense').textContent = fmt(fExp);
     document.getElementById('cfMonthlySave').textContent = (monthlyNet >= 0 ? '+' : '') + fmt(monthlyNet);
     document.getElementById('cfMonthlySave').className = `text-lg font-bold mt-0.5 ${monthlyNet >= 0 ? 'text-indigo-500' : 'text-rose-500'}`;
-    document.getElementById('cfThirtyDaysProj').textContent = fmt(bankLiquid + monthlyNet);
+    document.getElementById('cfThirtyDaysProj').textContent = fmt(running);
 
     document.getElementById('recurringItemsList').innerHTML = (state.recurring || []).length === 0
-      ? '<div class="text-xs text-slate-400 py-6 text-center">No hay partidas recurrentes aún. Añade una arriba o pulsa Detectar del banco.</div>'
+      ? '<div class="text-xs text-slate-400 py-6 text-center col-span-2">No hay partidas recurrentes aún. Añade una arriba o pulsa Detectar del banco.</div>'
       : state.recurring.map(r => {
           const accName = ACCOUNTS_META.find(a => a.id === (r.account || 'ing_corriente'))?.name || 'ING Corriente';
           return `
@@ -2034,47 +2280,12 @@
                 </div>
               </div>
               <div class="flex items-center gap-2 shrink-0">
-                <span class="text-xs font-bold ${r.amount >= 0 ? 'text-emerald-500' : 'text-rose-500'}">${fmt(r.amount)}</span>
+                <span class="text-xs font-bold ${r.amount >= 0 ? 'text-emerald-500' : 'text-rose-500'}">${r.amount >= 0 ? '+' : ''}${fmt(r.amount)}</span>
                 <button type="button" onclick="deleteRecurring('${r.id}')" class="text-slate-400 hover:text-rose-500 text-xs">✕</button>
               </div>
             </div>
           `;
         }).join('');
-
-    const selAcc = document.getElementById('cfTimelineAccount').value;
-    const days = parseInt(document.getElementById('cfTimelineDays').value || '30');
-    const events = buildUpcomingEvents(days, selAcc);
-
-    const runningBalances = {};
-    ACCOUNTS_META.forEach(a => { runningBalances[a.id] = getAccountBalance(a.id); });
-
-    const timelineBox = document.getElementById('cfTimelineList');
-    if (events.length === 0) {
-      timelineBox.innerHTML = `<div class="text-xs text-slate-400 py-8 text-center">No hay vencimientos programados en los próximos ${days} días para esta cuenta.</div>`;
-    } else {
-      timelineBox.innerHTML = events.map(ev => {
-        runningBalances[ev.account] += ev.amount;
-        const postBal = runningBalances[ev.account];
-        const accMeta = ACCOUNTS_META.find(a => a.id === ev.account);
-        const isDanger = postBal < 0;
-
-        return `
-          <div class="p-2.5 rounded-xl border ${isDanger ? 'border-rose-500/50 bg-rose-500/10' : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-850'} flex items-center justify-between gap-2 text-xs">
-            <div class="min-w-0">
-              <div class="font-bold flex items-center gap-1.5">
-                <span class="text-slate-400 font-mono text-[11px]">${ev.date}</span>
-                <span class="truncate">${ev.name}</span>
-              </div>
-              <div class="text-[11px] text-slate-400">${accMeta?.icon || ''} ${accMeta?.name || ev.account} ${isDanger ? '· ⚠️ Falta liquidez, hacer traspaso' : ''}</div>
-            </div>
-            <div class="text-right shrink-0">
-              <div class="font-bold ${ev.amount >= 0 ? 'text-emerald-500' : 'text-rose-500'}">${ev.amount >= 0 ? '+' : ''}${fmt(ev.amount)}</div>
-              <div class="text-[10px] ${isDanger ? 'text-rose-500 font-bold' : 'text-slate-400'}">Saldo tras cargo: ${fmt(postBal)}</div>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
   }
 
   function renderSettings() {
