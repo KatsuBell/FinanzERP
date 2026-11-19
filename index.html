@@ -155,7 +155,6 @@
 
       <!-- ==================== VISTA 1: RESUMEN GENERAL ==================== -->
       <section id="view-dashboard" class="space-y-4 max-w-7xl mx-auto">
-        <!-- Accesos ultra-rápidos visibles solo en Modo Pocket Móvil -->
         <div id="pocketQuickBar" class="hidden grid-cols-3 gap-2">
           <button type="button" onclick="openModal('modalQuickCash')" class="p-3 rounded-2xl bg-emerald-600 text-white flex flex-col items-center justify-center gap-1 shadow-sm">
             <span class="text-xl">💵</span><span class="text-[11px] font-bold">Efectivo / Hucha</span>
@@ -192,7 +191,7 @@
           </div>
         </div>
 
-        <!-- MIS CUENTAS Y HUCHAS (CLICABLES PARA VER SU HISTORIAL) -->
+        <!-- MIS CUENTAS Y HUCHAS -->
         <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
           <div class="flex items-center justify-between mb-2.5">
             <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Mis Cuentas y Huchas <span class="normal-case font-normal">(clic en una cuenta para ver sus movimientos)</span></h2>
@@ -215,7 +214,6 @@
 
         <!-- GRÁFICOS (BARRAS + DISCO) Y ACTIVIDAD RECIENTE -->
         <div class="grid grid-cols-1 lg:grid-cols-12 pocket-stack gap-4">
-          <!-- Gráfico Barras 6 Meses -->
           <div class="lg:col-span-5 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
             <div class="flex items-center justify-between mb-2">
               <h3 class="font-bold text-sm">Evolución (6 Meses)</h3>
@@ -227,7 +225,6 @@
             <div id="chartSixMonths" class="h-44 flex items-end justify-between gap-2 pt-4 pb-1 px-2 border-b border-slate-200 dark:border-slate-800"></div>
           </div>
 
-          <!-- Gráfico de Disco (Donut SVG) por Categorías -->
           <div class="lg:col-span-4 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
             <h3 class="font-bold text-sm mb-2">Distribución de Gastos (Disco)</h3>
             <div class="flex items-center gap-3 my-auto">
@@ -236,7 +233,6 @@
             </div>
           </div>
 
-          <!-- Últimos Movimientos -->
           <div class="lg:col-span-3 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col">
             <div class="flex items-center justify-between mb-2">
               <h3 class="font-bold text-sm">Últimos Movimientos</h3>
@@ -249,7 +245,6 @@
 
       <!-- ==================== VISTA 2: MOVIMIENTOS ==================== -->
       <section id="view-transactions" class="hidden space-y-3 max-w-7xl mx-auto">
-        <!-- Pestañas rápidas por cuenta para saltar con 1 clic -->
         <div id="accountQuickTabs" class="flex items-center gap-1.5 overflow-x-auto pb-1 custom-scroll"></div>
 
         <div class="bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-wrap items-center gap-2">
@@ -274,7 +269,6 @@
           <button type="button" onclick="openNewTxModal()" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold">+ Nuevo</button>
         </div>
 
-        <!-- Tabla Escritorio -->
         <div class="desktop-only-table bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
           <div class="overflow-x-auto custom-scroll">
             <table class="w-full text-left border-collapse text-xs">
@@ -294,7 +288,6 @@
           </div>
         </div>
 
-        <!-- Lista Tarjetas Modo Pocket Móvil -->
         <div id="transactionsMobileCards" class="mobile-cards-list hidden space-y-2"></div>
 
         <div id="txEmptyState" class="hidden py-10 text-center text-slate-400 text-xs">No hay movimientos en esta cuenta o filtro.</div>
@@ -329,7 +322,6 @@
 
       <!-- ==================== VISTA 4: PREVISIONES CASH FLOW ==================== -->
       <section id="view-cashflow" class="hidden space-y-3 max-w-7xl mx-auto">
-        <!-- KPIs Cash Flow -->
         <div class="grid grid-cols-2 lg:grid-cols-4 pocket-grid-2 gap-3">
           <div class="bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800">
             <div class="text-[11px] text-slate-400">Ingresos Fijos / Mes</div>
@@ -349,7 +341,6 @@
           </div>
         </div>
 
-        <!-- FORMULARIO PARA CREAR INGRESOS / GASTOS RECURRENTES POR CUENTA Y DÍA DEL MES -->
         <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800">
           <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
             <div>
@@ -384,7 +375,6 @@
           </div>
         </div>
 
-        <!-- 2 COLUMNAS: LISTA DE PARTIDAS RECURRENTES + CRONOGRAMA DE SALDO POR FECHA Y CUENTA -->
         <div class="grid grid-cols-1 lg:grid-cols-12 pocket-stack gap-3">
           <div class="lg:col-span-5 bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-col">
             <h3 class="font-bold text-sm mb-2">Partidas Programadas (Activas)</h3>
@@ -405,7 +395,7 @@
                   <option value="ing_ahorro">ING Ahorro</option>
                   <option value="efectivo">Efectivo</option>
                 </select>
-                <select id="cfTimelineDays" onchange="renderCashFlow()" class="px-2 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs">
+                <select id="cfTimelineDays" onchange="renderCashFlow()" class="px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs">
                   <option value="7">7 días</option>
                   <option value="30" selected>30 días</option>
                   <option value="60">60 días</option>
@@ -819,12 +809,12 @@
       <span id="fbUserText">No conectado a Firebase</span>
       <button type="button" id="fbLoginBtn" onclick="firebaseGoogleLogin()" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-semibold shrink-0">Iniciar sesión con Google</button>
     </div>
-    <div>
-      <label class="text-xs font-semibold block mb-1">Pega aquí tu bloque `firebaseConfig`:</label>
-      <textarea id="fbConfigTextarea" rows="5" placeholder='const firebaseConfig = { apiKey: "...", authDomain: "...", projectId: "..." };' class="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[11px] font-mono"></textarea>
+    <div id="fbManualConfigSection">
+      <label class="text-xs font-semibold block mb-1">Configuración `firebaseConfig` (opcional si ya está integrada):</label>
+      <textarea id="fbConfigTextarea" rows="4" placeholder='const firebaseConfig = { apiKey: "...", authDomain: "...", projectId: "..." };' class="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[11px] font-mono"></textarea>
     </div>
     <div class="flex justify-end gap-2">
-      <button type="button" onclick="saveFirebaseConfig()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold">Guardar y Conectar</button>
+      <button type="button" id="fbSaveConfigBtn" onclick="saveFirebaseConfig()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold">Guardar y Conectar</button>
     </div>
   </div>
 </div>
@@ -834,15 +824,16 @@
   const STORAGE_KEY = 'finanzerp_state_v4';
   const LEGACY_KEYS = ['finanzerp_state_v3', 'finanzerp_state_v2', 'finanzerp_state_v1'];
   const FB_CFG_KEY = 'finanzerp_fb_cfg';
-  const firebaseConfig = {
-  apiKey: "AIzaSyARC_lHfNvHuHChHDvsUiPumkjzy7S8MGs",
-  authDomain: "finanzerp.firebaseapp.com",
-  projectId: "finanzerp",
-  storageBucket: "finanzerp.firebasestorage.app",
-  messagingSenderId: "314439869978",
-  appId: "1:314439869978:web:6350e159a1d81aab68d3a3"
-};
   const THEME_KEY = 'finanzerp_theme_pref';
+
+  const DEFAULT_FIREBASE_CONFIG = {
+    apiKey: "AIzaSyARC_lHfNvHuHChHDvsUiPumkjzy7S8MGs",
+    authDomain: "finanzerp.firebaseapp.com",
+    projectId: "finanzerp",
+    storageBucket: "finanzerp.firebasestorage.app",
+    messagingSenderId: "314439869978",
+    appId: "1:314439869978:web:6350e159a1d81aab68d3a3"
+  };
 
   const ACCOUNTS_META = [
     { id: 'ing_corriente', name: 'ING Corriente', icon: '🧡', color: 'text-orange-500' },
@@ -1731,7 +1722,6 @@
       `;
     }).join('');
 
-    // Radar 7 días vista por cuenta
     const radarAccounts = ['ing_corriente', 'ing_nocuenta', 'ing_ahorro', 'efectivo'];
     const weekEvents = buildUpcomingEvents(7, 'all');
     document.getElementById('weeklyRadarGrid').innerHTML = radarAccounts.map(accId => {
@@ -1759,7 +1749,6 @@
       `;
     }).join('');
 
-    // KPIs
     const curMonth = todayISO().slice(0, 7);
     let mInc = 0, mExp = 0, pendingTickets = 0;
     (state.transactions || []).forEach(t => {
@@ -1793,7 +1782,6 @@
   }
 
   function renderChartsAndRecent() {
-    // 1. Gráfico de Barras 6 Meses (con altura en píxeles explícita para que nunca colapse)
     const months = [];
     const now = new Date();
     for (let i = 5; i >= 0; i--) {
@@ -1824,7 +1812,6 @@
       `;
     }).join('');
 
-    // 2. Gráfico de Disco (Donut SVG) por Categorías de Gasto
     const curMonth = todayISO().slice(0, 7);
     const catMap = {};
     let totalCatExp = 0;
@@ -1878,7 +1865,6 @@
       }).join('');
     }
 
-    // 3. Actividad reciente
     const recent = (state.transactions || []).slice(0, 6);
     document.getElementById('recentTransactionsList').innerHTML = recent.map(t => {
       const acc = ACCOUNTS_META.find(a => a.id === t.account)?.name || t.account;
@@ -1895,7 +1881,6 @@
   }
 
   function renderTransactions() {
-    // Tabs rápidas por cuenta
     const fAccEl = document.getElementById('filterAccount');
     const curAcc = fAccEl.value;
     const tabsBox = document.getElementById('accountQuickTabs');
@@ -1928,7 +1913,6 @@
 
     document.getElementById('txEmptyState').classList.toggle('hidden', filtered.length > 0);
 
-    // Tabla PC
     document.getElementById('transactionsTableBody').innerHTML = filtered.slice(0, 150).map(t => {
       const acc = ACCOUNTS_META.find(a => a.id === t.account)?.name || t.account;
       return `
@@ -1952,7 +1936,6 @@
       `;
     }).join('');
 
-    // Tarjetas Móvil Pocket
     document.getElementById('transactionsMobileCards').innerHTML = filtered.slice(0, 80).map(t => {
       const acc = ACCOUNTS_META.find(a => a.id === t.account)?.name || t.account;
       return `
@@ -2037,7 +2020,6 @@
     document.getElementById('cfMonthlySave').className = `text-lg font-bold mt-0.5 ${monthlyNet >= 0 ? 'text-indigo-500' : 'text-rose-500'}`;
     document.getElementById('cfThirtyDaysProj').textContent = fmt(bankLiquid + monthlyNet);
 
-    // Lista de partidas recurrentes
     document.getElementById('recurringItemsList').innerHTML = (state.recurring || []).length === 0
       ? '<div class="text-xs text-slate-400 py-6 text-center">No hay partidas recurrentes aún. Añade una arriba o pulsa Detectar del banco.</div>'
       : state.recurring.map(r => {
@@ -2059,12 +2041,10 @@
           `;
         }).join('');
 
-    // Cronograma día a día por cuenta
     const selAcc = document.getElementById('cfTimelineAccount').value;
     const days = parseInt(document.getElementById('cfTimelineDays').value || '30');
     const events = buildUpcomingEvents(days, selAcc);
 
-    // Saldos acumulados por cuenta para simular cada fecha
     const runningBalances = {};
     ACCOUNTS_META.forEach(a => { runningBalances[a.id] = getAccountBalance(a.id); });
 
@@ -2204,78 +2184,36 @@
     const cfg = parseFirebaseConfigText(raw);
     if (!cfg || !cfg.apiKey) return alert('No se pudo leer el firebaseConfig.');
     localStorage.setItem(FB_CFG_KEY, JSON.stringify(cfg));
-    function initFirebaseFromStorage() {
-if (!window._fbModules) return;
-let cfg = (typeof DEFAULT_FIREBASE_CONFIG !== 'undefined' && DEFAULT_FIREBASE_CONFIG.apiKey && !DEFAULT_FIREBASE_CONFIG.apiKey.startsWith('TU_'))
-? DEFAULT_FIREBASE_CONFIG
-: null;
-
-if (!cfg) {
-const raw = localStorage.getItem(FB_CFG_KEY);
-if (raw) {
-try { cfg = JSON.parse(raw); } catch (e) {}
-}
-}
-if (!cfg || !cfg.apiKey) return;
-
-// Ocultar el bloque de configuración manual si ya está integrado en el código
-const cfgBox = document.getElementById('fbConfigTextarea')?.parentElement;
-const saveBtn = document.querySelector('#modalFirebase button[onclick="saveFirebaseConfig()"]');
-if (cfgBox && typeof DEFAULT_FIREBASE_CONFIG !== 'undefined' && !DEFAULT_FIREBASE_CONFIG.apiKey.startsWith('TU_')) {
-cfgBox.classList.add('hidden');
-if (saveBtn) saveBtn.classList.add('hidden');
-} else {
-document.getElementById('fbConfigTextarea').value = JSON.stringify(cfg, null, 2);
-}
-
-try {
-const { initializeApp, getAuth, onAuthStateChanged, getFirestore, doc, onSnapshot } = window._fbModules;
-const app = initializeApp(cfg);
-fbAuth = getAuth(app);
-fbDb = getFirestore(app);
-
-onAuthStateChanged(fbAuth, (user) => {
-fbUser = user;
-updateSyncIndicators();
-if (user) {
-document.getElementById('fbUserText').textContent = Conectado como ${user.email};
-document.getElementById('fbLoginBtn').textContent = 'Cerrar sesión';
-document.getElementById('fbLoginBtn').onclick = () => window._fbModules.signOut(fbAuth);
-
-if (fbUnsub) fbUnsub();
-fbUnsub = onSnapshot(doc(fbDb, 'users', user.uid, 'erp', 'mainState'), (snap) => {
-if (snap.exists()) {
-const remote = snap.data();
-if ((remote.updatedAt 0) > (state.updatedAt 0)) {
-isApplyingRemote = true;
-state = { ...state, ...remote };
-localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-renderAll();
-isApplyingRemote = false;
-}
-} else { saveState(); }
-updateSyncIndicators();
-});
-} else {
-document.getElementById('fbUserText').textContent = 'Listo para sincronizar';
-document.getElementById('fbLoginBtn').textContent = 'Iniciar sesión con Google';
-document.getElementById('fbLoginBtn').onclick = firebaseGoogleLogin;
-}
-});
-} catch (e) { console.error(e); }
-};
+    initFirebaseFromStorage();
     alert('Configuración guardada. Pulsa "Iniciar sesión con Google".');
   }
 
   function initFirebaseFromStorage() {
     if (!window._fbModules) return;
-    const raw = localStorage.getItem(FB_CFG_KEY);
-    if (!raw) return;
-    document.getElementById('fbConfigTextarea').value = raw;
+    let cfg = (typeof DEFAULT_FIREBASE_CONFIG !== 'undefined' && DEFAULT_FIREBASE_CONFIG.apiKey)
+      ? DEFAULT_FIREBASE_CONFIG
+      : null;
+
+    if (!cfg) {
+      const raw = localStorage.getItem(FB_CFG_KEY);
+      if (raw) {
+        try { cfg = JSON.parse(raw); } catch (e) {}
+      }
+    }
+    if (!cfg || !cfg.apiKey) return;
+
+    const cfgSection = document.getElementById('fbManualConfigSection');
+    const saveBtn = document.getElementById('fbSaveConfigBtn');
+    if (typeof DEFAULT_FIREBASE_CONFIG !== 'undefined' && DEFAULT_FIREBASE_CONFIG.apiKey) {
+      if (cfgSection) cfgSection.classList.add('hidden');
+      if (saveBtn) saveBtn.classList.add('hidden');
+    } else {
+      document.getElementById('fbConfigTextarea').value = JSON.stringify(cfg, null, 2);
+    }
+
     try {
-      const cfg = JSON.parse(raw);
-      const { initializeApp, getAuth, onAuthStateChanged, getFirestore, doc, onSnapshot } = window._fbModules;
-      const app = initializeApp(cfg);
+      const { initializeApp, getApps, getAuth, onAuthStateChanged, getFirestore, doc, onSnapshot } = window._fbModules;
+      const app = getApps().length ? getApps()[0] : initializeApp(cfg);
       fbAuth = getAuth(app);
       fbDb = getFirestore(app);
 
@@ -2302,7 +2240,7 @@ document.getElementById('fbLoginBtn').onclick = firebaseGoogleLogin;
             updateSyncIndicators();
           });
         } else {
-          document.getElementById('fbUserText').textContent = 'Configurado, pendiente de iniciar sesión';
+          document.getElementById('fbUserText').textContent = 'Listo para sincronizar con Google';
           document.getElementById('fbLoginBtn').textContent = 'Iniciar sesión con Google';
           document.getElementById('fbLoginBtn').onclick = firebaseGoogleLogin;
         }
@@ -2311,7 +2249,7 @@ document.getElementById('fbLoginBtn').onclick = firebaseGoogleLogin;
   }
 
   async function firebaseGoogleLogin() {
-    if (!fbAuth) return alert('Primero pega y guarda tu firebaseConfig abajo.');
+    if (!fbAuth) return alert('Firebase aún está inicializando, inténtalo de nuevo en un segundo.');
     const { GoogleAuthProvider, signInWithPopup } = window._fbModules;
     try { await signInWithPopup(fbAuth, new GoogleAuthProvider()); closeModal('modalFirebase'); }
     catch (e) { alert('Error en login Google: ' + e.message); }
@@ -2325,11 +2263,11 @@ document.getElementById('fbLoginBtn').onclick = firebaseGoogleLogin;
 </script>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
   import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  window._fbModules = { initializeApp, getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, getFirestore, doc, setDoc, onSnapshot };
+  window._fbModules = { initializeApp, getApps, getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, getFirestore, doc, setDoc, onSnapshot };
   initFirebaseFromStorage();
 </script>
 </body>
