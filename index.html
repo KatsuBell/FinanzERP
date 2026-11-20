@@ -73,7 +73,7 @@
       </button>
       <button type="button" onclick="setTab('transactions')" data-tab="transactions" class="nav-btn w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-colors text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
         <span class="text-base shrink-0">💳</span>
-        <span class="nav-label truncate">Movimientos</span>
+        <span class="nav-label truncate">Movimientos & Mayor</span>
       </button>
       <button type="button" onclick="setTab('debts')" data-tab="debts" class="nav-btn w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-colors text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
         <span class="text-base shrink-0">🤝</span>
@@ -86,7 +86,7 @@
       </button>
       <button type="button" onclick="setTab('settings')" data-tab="settings" class="nav-btn w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-colors text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
         <span class="text-base shrink-0">⚙️</span>
-        <span class="nav-label truncate">Ajustes & Reglas</span>
+        <span class="nav-label truncate">Cuentas, Amigos & Reglas</span>
       </button>
 
       <div class="pt-2 mt-2 border-t border-slate-200 dark:border-slate-800 space-y-1">
@@ -158,7 +158,6 @@
 
       <!-- ==================== VISTA 1: RESUMEN GENERAL ==================== -->
       <section id="view-dashboard" class="space-y-3 max-w-7xl mx-auto">
-        <!-- ACCESOS RÁPIDOS DE DÍA A DÍA EN MÓVIL (3 BOTONES COMPACTOS EN FILA) -->
         <div id="pocketQuickBar" class="pocket-only grid-cols-3 gap-2 w-full">
           <button type="button" onclick="openNewTxModal()" class="w-full py-2 px-2 rounded-xl bg-indigo-600 text-white flex items-center justify-center gap-1.5 shadow-sm">
             <span class="text-sm">✍️</span><span class="text-xs font-bold">Manual</span>
@@ -171,12 +170,11 @@
           </button>
         </div>
 
-        <!-- KPIs (SOLO EN PC / ESCRITORIO) -->
         <div class="pocket-hide grid grid-cols-2 lg:grid-cols-4 gap-3">
           <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-            <div class="text-xs text-slate-400 flex items-center justify-between"><span>Patrimonio Total</span><span>🏦</span></div>
+            <div class="text-xs text-slate-400 flex items-center justify-between"><span>Patrimonio Neto</span><span>🏦</span></div>
             <div id="kpiTotalBalance" class="text-lg sm:text-2xl font-bold mt-1 text-indigo-500">0,00 €</div>
-            <div id="kpiBankOnly" class="text-[11px] text-slate-400 mt-0.5">En bancos: 0,00 €</div>
+            <div id="kpiBankOnly" class="text-[11px] text-slate-400 mt-0.5">Liquidez: 0,00 €</div>
           </div>
           <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
             <div class="text-xs text-slate-400 flex items-center justify-between"><span>Ingresos (Mes)</span><span>📈</span></div>
@@ -195,19 +193,19 @@
           </div>
         </div>
 
-        <!-- MIS CUENTAS Y HUCHAS (CON FECHA DE ÚLTIMO DATO) -->
         <div class="bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-          <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center justify-between gap-2 mb-2">
             <div>
-              <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Saldo de Cuentas y Huchas</h2>
-              <p class="text-[11px] text-slate-400">Fecha del último movimiento registrado en cada cuenta.</p>
+              <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Saldos por Cuenta</h2>
+              <p class="text-[11px] text-slate-400">Pulsa una cuenta para abrir su libro mayor ordenado por fecha y ver su saldo acumulado.</p>
             </div>
-            <button type="button" onclick="openModal('modalAdjustAccounts')" class="text-xs text-indigo-500 hover:underline font-medium shrink-0">Ajustar saldos</button>
+            <div class="flex items-center gap-3 shrink-0">
+              <button type="button" onclick="openModal('modalAdjustAccounts')" class="text-xs text-indigo-500 hover:underline font-medium">Ajustar / Crear cuentas</button>
+            </div>
           </div>
           <div id="accountsGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 pocket-grid-2 gap-2"></div>
         </div>
 
-        <!-- PREVISIÓN PRÓXIMOS DÍAS -->
         <div class="bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-2">
           <div class="flex items-center justify-between gap-2">
             <div>
@@ -220,7 +218,6 @@
           <div id="pocketForecastFeed" class="pocket-only pt-1.5 border-t border-slate-100 dark:border-slate-800 space-y-1"></div>
         </div>
 
-        <!-- GRÁFICOS Y ÚLTIMOS MOVIMIENTOS (SOLO EN PC / ESCRITORIO) -->
         <div class="pocket-hide grid grid-cols-1 lg:grid-cols-12 gap-4">
           <div class="lg:col-span-5 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
             <div class="flex items-center justify-between mb-2">
@@ -247,29 +244,42 @@
           <div class="lg:col-span-3 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col">
             <div class="flex items-center justify-between mb-2">
               <h3 class="font-bold text-sm">Últimos Movimientos</h3>
-              <button type="button" onclick="setTab('transactions')" class="text-xs text-indigo-500 hover:underline font-medium">Todos →</button>
+              <button type="button" onclick="setTab('transactions')" class="text-xs text-indigo-500 hover:underline font-medium">Ver mayor →</button>
             </div>
             <div id="recentTransactionsList" class="space-y-2 flex-1 overflow-y-auto max-h-48 custom-scroll pr-1"></div>
           </div>
         </div>
       </section>
 
-      <!-- ==================== VISTA 2: MOVIMIENTOS ==================== -->
+      <!-- ==================== VISTA 2: MOVIMIENTOS & MAYOR CONTABLE ==================== -->
       <section id="view-transactions" class="hidden space-y-3 max-w-7xl mx-auto">
         <div id="accountQuickTabs" class="flex items-center gap-1.5 overflow-x-auto pb-1 custom-scroll"></div>
 
+        <!-- RESUMEN DE MAYOR PARA LA CUENTA / FILTRO ACTIVO -->
+        <div id="ledgerSummaryBar" class="bg-white dark:bg-slate-900 px-3.5 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs">
+          <div id="ledgerAccountTitle" class="font-bold text-sm">Libro Mayor · Todas las cuentas</div>
+          <div class="flex flex-wrap items-center gap-3">
+            <span>Saldo base: <b id="ledgerBaseBal">0,00 €</b></span>
+            <span>Entradas: <b id="ledgerInSum" class="text-emerald-500">0,00 €</b></span>
+            <span>Salidas: <b id="ledgerOutSum" class="text-rose-500">0,00 €</b></span>
+            <span>Saldo actual: <b id="ledgerCurrentBal" class="text-indigo-500 text-sm">0,00 €</b></span>
+          </div>
+        </div>
+
         <div class="bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-wrap items-center gap-2">
           <input id="filterSearch" oninput="renderTransactions()" type="text" placeholder="Buscar comercio, concepto..." class="flex-1 min-w-[150px] px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs focus:outline-none focus:border-indigo-500" />
-          <select id="filterAccount" onchange="renderTransactions()" class="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs">
+          <select id="filterAccount" onchange="renderTransactions()" class="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold">
             <option value="all">Todas las cuentas</option>
-            <option value="ing_corriente">ING Corriente</option>
-            <option value="ing_ahorro">ING Ahorro</option>
-            <option value="ing_nocuenta">ING NoCuenta</option>
-            <option value="efectivo">Efectivo</option>
-            <option value="hucha_monedas">Hucha Colección</option>
           </select>
           <select id="filterCategory" onchange="renderTransactions()" class="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs">
             <option value="all">Todas las categorías</option>
+          </select>
+          <select id="filterSortOrder" onchange="renderTransactions()" class="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold">
+            <option value="date_asc">Orden: Fecha (Más antigua primero · Mayor)</option>
+            <option value="date_desc">Orden: Fecha (Más reciente primero)</option>
+            <option value="account_asc">Orden: Cuenta (A–Z) y fecha</option>
+            <option value="amount_desc">Orden: Importe (Mayor a menor)</option>
+            <option value="amount_asc">Orden: Importe (Menor a mayor)</option>
           </select>
           <select id="filterValidation" onchange="renderTransactions()" class="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs">
             <option value="all">Estado: Todos</option>
@@ -289,8 +299,9 @@
                   <th class="py-2.5 px-3 font-semibold">Cuenta</th>
                   <th class="py-2.5 px-3 font-semibold">Categoría</th>
                   <th class="py-2.5 px-3 font-semibold">Concepto</th>
-                  <th class="py-2.5 px-3 font-semibold text-center">Ticket / Estado</th>
+                  <th class="py-2.5 px-3 font-semibold text-center">Estado</th>
                   <th class="py-2.5 px-3 font-semibold text-right">Importe</th>
+                  <th class="py-2.5 px-3 font-semibold text-right">Saldo Mayor</th>
                   <th class="py-2.5 px-3 font-semibold text-right">Acciones</th>
                 </tr>
               </thead>
@@ -347,17 +358,16 @@
             <div id="cfMonthlySave" class="text-lg font-bold text-indigo-500 mt-0.5">0,00 €</div>
           </div>
           <div class="bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800">
-            <div class="text-[11px] text-slate-400">Saldo Proyectado (30d)</div>
+            <div class="text-[11px] text-slate-400">Saldo Proyectado</div>
             <div id="cfThirtyDaysProj" class="text-lg font-bold text-sky-500 mt-0.5">0,00 €</div>
           </div>
         </div>
 
-        <!-- ALTA DE PARTIDAS RECURRENTES (SOLO PC) -->
         <div class="pocket-hide bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800">
           <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
             <div>
               <h3 class="font-bold text-sm">Programar Ingreso o Gasto Recurrente</h3>
-              <p class="text-[11px] text-slate-400">Define en qué cuenta entra o sale, qué día del mes cae y su importe para construir la tabla de tesorería.</p>
+              <p class="text-[11px] text-slate-400">Solo se detectan recibos, cuotas o nóminas recurrentes (nunca supermercados ni cenas puntuales).</p>
             </div>
             <div class="flex items-center gap-1.5">
               <select id="cfRoundStep" onchange="detectRecurringFromTransactions()" class="px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[11px]">
@@ -365,7 +375,7 @@
                 <option value="5" selected>Suministros alza: +5 €</option>
                 <option value="10">Suministros alza: +10 €</option>
               </select>
-              <button type="button" onclick="detectRecurringFromTransactions()" class="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-semibold">🔄 Detectar del banco</button>
+              <button type="button" onclick="detectRecurringFromTransactions()" class="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-semibold">🔄 Detectar recibos/cuotas</button>
             </div>
           </div>
 
@@ -387,7 +397,6 @@
           </div>
         </div>
 
-        <!-- TABLA PRINCIPAL DE PREVISIONES POR CUENTA -->
         <div class="bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-2.5">
           <div class="flex flex-wrap items-center justify-between gap-2">
             <div>
@@ -396,11 +405,6 @@
             </div>
             <div class="flex items-center gap-1.5 w-full sm:w-auto">
               <select id="cfTimelineAccount" onchange="renderCashFlow()" class="flex-1 sm:flex-initial px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold">
-                <option value="ing_corriente">🧡 ING Corriente</option>
-                <option value="ing_ahorro">💰 ING Ahorro</option>
-                <option value="ing_nocuenta">💳 ING NoCuenta</option>
-                <option value="efectivo">💵 Efectivo</option>
-                <option value="hucha_monedas">🐷 Hucha Colección</option>
                 <option value="all">📋 Todas las cuentas</option>
               </select>
               <select id="cfTimelineDays" onchange="renderCashFlow()" class="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs">
@@ -433,15 +437,25 @@
           </div>
         </div>
 
-        <!-- PARTIDAS RECURRENTES PROGRAMADAS (SOLO PC) -->
         <div class="pocket-hide bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800">
           <h3 class="font-bold text-sm mb-2">Partidas Recurrentes Programadas (Activar / Desactivar / Eliminar)</h3>
           <div id="recurringItemsList" class="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-60 overflow-y-auto custom-scroll pr-1"></div>
         </div>
       </section>
 
-      <!-- ==================== VISTA 5: AJUSTES & REGLAS AUTOMÁTICAS ==================== -->
-      <section id="view-settings" class="hidden space-y-4 max-w-5xl mx-auto">
+      <!-- ==================== VISTA 5: AJUSTES, CUENTAS, AMIGOS & REGLAS ==================== -->
+      <section id="view-settings" class="hidden space-y-4 max-w-6xl mx-auto">
+        <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h2 class="font-bold text-sm flex items-center gap-2"><span>🏦</span> Cuentas Importadas y Personalizadas</h2>
+              <p class="text-xs text-slate-400 mt-0.5">Edita nombre, tipo, saldo inicial o si computa en el patrimonio/ahorro. Las cuentas de tipo "Amigo" también se reflejan en Deudas & Amigos.</p>
+            </div>
+            <button type="button" onclick="openModal('modalAdjustAccounts')" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold">+ Crear cuenta</button>
+          </div>
+          <div id="settingsAccountsList" class="divide-y divide-slate-100 dark:divide-slate-800 max-h-80 overflow-y-auto custom-scroll"></div>
+        </div>
+
         <div class="grid grid-cols-1 lg:grid-cols-2 pocket-stack gap-4">
           <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3">
             <div>
@@ -486,7 +500,7 @@
         <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3">
           <div>
             <h3 class="font-bold text-sm">Copia de Seguridad y Limpieza</h3>
-            <p class="text-xs text-slate-400">Exporta o restaura tus datos en JSON, o vacía los datos de ejemplo.</p>
+            <p class="text-xs text-slate-400">Exporta o restaura tus datos en JSON, o borra todos los datos (incluidos cuentas importadas, amigos y reglas).</p>
           </div>
           <div class="flex flex-wrap gap-2">
             <button type="button" onclick="exportBackupJson()" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-medium">⬇ Exportar JSON</button>
@@ -507,7 +521,7 @@
         <span class="text-base">🏠</span><span>Saldos</span>
       </button>
       <button type="button" onclick="setTab('transactions')" data-tab="transactions" class="mob-nav flex flex-col items-center justify-center text-[10px] font-medium text-slate-400">
-        <span class="text-base">💳</span><span>Movimientos</span>
+        <span class="text-base">💳</span><span>Mayor</span>
       </button>
       <button type="button" onclick="openModal('modalOcr')" class="flex flex-col items-center justify-center -mt-4 w-12 h-12 rounded-full bg-indigo-600 text-white shadow-lg">
         <span class="text-lg">📷</span>
@@ -642,7 +656,7 @@
       </div>
     </div>
 
-    <input id="qdConcept" type="text" placeholder="Concepto (ej. Cena Monkiria, Entradas, Spotify...)" class="w-full px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs" />
+    <input id="qdConcept" type="text" placeholder="Concepto (ej. Cena, Entradas, Spotify...)" class="w-full px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs" />
 
     <button type="button" onclick="saveQuickDebt()" class="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-sm font-bold">Registrar Deuda</button>
   </div>
@@ -658,16 +672,12 @@
 
     <div>
       <label class="text-xs font-semibold block mb-1">Cuenta destino:</label>
-      <select id="ingTargetAccount" class="w-full px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs">
-        <option value="ing_corriente">ING Cuenta Corriente / Nómina</option>
-        <option value="ing_ahorro">ING Cuenta Ahorro / Naranja</option>
-        <option value="ing_nocuenta">ING NoCuenta</option>
-      </select>
+      <select id="ingTargetAccount" class="w-full px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs"></select>
     </div>
 
     <label class="flex items-center gap-2 text-xs cursor-pointer">
-      <input id="ingAutoRoundup" type="checkbox" checked class="rounded" />
-      Sumar automáticamente los "Redondeos" a ING Ahorro
+      <input id="ingAutoRoundup" type="checkbox" class="rounded" />
+      Sumar automáticamente los "Redondeos" a la cuenta de ahorro
     </label>
 
     <label class="block w-full py-6 px-4 rounded-2xl border-2 border-dashed border-orange-500/50 bg-orange-500/5 text-center cursor-pointer hover:bg-orange-500/10">
@@ -684,17 +694,17 @@
       <h3 class="font-bold text-base">📂 Importar Datos de HomeBank</h3>
       <button type="button" onclick="closeModal('modalHomeBank')" class="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">✕</button>
     </div>
-    <p class="text-xs text-slate-400">Compatible con el archivo nativo <b>.xhb</b> de HomeBank o con exportación <b>.csv</b>.</p>
+    <p class="text-xs text-slate-400">Crea automáticamente todas las cuentas del <b>.xhb</b> (bancos, efectivo, alijo, amigos, préstamos/hipotecas) para que luego puedas modificarlas a tu gusto.</p>
 
     <div>
-      <label class="text-xs font-semibold block mb-1">Cuenta por defecto (si el archivo es CSV de una sola cuenta):</label>
-      <select id="hbDefaultAccount" class="w-full px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs">
-        <option value="ing_corriente">ING Corriente</option>
-        <option value="ing_ahorro">ING Ahorro</option>
-        <option value="ing_nocuenta">ING NoCuenta</option>
-        <option value="efectivo">Efectivo</option>
-      </select>
+      <label class="text-xs font-semibold block mb-1">Cuenta por defecto (solo para CSV sin columna de cuenta):</label>
+      <select id="hbDefaultAccount" class="w-full px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs"></select>
     </div>
+
+    <label class="flex items-center gap-2 text-xs cursor-pointer">
+      <input id="hbImportInitialBalances" type="checkbox" checked class="rounded" />
+      Aplicar saldos iniciales de cuentas del .xhb
+    </label>
 
     <label class="block w-full py-6 px-4 rounded-2xl border-2 border-dashed border-emerald-500/50 bg-emerald-500/5 text-center cursor-pointer hover:bg-emerald-500/10">
       <div class="text-2xl mb-1">🗂️</div>
@@ -733,11 +743,7 @@
     <input id="ocrConcept" type="text" placeholder="Comercio / Concepto" class="w-full px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs" />
 
     <div class="grid grid-cols-2 gap-2">
-      <select id="ocrAccount" class="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs">
-        <option value="efectivo">Efectivo</option>
-        <option value="ing_corriente">ING Corriente</option>
-        <option value="ing_nocuenta">ING NoCuenta</option>
-      </select>
+      <select id="ocrAccount" class="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs"></select>
       <select id="ocrCategory" class="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs">
         <option value="Supermercados y alimentación">Supermercado</option>
         <option value="Cafeterías y restaurantes">Restaurante / Café</option>
@@ -777,13 +783,7 @@
     <div class="grid grid-cols-2 gap-2">
       <div>
         <label class="text-[11px] text-slate-400">Cuenta</label>
-        <select id="editTxAccount" class="w-full px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs">
-          <option value="ing_corriente">ING Corriente</option>
-          <option value="ing_ahorro">ING Ahorro</option>
-          <option value="ing_nocuenta">ING NoCuenta</option>
-          <option value="efectivo">Efectivo</option>
-          <option value="hucha_monedas">Hucha Colección</option>
-        </select>
+        <select id="editTxAccount" class="w-full px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs"></select>
       </div>
       <div>
         <label class="text-[11px] text-slate-400">Categoría</label>
@@ -821,14 +821,31 @@
 </div>
 
 <div id="modalAdjustAccounts" class="hidden fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-3">
-  <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl p-4 space-y-3">
+  <div class="bg-white dark:bg-slate-900 w-full max-w-lg rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl p-4 space-y-3 max-h-[88vh] flex flex-col">
     <div class="flex items-center justify-between">
-      <h3 class="font-bold text-base">Saldos Base de Cuentas</h3>
+      <h3 class="font-bold text-base">Saldos Base y Nueva Cuenta</h3>
       <button type="button" onclick="closeModal('modalAdjustAccounts')" class="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">✕</button>
     </div>
-    <p class="text-xs text-slate-400">Define el saldo inicial antes de tus movimientos registrados.</p>
-    <div id="adjustAccountsFields" class="space-y-2"></div>
-    <button type="button" onclick="saveAccountBases()" class="w-full py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold">Guardar Saldos</button>
+    <p class="text-xs text-slate-400">Ajusta el saldo inicial de cada cuenta o crea una cuenta nueva.</p>
+
+    <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-800 space-y-2">
+      <div class="text-[11px] font-bold uppercase text-slate-400">Añadir cuenta nueva</div>
+      <div class="grid grid-cols-12 gap-2">
+        <input id="newAccName" type="text" placeholder="Nombre (ej. Alijo, Hipoteca, Cuenta Luis...)" class="col-span-6 px-2.5 py-1.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs" />
+        <select id="newAccKind" class="col-span-4 px-2 py-1.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs">
+          <option value="bank">Banco</option>
+          <option value="savings">Ahorro</option>
+          <option value="cash">Efectivo / Alijo</option>
+          <option value="coin">Hucha</option>
+          <option value="friend">Amigo</option>
+          <option value="loan">Préstamo / Hipoteca</option>
+        </select>
+        <button type="button" onclick="addNewAccountFromModal()" class="col-span-2 px-2 py-1.5 rounded-lg bg-emerald-600 text-white text-xs font-bold">+</button>
+      </div>
+    </div>
+
+    <div id="adjustAccountsFields" class="space-y-2 overflow-y-auto custom-scroll flex-1 pr-1"></div>
+    <button type="button" onclick="saveAccountBases()" class="w-full py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold shrink-0">Guardar Saldos</button>
   </div>
 </div>
 
@@ -854,8 +871,9 @@
 
 <!-- ==================== LÓGICA PRINCIPAL ==================== -->
 <script>
-  const STORAGE_KEY = 'finanzerp_state_v4';
-  const LEGACY_KEYS = ['finanzerp_state_v3', 'finanzerp_state_v2', 'finanzerp_state_v1'];
+  const STORAGE_KEY = 'finanzerp_state_v5';
+  const LEGACY_KEYS = ['finanzerp_state_v4', 'finanzerp_state_v3', 'finanzerp_state_v2', 'finanzerp_state_v1'];
+  const RESET_FLAG_KEY = 'finanzerp_reset_flag_v5';
   const FB_CFG_KEY = 'finanzerp_fb_cfg';
   const THEME_KEY = 'finanzerp_theme_pref';
 
@@ -868,12 +886,21 @@
     appId: "1:314439869978:web:6350e159a1d81aab68d3a3"
   };
 
-  const ACCOUNTS_META = [
-    { id: 'ing_corriente', name: 'ING Corriente', icon: '🧡', color: 'text-orange-500' },
-    { id: 'ing_ahorro', name: 'ING Ahorro', icon: '💰', color: 'text-amber-500' },
-    { id: 'ing_nocuenta', name: 'ING NoCuenta', icon: '💳', color: 'text-sky-500' },
-    { id: 'efectivo', name: 'Efectivo', icon: '💵', color: 'text-emerald-500' },
-    { id: 'hucha_monedas', name: 'Hucha Colección', icon: '🐷', color: 'text-amber-400' }
+  const ACCOUNT_KINDS = {
+    bank: { label: 'Banco', icon: '🏦', color: 'text-orange-500', includeNetWorth: true },
+    savings: { label: 'Ahorro', icon: '💰', color: 'text-amber-500', includeNetWorth: true },
+    cash: { label: 'Efectivo / Alijo', icon: '💵', color: 'text-emerald-500', includeNetWorth: true },
+    coin: { label: 'Hucha', icon: '🐷', color: 'text-amber-400', includeNetWorth: true },
+    friend: { label: 'Amigo', icon: '🤝', color: 'text-sky-500', includeNetWorth: false },
+    loan: { label: 'Préstamo / Hipoteca', icon: '🏠', color: 'text-rose-500', includeNetWorth: false }
+  };
+
+  const DEFAULT_ACCOUNTS = [
+    { id: 'ing_corriente', name: 'ING Corriente', icon: '🧡', color: 'text-orange-500', kind: 'bank', includeNetWorth: true },
+    { id: 'ing_ahorro', name: 'ING Ahorro', icon: '💰', color: 'text-amber-500', kind: 'savings', includeNetWorth: true },
+    { id: 'ing_nocuenta', name: 'ING NoCuenta', icon: '💳', color: 'text-sky-500', kind: 'bank', includeNetWorth: true },
+    { id: 'efectivo', name: 'Efectivo', icon: '💵', color: 'text-emerald-500', kind: 'cash', includeNetWorth: true },
+    { id: 'hucha_monedas', name: 'Hucha Colección', icon: '🐷', color: 'text-amber-400', kind: 'coin', includeNetWorth: true }
   ];
 
   const DONUT_COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ec4899', '#06b6d4', '#8b5cf6'];
@@ -881,17 +908,17 @@
   const todayISO = () => new Date().toISOString().slice(0, 10);
   const fmt = (n) => new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(Number(n) || 0);
   const uid = () => 'id_' + Math.random().toString(36).slice(2, 9) + Date.now().toString(36);
+  const normText = (s) => String(s || '').toLowerCase().replace(/\s+/g, ' ').trim();
 
   let state = {
+    accounts: DEFAULT_ACCOUNTS.map(a => ({ ...a })),
     accountBases: { ing_corriente: 0, ing_ahorro: 0, ing_nocuenta: 0, efectivo: 0, hucha_monedas: 0 },
     transactions: [],
     debts: [],
-    friends: ['Aissa', 'Asensio', 'Jose', 'Ortiz', 'Carlos', 'Manu', 'Borja', 'Abde'],
-    sharedRules: [
-      { id: 'r1', keyword: 'Spotify', friend: 'Asensio', mode: 'fixed', value: 7.00 },
-      { id: 'r2', keyword: 'Disney', friend: 'Asensio', mode: 'fixed', value: 3.00 }
-    ],
+    friends: [],
+    sharedRules: [],
     recurring: [],
+    dismissedRecurringKeys: [],
     updatedAt: 0
   };
 
@@ -910,6 +937,74 @@
   };
 
   let fbAuth = null, fbDb = null, fbUser = null, fbUnsub = null, isApplyingRemote = false;
+
+  function getAccountsList() {
+    return Array.isArray(state.accounts) && state.accounts.length > 0
+      ? state.accounts
+      : DEFAULT_ACCOUNTS.map(a => ({ ...a }));
+  }
+
+  function getAccountMeta(accId) {
+    const found = getAccountsList().find(a => a.id === accId);
+    if (found) return found;
+    return { id: accId, name: accId || 'Cuenta', icon: '🏦', color: 'text-slate-400', kind: 'bank', includeNetWorth: true };
+  }
+
+  function refreshAccountSelects() {
+    const accs = getAccountsList();
+    const buildOpts = (list) => list.map(a => `<option value="${a.id}">${a.icon || '🏦'} ${a.name}</option>`).join('');
+
+    const filterAcc = document.getElementById('filterAccount');
+    if (filterAcc) {
+      const prev = filterAcc.value || 'all';
+      filterAcc.innerHTML = `<option value="all">Todas las cuentas</option>` + buildOpts(accs);
+      if ([...filterAcc.options].some(o => o.value === prev)) filterAcc.value = prev;
+      else filterAcc.value = 'all';
+    }
+
+    const cfAcc = document.getElementById('cfTimelineAccount');
+    if (cfAcc) {
+      const prevCf = cfAcc.value || 'all';
+      cfAcc.innerHTML = `<option value="all">📋 Todas las cuentas</option>` + buildOpts(accs);
+      if ([...cfAcc.options].some(o => o.value === prevCf)) cfAcc.value = prevCf;
+      else cfAcc.value = 'all';
+    }
+
+    const newRecAcc = document.getElementById('newRecAccount');
+    if (newRecAcc) {
+      const prevRec = newRecAcc.value;
+      newRecAcc.innerHTML = buildOpts(accs);
+      if (prevRec && [...newRecAcc.options].some(o => o.value === prevRec)) newRecAcc.value = prevRec;
+    }
+
+    const ingTarget = document.getElementById('ingTargetAccount');
+    if (ingTarget) {
+      const prevIng = ingTarget.value;
+      ingTarget.innerHTML = buildOpts(accs);
+      if (prevIng && [...ingTarget.options].some(o => o.value === prevIng)) ingTarget.value = prevIng;
+    }
+
+    const hbDef = document.getElementById('hbDefaultAccount');
+    if (hbDef) {
+      const prevHb = hbDef.value;
+      hbDef.innerHTML = buildOpts(accs);
+      if (prevHb && [...hbDef.options].some(o => o.value === prevHb)) hbDef.value = prevHb;
+    }
+
+    const ocrAcc = document.getElementById('ocrAccount');
+    if (ocrAcc) {
+      const prevOcr = ocrAcc.value;
+      ocrAcc.innerHTML = buildOpts(accs);
+      if (prevOcr && [...ocrAcc.options].some(o => o.value === prevOcr)) ocrAcc.value = prevOcr;
+    }
+
+    const editAcc = document.getElementById('editTxAccount');
+    if (editAcc) {
+      const prevEdit = editAcc.value;
+      editAcc.innerHTML = buildOpts(accs);
+      if (prevEdit && [...editAcc.options].some(o => o.value === prevEdit)) editAcc.value = prevEdit;
+    }
+  }
 
   function formatEsDate(isoStr) {
     if (!isoStr || !isoStr.includes('-')) return isoStr;
@@ -951,21 +1046,27 @@
     const dToday = todayISO();
     const dIn3 = new Date(Date.now() + 3 * 86400000).getDate();
     const dIn5 = new Date(Date.now() + 5 * 86400000).getDate();
+    state.accounts = DEFAULT_ACCOUNTS.map(a => ({ ...a }));
     state.accountBases = { ing_corriente: 540.00, ing_ahorro: 1250.00, ing_nocuenta: 180.00, efectivo: 45.00, hucha_monedas: 38.50 };
+    state.friends = ['Aissa', 'Asensio', 'Ortiz'];
+    state.sharedRules = [
+      { id: 'r1', keyword: 'Spotify', friend: 'Asensio', mode: 'fixed', value: 7.00 },
+      { id: 'r2', keyword: 'Disney', friend: 'Asensio', mode: 'fixed', value: 3.00 }
+    ];
     state.transactions = [
-      { id: 'tx1', date: dToday, account: 'ing_corriente', category: 'Supermercados y alimentación', concept: 'Pago en MERCADONA', amount: -51.60, validated: true, ticket: null },
-      { id: 'tx2', date: dToday, account: 'ing_corriente', category: 'Suscripciones', concept: 'Recibo Spotify Family', amount: -17.99, validated: true, ticket: null },
-      { id: 'tx3', date: dToday, account: 'efectivo', category: 'Cafeterías y restaurantes', concept: 'Café y tostada Bombon Boss', amount: -4.20, validated: false, ticket: null },
-      { id: 'tx4', date: dToday, account: 'ing_corriente', category: 'Nómina o Pensión', concept: 'Nómina Mensual', amount: 1650.00, validated: true, ticket: null },
-      { id: 'tx5', date: dToday, account: 'ing_nocuenta', category: 'Ocio y viajes', concept: 'Entradas cine y cena', amount: -28.50, validated: true, ticket: null }
+      { id: 'tx1', date: dToday, seq: 1, account: 'ing_corriente', category: 'Supermercados y alimentación', concept: 'Pago en MERCADONA', amount: -51.60, validated: true, ticket: null },
+      { id: 'tx2', date: dToday, seq: 2, account: 'ing_corriente', category: 'Suscripciones', concept: 'Recibo Spotify Family', amount: -17.99, validated: true, ticket: null },
+      { id: 'tx3', date: dToday, seq: 3, account: 'efectivo', category: 'Cafeterías y restaurantes', concept: 'Café y tostada', amount: -4.20, validated: false, ticket: null },
+      { id: 'tx4', date: dToday, seq: 4, account: 'ing_corriente', category: 'Nómina o Pensión', concept: 'Nómina Mensual', amount: 1650.00, validated: true, ticket: null },
+      { id: 'tx5', date: dToday, seq: 5, account: 'ing_nocuenta', category: 'Ocio y viajes', concept: 'Entradas cine', amount: -28.50, validated: true, ticket: null }
     ];
     state.debts = [
-      { id: 'd1', date: dToday, friend: 'Aissa', direction: 'i_owe', amount: 20.83, concept: 'Cena Terrone', settled: false },
+      { id: 'd1', date: dToday, friend: 'Aissa', direction: 'i_owe', amount: 20.83, concept: 'Cena compartida', settled: false },
       { id: 'd2', date: dToday, friend: 'Asensio', direction: 'owe_me', amount: 7.00, concept: 'Spotify (Auto)', settled: false }
     ];
     state.recurring = [
       { id: 'rec1', name: 'Nómina Mensual', amount: 1650.00, account: 'ing_corriente', dayOfMonth: 28, note: 'Ingreso fijo', active: true, manual: true },
-      { id: 'rec2', name: 'Gimnasio Fitness Park', amount: -34.90, account: 'ing_corriente', dayOfMonth: dIn3, note: 'Cuota fija', active: true, manual: true },
+      { id: 'rec2', name: 'Gimnasio', amount: -34.90, account: 'ing_corriente', dayOfMonth: dIn3, note: 'Cuota fija', active: true, manual: true },
       { id: 'rec3', name: 'Factura Luz (Media + Alza)', amount: -65.00, account: 'ing_corriente', dayOfMonth: dIn5, note: 'Suministro redondeado al alza', active: true, manual: true },
       { id: 'rec4', name: 'Spotify Family', amount: -17.99, account: 'ing_nocuenta', dayOfMonth: 15, note: 'Suscripción', active: true, manual: true }
     ];
@@ -973,26 +1074,43 @@
   }
 
   function loadState() {
+    const explicitlyCleared = localStorage.getItem(RESET_FLAG_KEY) === '1';
     let raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) {
+    if (!raw && !explicitlyCleared) {
       for (const oldKey of LEGACY_KEYS) {
         const legacy = localStorage.getItem(oldKey);
         if (legacy) { raw = legacy; break; }
       }
     }
 
-    const explicitlyCleared = localStorage.getItem(RESET_FLAG_KEY) === '1';
-
     if (raw) {
       try {
         const parsed = JSON.parse(raw);
-        state = { ...state, ...parsed };
-        state.recurring = (state.recurring || []).map((r, i) => ({
-          account: 'ing_corriente',
-          dayOfMonth: ((i * 5) % 28) + 1,
-          ...r
-        }));
-        if (!explicitlyCleared && (!state.transactions || state.transactions.length === 0) && (!state.debts || state.debts.length === 0)) {
+        const parsedAccounts = Array.isArray(parsed.accounts) && parsed.accounts.length > 0
+          ? parsed.accounts
+          : DEFAULT_ACCOUNTS.map(a => ({ ...a }));
+
+        state = {
+          accounts: parsedAccounts,
+          accountBases: { ...(parsed.accountBases || {}) },
+          transactions: Array.isArray(parsed.transactions) ? parsed.transactions.map((t, idx) => ({ seq: idx + 1, ...t })) : [],
+          debts: Array.isArray(parsed.debts) ? parsed.debts : [],
+          friends: Array.isArray(parsed.friends) ? parsed.friends : [],
+          sharedRules: Array.isArray(parsed.sharedRules) ? parsed.sharedRules : [],
+          recurring: Array.isArray(parsed.recurring) ? parsed.recurring.map((r, i) => ({
+            account: 'ing_corriente',
+            dayOfMonth: ((i * 5) % 28) + 1,
+            ...r
+          })) : [],
+          dismissedRecurringKeys: Array.isArray(parsed.dismissedRecurringKeys) ? parsed.dismissedRecurringKeys : [],
+          updatedAt: parsed.updatedAt || 0
+        };
+
+        state.accounts.forEach(a => {
+          if (state.accountBases[a.id] === undefined) state.accountBases[a.id] = 0;
+        });
+
+        if (!explicitlyCleared && state.transactions.length === 0 && state.debts.length === 0 && !parsed.updatedAt) {
           seedDemoData();
         }
       } catch (e) {
@@ -1006,6 +1124,7 @@
   function saveState(skipCloud = false) {
     state.updatedAt = Date.now();
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    refreshAccountSelects();
     renderAll();
     if (!skipCloud && fbDb && fbUser && !isApplyingRemote && window._fbModules) {
       const { doc, setDoc } = window._fbModules;
@@ -1018,7 +1137,12 @@
     const sum = (state.transactions || [])
       .filter(t => t.account === accId)
       .reduce((acc, t) => acc + Number(t.amount || 0), 0);
-    return base + sum;
+    return Math.round((base + sum) * 100) / 100;
+  }
+
+  function nextTxSeq() {
+    const maxSeq = (state.transactions || []).reduce((m, t) => Math.max(m, Number(t.seq || 0)), 0);
+    return maxSeq + 1;
   }
 
   // ==================== NAVEGACIÓN, POCKET MODE Y CLIC EN CUENTAS ====================
@@ -1026,10 +1150,10 @@
     ui.tab = tab;
     const titles = {
       dashboard: ui.viewMode === 'mobile' ? 'Saldos' : 'Resumen General',
-      transactions: 'Movimientos por Cuenta',
+      transactions: 'Movimientos & Mayor Contable',
       debts: 'Deudas & Amigos',
       cashflow: 'Previsiones Cash Flow',
-      settings: 'Ajustes y Reglas'
+      settings: 'Cuentas, Amigos & Reglas'
     };
     document.getElementById('pageTitle').textContent = titles[tab] || 'FinanzERP';
 
@@ -1063,6 +1187,7 @@
 
   function openAccountHistory(accId) {
     document.getElementById('filterAccount').value = accId;
+    document.getElementById('filterSortOrder').value = 'date_asc';
     setTab('transactions');
   }
 
@@ -1107,6 +1232,7 @@
   }
 
   function openModal(id) {
+    refreshAccountSelects();
     const el = document.getElementById(id);
     if (!el) return;
     el.classList.remove('hidden');
@@ -1118,6 +1244,27 @@
   function closeModal(id) {
     const el = document.getElementById(id);
     if (el) el.classList.add('hidden');
+  }
+
+  // ==================== DEDUPLICACIÓN DE MOVIMIENTOS ====================
+  function isDuplicateTransaction(account, date, amount, concept) {
+    const targetAmt = Math.round(Number(amount || 0) * 100);
+    const targetConcept = normText(concept);
+    return (state.transactions || []).some(t =>
+      t.account === account &&
+      t.date === date &&
+      Math.round(Number(t.amount || 0) * 100) === targetAmt &&
+      normText(t.concept) === targetConcept
+    );
+  }
+
+  function addTransactionSafe(txPayload) {
+    if (isDuplicateTransaction(txPayload.account, txPayload.date, txPayload.amount, txPayload.concept)) {
+      return null;
+    }
+    const tx = { id: uid(), seq: nextTxSeq(), ...txPayload };
+    state.transactions.push(tx);
+    return tx;
   }
 
   // ==================== REGLAS AUTOMÁTICAS ====================
@@ -1183,7 +1330,135 @@
     alert(`Reglas aplicadas: se han generado ${totalCreated} deudas nuevas.`);
   }
 
-  // ==================== GESTIÓN DE AMIGOS & HISTORIAL ====================
+  // ==================== GESTIÓN DE CUENTAS Y AMIGOS ====================
+  function ensureFriendExists(name) {
+    const clean = String(name || '').trim();
+    if (!clean) return null;
+    const existing = state.friends.find(f => f.toLowerCase() === clean.toLowerCase());
+    if (existing) return existing;
+    state.friends.push(clean);
+    return clean;
+  }
+
+  function makeSafeAccountId(baseName, fallbackPrefix = 'hb_acc') {
+    const slug = normText(baseName).replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 24);
+    let candidate = slug || `${fallbackPrefix}_${Math.random().toString(36).slice(2, 6)}`;
+    if (state.accounts.some(a => a.id === candidate)) {
+      candidate = `${candidate}_${Math.random().toString(36).slice(2, 5)}`;
+    }
+    return candidate;
+  }
+
+  function inferAccountKindAndFriend(rawName) {
+    const s = normText(rawName);
+    if (/\b(hipoteca|prestamo|préstamo|loan|mortgage)\b/.test(s)) {
+      return { kind: 'loan', icon: '🏠', color: 'text-rose-500', includeNetWorth: false, friendName: null };
+    }
+    if (/\b(hucha|coleccion|colección|monedas)\b/.test(s)) {
+      return { kind: 'coin', icon: '🐷', color: 'text-amber-400', includeNetWorth: true, friendName: null };
+    }
+    if (/\b(efectivo|alijo|metalico|metálico|cash|cartera|bolsillo|caja)\b/.test(s)) {
+      return { kind: 'cash', icon: '💵', color: 'text-emerald-500', includeNetWorth: true, friendName: null };
+    }
+    if (/\b(ahorro|naranja)\b/.test(s)) {
+      return { kind: 'savings', icon: '💰', color: 'text-amber-500', includeNetWorth: true, friendName: null };
+    }
+    const friendMatch = rawName.match(/(?:amigo|amigos|deuda|deudas|grupo|compartid[oa])\s*[-:/]?\s*(.+)?/i);
+    if (friendMatch) {
+      const candidate = (friendMatch[1] || '').trim();
+      return {
+        kind: 'friend',
+        icon: '🤝',
+        color: 'text-sky-500',
+        includeNetWorth: false,
+        friendName: candidate && !/^amigos?$/i.test(candidate) ? candidate : null
+      };
+    }
+    return { kind: 'bank', icon: '🏦', color: 'text-indigo-500', includeNetWorth: true, friendName: null };
+  }
+
+  function ensureAccountForHomeBank(rawName, hbKey = '') {
+    const cleanName = String(rawName || '').trim() || `Cuenta ${hbKey}`;
+    const existingByName = state.accounts.find(a => normText(a.name) === normText(cleanName));
+    if (existingByName) return existingByName;
+
+    const inferred = inferAccountKindAndFriend(cleanName);
+    const id = makeSafeAccountId(cleanName, 'hb');
+    const accObj = {
+      id,
+      name: cleanName,
+      icon: inferred.icon,
+      color: inferred.color,
+      kind: inferred.kind,
+      includeNetWorth: inferred.includeNetWorth,
+      hbKey: hbKey || null
+    };
+    state.accounts.push(accObj);
+    if (state.accountBases[id] === undefined) state.accountBases[id] = 0;
+    if (inferred.friendName) ensureFriendExists(inferred.friendName);
+    return accObj;
+  }
+
+  function addNewAccountFromModal() {
+    const name = document.getElementById('newAccName').value.trim();
+    const kind = document.getElementById('newAccKind').value;
+    if (!name) return alert('Escribe un nombre para la cuenta.');
+    const metaKind = ACCOUNT_KINDS[kind] || ACCOUNT_KINDS.bank;
+    const id = makeSafeAccountId(name, 'acc');
+    state.accounts.push({
+      id,
+      name,
+      icon: metaKind.icon,
+      color: metaKind.color,
+      kind,
+      includeNetWorth: metaKind.includeNetWorth
+    });
+    state.accountBases[id] = 0;
+    if (kind === 'friend') ensureFriendExists(name.replace(/^(cuenta|amigo)\s*[-:/]?\s*/i, '').trim() || name);
+    document.getElementById('newAccName').value = '';
+    saveState();
+    renderAdjustAccountsModal();
+  }
+
+  function updateAccountKind(accId, newKind) {
+    const acc = state.accounts.find(a => a.id === accId);
+    if (!acc) return;
+    const kMeta = ACCOUNT_KINDS[newKind] || ACCOUNT_KINDS.bank;
+    acc.kind = newKind;
+    acc.icon = kMeta.icon;
+    acc.color = kMeta.color;
+    acc.includeNetWorth = kMeta.includeNetWorth;
+    saveState();
+  }
+
+  function renameAccount(accId) {
+    const acc = state.accounts.find(a => a.id === accId);
+    if (!acc) return;
+    const nextName = prompt('Nuevo nombre para la cuenta:', acc.name);
+    if (!nextName || !nextName.trim()) return;
+    acc.name = nextName.trim();
+    saveState();
+  }
+
+  function toggleAccountNetWorth(accId) {
+    const acc = state.accounts.find(a => a.id === accId);
+    if (!acc) return;
+    acc.includeNetWorth = !acc.includeNetWorth;
+    saveState();
+  }
+
+  function deleteAccount(accId) {
+    if (state.accounts.length <= 1) return alert('Debe quedar al menos una cuenta.');
+    const acc = state.accounts.find(a => a.id === accId);
+    if (!confirm(`¿Eliminar la cuenta "${acc?.name || accId}"? Sus movimientos quedarán asignados a otra cuenta.`)) return;
+    const fallbackId = state.accounts.find(a => a.id !== accId).id;
+    state.transactions.forEach(t => { if (t.account === accId) t.account = fallbackId; });
+    state.recurring.forEach(r => { if (r.account === accId) r.account = fallbackId; });
+    delete state.accountBases[accId];
+    state.accounts = state.accounts.filter(a => a.id !== accId);
+    saveState();
+  }
+
   function addFriendFromSettings() {
     const inp = document.getElementById('settingsNewFriendInput');
     const name = inp.value.trim();
@@ -1231,7 +1506,7 @@
             </div>
             <div class="flex items-center gap-2 shrink-0">
               <span class="text-xs font-bold ${d.direction === 'owe_me' ? 'text-emerald-500' : 'text-rose-500'}">${d.direction === 'owe_me' ? '+' : '-'}${fmt(d.amount)}</span>
-              <button type="button" onclick="toggleDebtSettled('${d.id}'); openFriendHistory('${friendName}')" class="px-2 py-1 rounded-lg text-[11px] font-semibold ${d.settled ? 'bg-slate-200 dark:bg-slate-700' : 'bg-emerald-600 text-white'}">
+              <button type="button" onclick="toggleDebtSettled('${d.id}'); openFriendHistory('${friendName.replace(/'/g, "\\'")}')" class="px-2 py-1 rounded-lg text-[11px] font-semibold ${d.settled ? 'bg-slate-200 dark:bg-slate-700' : 'bg-emerald-600 text-white'}">
                 ${d.settled ? 'Reabrir' : 'Saldar'}
               </button>
             </div>
@@ -1294,8 +1569,8 @@
     const category = document.getElementById('qcCategory').value;
     const concept = document.getElementById('qcConcept').value.trim() || (ui.qcAccount === 'hucha_monedas' ? 'Monedas repetidas hucha' : category);
 
-    const tx = { id: uid(), date: todayISO(), account: ui.qcAccount, category, concept, amount, validated: !ui.qcTicketData, ticket: ui.qcTicketData };
-    state.transactions.unshift(tx);
+    const tx = { id: uid(), seq: nextTxSeq(), date: todayISO(), account: ui.qcAccount, category, concept, amount, validated: !ui.qcTicketData, ticket: ui.qcTicketData };
+    state.transactions.push(tx);
     evaluateSharedRulesForTx(tx);
 
     document.getElementById('qcAmount').value = '';
@@ -1315,9 +1590,13 @@
   function renderDebtFriendChips() {
     document.getElementById('qdDate').value = todayISO();
     const box = document.getElementById('qdFriendsChips');
+    if (!state.friends || state.friends.length === 0) {
+      box.innerHTML = `<span class="text-xs text-slate-400">No hay amigos añadidos. Añádelos en Ajustes.</span>`;
+      return;
+    }
     box.innerHTML = state.friends.map(f => {
       const sel = ui.qdSelectedFriends.includes(f);
-      return `<button type="button" onclick="toggleQdFriend('${f}')" class="px-2.5 py-1 rounded-full text-xs font-semibold transition-colors ${sel ? 'bg-indigo-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-300'}">${f}</button>`;
+      return `<button type="button" onclick="toggleQdFriend('${f.replace(/'/g, "\\'")}')" class="px-2.5 py-1 rounded-full text-xs font-semibold transition-colors ${sel ? 'bg-indigo-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-300'}">${f}</button>`;
     }).join('');
   }
 
@@ -1341,7 +1620,7 @@
     const amount = parseFloat(document.getElementById('qdAmountPerPerson').value);
     if (isNaN(amount) || amount <= 0) return alert('Introduce el importe por persona.');
     const date = document.getElementById('qdDate').value || todayISO();
-    const concept = document.getElementById('qdConcept').value.trim() || 'Cena / Plan compartido';
+    const concept = document.getElementById('qdConcept').value.trim() || 'Plan compartido';
 
     ui.qdSelectedFriends.forEach(friend => {
       state.debts.unshift({ id: uid(), date, friend, direction: ui.qdDir, amount, concept, settled: false });
@@ -1374,6 +1653,7 @@
     if (typeof XLSX === 'undefined') return alert('La librería Excel aún está cargando.');
     const targetAcc = document.getElementById('ingTargetAccount').value;
     const autoRoundup = document.getElementById('ingAutoRoundup').checked;
+    const savingsAcc = state.accounts.find(a => a.kind === 'savings')?.id || 'ing_ahorro';
 
     const reader = new FileReader();
     reader.onload = (evt) => {
@@ -1392,7 +1672,7 @@
         const idxDesc = headers.findIndex(h => h.includes('DESCRIPCI'));
         const idxImp = headers.findIndex(h => h.includes('IMPORTE'));
 
-        let imported = 0, autoDebts = 0;
+        let imported = 0, skippedDupes = 0, autoDebts = 0;
 
         for (let i = headerIdx + 1; i < rows.length; i++) {
           const r = rows[i];
@@ -1412,24 +1692,32 @@
           const category = String(r[idxSub] || r[idxCat] || 'Otros').trim();
           const concept = String(r[idxDesc] || category).trim();
 
-          const exists = state.transactions.some(t => t.account === targetAcc && t.date === dateStr && Math.abs(Number(t.amount) - amount) < 0.005 && t.concept.toLowerCase() === concept.toLowerCase());
-          if (exists) continue;
-
-          const newTx = { id: uid(), date: dateStr, account: targetAcc, category, concept, amount, validated: true, ticket: null };
-          state.transactions.push(newTx);
+          const added = addTransactionSafe({ date: dateStr, account: targetAcc, category, concept, amount, validated: true, ticket: null });
+          if (!added) {
+            skippedDupes++;
+            continue;
+          }
           imported++;
-          autoDebts += evaluateSharedRulesForTx(newTx);
+          autoDebts += evaluateSharedRulesForTx(added);
 
           if (autoRoundup && amount < 0 && (category.toLowerCase().includes('redondeo') || concept.toLowerCase().includes('redondeo'))) {
-            state.transactions.push({ id: uid(), date: dateStr, account: 'ing_ahorro', category: 'Redondeo Ahorro', concept: 'Abono Redondeo ING', amount: Math.abs(amount), validated: true, ticket: null });
+            addTransactionSafe({
+              date: dateStr,
+              account: savingsAcc,
+              category: 'Redondeo Ahorro',
+              concept: 'Abono Redondeo ING',
+              amount: Math.abs(amount),
+              validated: true,
+              ticket: null
+            });
           }
         }
 
-        state.transactions.sort((a, b) => b.date.localeCompare(a.date));
         detectRecurringFromTransactions(true);
         closeModal('modalIngExcel');
+        e.target.value = '';
         saveState();
-        alert(`Importación ING completada: ${imported} movimientos nuevos y ${autoDebts} deudas compartidas generadas.`);
+        alert(`Importación ING completada: ${imported} movimientos nuevos, ${skippedDupes} duplicados omitidos y ${autoDebts} deudas compartidas generadas.`);
       } catch (err) { alert('Error leyendo Excel ING: ' + err.message); }
     };
     reader.readAsArrayBuffer(file);
@@ -1439,42 +1727,100 @@
     const file = e.target.files[0];
     if (!file) return;
     const defAcc = document.getElementById('hbDefaultAccount').value;
+    const applyBases = !!document.getElementById('hbImportInitialBalances')?.checked;
+
     const reader = new FileReader();
     reader.onload = (evt) => {
       const text = evt.target.result;
-      let imported = 0;
+      let imported = 0, skippedDupes = 0, createdAccounts = 0, linkedFriendDebts = 0;
 
       if (file.name.toLowerCase().endsWith('.xhb') || text.trim().startsWith('<?xml')) {
         const xml = new DOMParser().parseFromString(text, 'text/xml');
-        const accMap = {};
+        const hbKeyToAppAcc = {};
+        const beforeCount = state.accounts.length;
+
         xml.querySelectorAll('account').forEach(a => {
-          const key = a.getAttribute('key');
-          const name = (a.getAttribute('name') || '').toLowerCase();
-          if (name.includes('ahorro') || name.includes('naranja')) accMap[key] = 'ing_ahorro';
-          else if (name.includes('nocuenta')) accMap[key] = 'ing_nocuenta';
-          else if (name.includes('efectivo') || name.includes('cartera')) accMap[key] = 'efectivo';
-          else if (name.includes('moneda') || name.includes('hucha')) accMap[key] = 'hucha_monedas';
-          else accMap[key] = 'ing_corriente';
+          const hbKey = a.getAttribute('key');
+          const rawName = (a.getAttribute('name') || '').trim();
+          const initBal = parseFloat(a.getAttribute('initial') || '0') || 0;
+          const accObj = ensureAccountForHomeBank(rawName || `Cuenta ${hbKey}`, hbKey);
+          hbKeyToAppAcc[hbKey] = accObj;
+
+          if (applyBases && initBal !== 0) {
+            state.accountBases[accObj.id] = Math.round(((Number(state.accountBases[accObj.id]) || 0) + initBal) * 100) / 100;
+          }
         });
-        const catMap = {}; xml.querySelectorAll('cat').forEach(c => { catMap[c.getAttribute('key')] = c.getAttribute('name') || 'General'; });
-        const payMap = {}; xml.querySelectorAll('pay').forEach(p => { payMap[p.getAttribute('key')] = p.getAttribute('name') || ''; });
+
+        createdAccounts = Math.max(0, state.accounts.length - beforeCount);
+
+        const catMap = {};
+        xml.querySelectorAll('cat').forEach(c => { catMap[c.getAttribute('key')] = c.getAttribute('name') || 'General'; });
+
+        const payMap = {};
+        xml.querySelectorAll('pay').forEach(p => {
+          const k = p.getAttribute('key');
+          const pName = (p.getAttribute('name') || '').trim();
+          payMap[k] = pName;
+          if (pName && /\b(amigo|amigos|deuda|colega|compartido)\b/i.test(pName)) {
+            const cleanedFriend = pName.replace(/\b(amigo|amigos|deuda|colega|compartido)\b/gi, '').replace(/[-:/]/g, '').trim();
+            if (cleanedFriend) ensureFriendExists(cleanedFriend);
+          }
+        });
 
         xml.querySelectorAll('ope').forEach(o => {
+          const rawAccKey = o.getAttribute('account');
+          const accObj = hbKeyToAppAcc[rawAccKey];
+
           const julian = parseInt(o.getAttribute('date'));
           const dateObj = new Date(Date.UTC(1, 0, 1));
           dateObj.setUTCDate(dateObj.getUTCDate() + julian - 1);
           const dateStr = !isNaN(dateObj) ? dateObj.toISOString().slice(0, 10) : todayISO();
           const amount = parseFloat(o.getAttribute('amount') || '0');
-          if (amount === 0) return;
-          const account = accMap[o.getAttribute('account')] || defAcc;
+          if (isNaN(amount) || amount === 0) return;
+
+          const account = accObj ? accObj.id : defAcc;
           const category = catMap[o.getAttribute('category')] || 'HomeBank';
-          const concept = [payMap[o.getAttribute('payee')], o.getAttribute('wording')].filter(Boolean).join(' - ') || category;
-          if (!state.transactions.some(t => t.date === dateStr && Math.abs(t.amount - amount) < 0.005 && t.concept === concept)) {
-            state.transactions.push({ id: uid(), date: dateStr, account, category, concept, amount, validated: true, ticket: null });
+          const payeeName = payMap[o.getAttribute('payee')] || '';
+          const wording = o.getAttribute('wording') || '';
+          const concept = [payeeName, wording].filter(Boolean).join(' - ') || category;
+
+          const added = addTransactionSafe({ date: dateStr, account, category, concept, amount, validated: true, ticket: null });
+          if (!added) {
+            skippedDupes++;
+          } else {
             imported++;
+            evaluateSharedRulesForTx(added);
+          }
+
+          if (accObj && accObj.kind === 'friend') {
+            const inferredFriend = inferAccountKindAndFriend(accObj.name).friendName || payeeName || accObj.name;
+            const fName = ensureFriendExists(inferredFriend);
+            if (fName) {
+              const direction = amount > 0 ? 'owe_me' : 'i_owe';
+              const absAmt = Math.abs(amount);
+              const debtExists = state.debts.some(d =>
+                d.friend === fName &&
+                d.date === dateStr &&
+                Math.abs(Number(d.amount) - absAmt) < 0.01 &&
+                normText(d.concept) === normText(concept)
+              );
+              if (!debtExists) {
+                state.debts.unshift({
+                  id: uid(),
+                  date: dateStr,
+                  friend: fName,
+                  direction,
+                  amount: absAmt,
+                  concept: `${concept} (HomeBank · ${accObj.name})`,
+                  settled: false
+                });
+                linkedFriendDebts++;
+              }
+            }
           }
         });
       } else {
+        const beforeCount = state.accounts.length;
         text.split(/\r?\n/).filter(Boolean).slice(1).forEach(line => {
           const cols = line.split(';');
           if (cols.length < 6) return;
@@ -1484,19 +1830,24 @@
           else if (rawDate.includes('/') && rawDate.split('/')[0].length === 2) { const p = rawDate.split('/'); dateStr = `${p[2]}-${p[1]}-${p[0]}`; }
           const amount = parseFloat(cols[5].replace(',', '.'));
           if (isNaN(amount) || amount === 0) return;
+
+          const rawAccCol = (cols[1] || '').trim();
+          const account = rawAccCol ? ensureAccountForHomeBank(rawAccCol).id : defAcc;
           const concept = [cols[3], cols[4]].map(s => (s || '').trim()).filter(Boolean).join(' - ') || 'Movimiento HomeBank';
           const category = (cols[6] || 'HomeBank').trim();
-          if (!state.transactions.some(t => t.date === dateStr && Math.abs(t.amount - amount) < 0.005 && t.concept === concept)) {
-            state.transactions.push({ id: uid(), date: dateStr, account: defAcc, category, concept, amount, validated: true, ticket: null });
-            imported++;
-          }
+
+          const added = addTransactionSafe({ date: dateStr, account, category, concept, amount, validated: true, ticket: null });
+          if (!added) skippedDupes++;
+          else { imported++; evaluateSharedRulesForTx(added); }
         });
+        createdAccounts = Math.max(0, state.accounts.length - beforeCount);
       }
-      state.transactions.sort((a, b) => b.date.localeCompare(a.date));
+
       detectRecurringFromTransactions(true);
       closeModal('modalHomeBank');
+      e.target.value = '';
       saveState();
-      alert(`HomeBank importado: ${imported} movimientos añadidos.`);
+      alert(`HomeBank importado: ${createdAccounts} cuenta(s) detectada(s)/creada(s), ${imported} movimientos nuevos, ${skippedDupes} duplicados omitidos y ${linkedFriendDebts} movimientos vinculados a amigos.`);
     };
     reader.readAsText(file);
   }
@@ -1668,6 +2019,7 @@
     if (isNaN(val) || val <= 0) return alert('Introduce el importe del ticket.');
     const tx = {
       id: uid(),
+      seq: nextTxSeq(),
       date: document.getElementById('ocrDate').value || todayISO(),
       account: document.getElementById('ocrAccount').value,
       category: document.getElementById('ocrCategory').value,
@@ -1676,7 +2028,7 @@
       validated: document.getElementById('ocrMarkValidated').checked,
       ticket: ui.ocrTicketData
     };
-    state.transactions.unshift(tx);
+    state.transactions.push(tx);
     evaluateSharedRulesForTx(tx);
     ui.ocrTicketData = null;
     document.getElementById('ocrAmount').value = '';
@@ -1686,11 +2038,15 @@
   }
 
   function openNewTxModal() {
+    refreshAccountSelects();
     document.getElementById('editTxTitle').textContent = 'Nuevo Movimiento Manual';
     document.getElementById('editTxId').value = '';
     document.getElementById('editTxDate').value = todayISO();
     document.getElementById('editTxAmount').value = '';
-    document.getElementById('editTxAccount').value = document.getElementById('filterAccount').value !== 'all' ? document.getElementById('filterAccount').value : 'ing_corriente';
+    const defaultAcc = document.getElementById('filterAccount').value !== 'all'
+      ? document.getElementById('filterAccount').value
+      : (getAccountsList()[0]?.id || 'ing_corriente');
+    document.getElementById('editTxAccount').value = defaultAcc;
     document.getElementById('editTxCategory').value = 'Supermercados y alimentación';
     document.getElementById('editTxConcept').value = '';
     document.getElementById('editTxValidated').checked = true;
@@ -1699,6 +2055,7 @@
   }
 
   function openEditTxModal(id) {
+    refreshAccountSelects();
     const tx = state.transactions.find(t => t.id === id);
     if (!tx) return;
     document.getElementById('editTxTitle').textContent = 'Editar Movimiento';
@@ -1737,8 +2094,8 @@
       const idx = state.transactions.findIndex(t => t.id === id);
       if (idx !== -1) state.transactions[idx] = { ...state.transactions[idx], ...payload };
     } else {
-      const newTx = { id: uid(), ...payload };
-      state.transactions.unshift(newTx);
+      const newTx = { id: uid(), seq: nextTxSeq(), ...payload };
+      state.transactions.push(newTx);
       evaluateSharedRulesForTx(newTx);
     }
     closeModal('modalEditTx');
@@ -1765,50 +2122,93 @@
     openModal('modalViewTicket');
   }
 
-  // ==================== CASH FLOW Y TABLA DE TESORERÍA ====================
+  // ==================== CASH FLOW Y PARTIDAS RECURRENTES ====================
+  function isNonRecurringSpotExpense(textLower) {
+    const spotPatterns = [
+      /\b(mercadona|carrefour|dia|lidl|aldi|consum|eroski|alcampo|supermercado|alimentacion|alimentación|fruta|verdura|panaderia|panadería|carniceria|carnicería)\b/,
+      /\b(cena|cenar|restaurante|bar|cafeteria|cafetería|taperia|tapería|pizzeria|pizzería|burger|kebab|sushi|terraza|copa|copas|ocio|cine|concierto|entrada|entradas|viaje|hotel)\b/,
+      /\b(monedas|alijo|efectivo|cajero|retirada|redondeo|traspaso)\b/
+    ];
+    return spotPatterns.some(rx => rx.test(textLower));
+  }
+
+  function buildRecurringKey(name, account) {
+    return `${account || 'ing_corriente'}::${normText(name).slice(0, 26)}`;
+  }
+
   function detectRecurringFromTransactions(silent = false) {
     const step = parseInt(document.getElementById('cfRoundStep')?.value || '5');
-    const utilityKeywords = ['luz', 'iberdrola', 'endesa', 'naturgy', 'agua', 'hidrogea', 'gas', 'teléfono', 'internet', 'digi', 'movistar', 'vodafone', 'orange', 'gasolina'];
-    const subKeywords = ['gimnasio', 'fitness', 'spotify', 'netflix', 'disney', 'amazon', 'prime', 'hbo', 'icloud', 'google', 'nómina', 'nomina', 'suscrip'];
+    const utilityKeywords = ['luz', 'iberdrola', 'endesa', 'naturgy', 'agua', 'hidrogea', 'gas', 'teléfono', 'telefono', 'internet', 'digi', 'movistar', 'vodafone', 'orange', 'comunidad'];
+    const fixedBillKeywords = ['gimnasio', 'fitness', 'spotify', 'netflix', 'disney', 'amazon', 'prime', 'hbo', 'icloud', 'google', 'nómina', 'nomina', 'pension', 'pensión', 'alquiler', 'seguro', 'cuota', 'suscrip'];
+    const dismissed = new Set(state.dismissedRecurringKeys || []);
 
     const groups = {};
     (state.transactions || []).forEach(t => {
-      if (t.category.toLowerCase().includes('redondeo') || t.category.toLowerCase().includes('traspaso')) return;
-      const key = t.concept.replace(/\d+/g, '').trim().slice(0, 26).toLowerCase();
+      const lowerAll = `${t.concept || ''} ${t.category || ''}`.toLowerCase();
+      if (isNonRecurringSpotExpense(lowerAll)) return;
+
+      const key = normText(t.concept).replace(/\d+/g, '').trim().slice(0, 26);
       if (!key) return;
       const day = parseInt((t.date || '').split('-')[2]) || 1;
-      if (!groups[key]) groups[key] = { name: t.concept.slice(0, 28), amounts: [], category: t.category, account: t.account, dayOfMonth: day };
+      const ym = (t.date || '').slice(0, 7);
+
+      if (!groups[key]) {
+        groups[key] = { name: t.concept.slice(0, 28), amounts: [], months: new Set(), category: t.category, account: t.account, dayOfMonth: day };
+      }
       groups[key].amounts.push(Number(t.amount));
+      if (ym) groups[key].months.add(ym);
     });
 
     const detected = [];
     Object.values(groups).forEach(g => {
       const lower = `${g.name} ${g.category}`.toLowerCase();
-      const isUtility = utilityKeywords.some(k => lower.includes(k));
-      const isSub = subKeywords.some(k => lower.includes(k));
+      if (isNonRecurringSpotExpense(lower)) return;
 
-      if (g.amounts.length >= 2 || isUtility || isSub) {
+      const isUtility = utilityKeywords.some(k => lower.includes(k));
+      const isFixedBill = fixedBillKeywords.some(k => lower.includes(k));
+      const distinctMonths = g.months.size;
+
+      if (isUtility || isFixedBill || distinctMonths >= 2 || g.amounts.length >= 3) {
         const avg = g.amounts.reduce((a, b) => a + b, 0) / g.amounts.length;
-        let finalAmt = avg;
-        let note = 'Cuota fija';
+        let finalAmt = Math.round(avg * 100) / 100;
+        let note = isUtility ? 'Suministro' : 'Recibo / Cuota recurrente';
 
         if (isUtility && avg < 0) {
           const absAvg = Math.abs(avg);
           const roundedUp = Math.ceil(absAvg / step) * step;
           finalAmt = -roundedUp;
           note = `Media ${fmt(absAvg)} → Alza ${fmt(roundedUp)}`;
-        } else {
-          finalAmt = Math.round(avg * 100) / 100;
         }
 
-        detected.push({ id: uid(), name: g.name, amount: finalAmt, account: g.account || 'ing_corriente', dayOfMonth: g.dayOfMonth || 1, note, active: true });
+        const recKey = buildRecurringKey(g.name, g.account || 'ing_corriente');
+        if (dismissed.has(recKey)) return;
+
+        detected.push({
+          id: uid(),
+          name: g.name,
+          amount: finalAmt,
+          account: g.account || 'ing_corriente',
+          dayOfMonth: g.dayOfMonth || 1,
+          note,
+          active: true,
+          manual: false
+        });
       }
     });
 
-    if (detected.length > 0) {
-      const manuals = (state.recurring || []).filter(r => r.manual);
-      state.recurring = [...detected, ...manuals];
-    }
+    const existingManuals = (state.recurring || []).filter(r => r.manual);
+    const existingActiveByKey = new Map();
+    (state.recurring || []).filter(r => !r.manual).forEach(r => {
+      existingActiveByKey.set(buildRecurringKey(r.name, r.account), r);
+    });
+
+    const mergedDetected = detected.map(d => {
+      const k = buildRecurringKey(d.name, d.account);
+      const prev = existingActiveByKey.get(k);
+      return prev ? { ...d, id: prev.id, active: prev.active, dayOfMonth: prev.dayOfMonth || d.dayOfMonth } : d;
+    });
+
+    state.recurring = [...mergedDetected, ...existingManuals];
     if (!silent) saveState();
   }
 
@@ -1821,6 +2221,9 @@
 
     if (!name || isNaN(rawAmt) || rawAmt <= 0) return alert('Introduce concepto e importe válido.');
     const amount = type === 'expense' ? -Math.abs(rawAmt) : Math.abs(rawAmt);
+
+    const recKey = buildRecurringKey(name, account);
+    state.dismissedRecurringKeys = (state.dismissedRecurringKeys || []).filter(k => k !== recKey);
 
     state.recurring.push({ id: uid(), name, amount, account, dayOfMonth, note: `Día ${dayOfMonth} de cada mes`, active: true, manual: true });
     document.getElementById('newRecName').value = '';
@@ -1835,6 +2238,11 @@
   }
 
   function deleteRecurring(id) {
+    const target = state.recurring.find(x => x.id === id);
+    if (target) {
+      const k = buildRecurringKey(target.name, target.account);
+      state.dismissedRecurringKeys = [...new Set([...(state.dismissedRecurringKeys || []), k])];
+    }
     state.recurring = state.recurring.filter(x => x.id !== id);
     saveState();
   }
@@ -1878,6 +2286,7 @@
   // ==================== RENDERIZADO ====================
   function renderAll() {
     try {
+      refreshAccountSelects();
       renderAccountsAndWeeklyRadar();
       renderChartsAndRecent();
       renderTransactions();
@@ -1889,34 +2298,42 @@
   }
 
   function renderAccountsAndWeeklyRadar() {
-    let totalAll = 0, totalBank = 0;
+    const accs = getAccountsList();
+    let totalNetWorth = 0, totalLiquid = 0;
     const grid = document.getElementById('accountsGrid');
-    grid.innerHTML = ACCOUNTS_META.map(acc => {
+
+    grid.innerHTML = accs.map(acc => {
       const bal = getAccountBalance(acc.id);
       const lastDate = getAccountLastDate(acc.id);
       const dateLabel = lastDate ? `Act. ${formatEsDate(lastDate)}` : 'Sin mov.';
-      totalAll += bal;
-      if (acc.id.startsWith('ing_')) totalBank += bal;
+      const included = acc.includeNetWorth !== false;
+      if (included) {
+        totalNetWorth += bal;
+        if (acc.kind !== 'loan') totalLiquid += bal;
+      }
+      const kindBadge = ACCOUNT_KINDS[acc.kind]?.label || 'Cuenta';
       return `
-        <div onclick="openAccountHistory('${acc.id}')" title="Clic para ver todos los movimientos de ${acc.name}" class="cursor-pointer p-2.5 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-800 hover:border-indigo-500 transition-all group">
-          <div class="flex items-center justify-between text-xs text-slate-400">
-            <span class="truncate group-hover:text-indigo-400 font-medium">${acc.name}</span><span>${acc.icon}</span>
+        <div onclick="openAccountHistory('${acc.id}')" title="Clic para abrir el libro mayor de ${acc.name}" class="cursor-pointer p-2.5 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-800 hover:border-indigo-500 transition-all group">
+          <div class="flex items-center justify-between gap-1 text-xs text-slate-400">
+            <span class="truncate group-hover:text-indigo-400 font-medium">${acc.name}</span>
+            <span class="shrink-0">${acc.icon || '🏦'}</span>
           </div>
-          <div class="text-sm sm:text-base font-bold mt-1 ${acc.color}">${fmt(bal)}</div>
+          <div class="text-sm sm:text-base font-bold mt-1 ${acc.color || 'text-indigo-500'}">${fmt(bal)}</div>
           <div class="text-[10px] text-slate-400 mt-0.5 flex items-center justify-between gap-1">
-            <span>${dateLabel}</span>
-            <span class="pocket-hide">Ver →</span>
+            <span class="truncate">${dateLabel} · ${kindBadge}</span>
+            <span class="pocket-hide shrink-0">Mayor →</span>
           </div>
         </div>
       `;
     }).join('');
 
     const radarAccounts = ui.viewMode === 'mobile'
-      ? ['ing_corriente', 'efectivo']
-      : ['ing_corriente', 'ing_nocuenta', 'ing_ahorro', 'efectivo'];
+      ? accs.filter(a => a.kind !== 'loan').slice(0, 2).map(a => a.id)
+      : accs.filter(a => a.kind !== 'loan').slice(0, 4).map(a => a.id);
+
     const weekEvents = buildUpcomingEvents(7, 'all');
     document.getElementById('weeklyRadarGrid').innerHTML = radarAccounts.map(accId => {
-      const meta = ACCOUNTS_META.find(a => a.id === accId);
+      const meta = getAccountMeta(accId);
       const startBal = getAccountBalance(accId);
       const accEvs = weekEvents.filter(e => e.account === accId);
       const net7d = accEvs.reduce((s, e) => s + e.amount, 0);
@@ -1926,8 +2343,8 @@
       return `
         <div onclick="document.getElementById('cfTimelineAccount').value='${accId}'; setTab('cashflow');" class="cursor-pointer p-2.5 rounded-xl border ${deficit > 0 ? 'border-rose-500/50 bg-rose-500/5' : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-850'} hover:border-indigo-500 transition-colors">
           <div class="flex items-center justify-between text-xs font-semibold">
-            <span>${meta.icon} ${meta.name}</span>
-            <span class="text-[11px] px-1.5 py-0.5 rounded-md ${deficit > 0 ? 'bg-rose-500/20 text-rose-500 font-bold' : 'bg-emerald-500/15 text-emerald-500'}">
+            <span class="truncate">${meta.icon || '🏦'} ${meta.name}</span>
+            <span class="text-[11px] px-1.5 py-0.5 rounded-md shrink-0 ${deficit > 0 ? 'bg-rose-500/20 text-rose-500 font-bold' : 'bg-emerald-500/15 text-emerald-500'}">
               ${deficit > 0 ? `⚠️ Traspasar ${fmt(deficit)}` : '✅ Cubierto'}
             </span>
           </div>
@@ -1947,7 +2364,7 @@
         pocketFeed.innerHTML = `<div class="text-[11px] text-slate-400 py-0.5">Sin movimientos previstos en los próximos días.</div>`;
       } else {
         pocketFeed.innerHTML = nextEvs.map(ev => {
-          const accShort = ACCOUNTS_META.find(a => a.id === ev.account)?.name || ev.account;
+          const accShort = getAccountMeta(ev.account).name;
           return `
             <div onclick="document.getElementById('cfTimelineAccount').value='${ev.account}'; setTab('cashflow');" class="cursor-pointer flex items-center justify-between gap-2 py-1 px-2 rounded-lg bg-slate-50 dark:bg-slate-850 text-xs">
               <div class="truncate">
@@ -1980,8 +2397,8 @@
     });
     const netDebt = oweMe - iOwe;
 
-    document.getElementById('kpiTotalBalance').textContent = fmt(totalAll);
-    document.getElementById('kpiBankOnly').textContent = `En bancos ING: ${fmt(totalBank)}`;
+    document.getElementById('kpiTotalBalance').textContent = fmt(totalNetWorth);
+    document.getElementById('kpiBankOnly').textContent = `Liquidez sin préstamos: ${fmt(totalLiquid)}`;
     document.getElementById('kpiMonthIncome').textContent = fmt(mInc);
     document.getElementById('kpiMonthExpense').textContent = fmt(mExp);
     document.getElementById('kpiPendingTickets').textContent = `${pendingTickets} pendiente(s) de validar`;
@@ -2091,14 +2508,19 @@
       }).join('');
     }
 
-    const recent = (state.transactions || []).slice(0, 6);
-    document.getElementById('recentTransactionsList').innerHTML = recent.map(t => {
-      const acc = ACCOUNTS_META.find(a => a.id === t.account)?.name || t.account;
+    const sortedRecent = [...(state.transactions || [])].sort((a, b) => {
+      const cmp = String(b.date || '').localeCompare(String(a.date || ''));
+      if (cmp !== 0) return cmp;
+      return Number(b.seq || 0) - Number(a.seq || 0);
+    }).slice(0, 6);
+
+    document.getElementById('recentTransactionsList').innerHTML = sortedRecent.map(t => {
+      const acc = getAccountMeta(t.account).name;
       return `
         <div class="p-2 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/70 dark:border-slate-800 flex items-center justify-between gap-2">
           <div class="min-w-0">
             <div class="text-xs font-semibold truncate">${t.concept}</div>
-            <div class="text-[10px] text-slate-400">${t.date} · ${acc}</div>
+            <div class="text-[10px] text-slate-400">${formatEsDate(t.date)} · ${acc}</div>
           </div>
           <div class="text-xs font-bold shrink-0 ${t.amount >= 0 ? 'text-emerald-500' : 'text-rose-500'}">${t.amount >= 0 ? '+' : ''}${fmt(t.amount)}</div>
         </div>
@@ -2109,12 +2531,14 @@
   function renderTransactions() {
     const fAccEl = document.getElementById('filterAccount');
     const curAcc = fAccEl.value;
+    const accs = getAccountsList();
     const tabsBox = document.getElementById('accountQuickTabs');
-    const allTabs = [{ id: 'all', name: 'Todas', icon: '📋' }, ...ACCOUNTS_META];
+    const allTabs = [{ id: 'all', name: 'Todas', icon: '📋' }, ...accs];
+
     tabsBox.innerHTML = allTabs.map(a => {
       const active = curAcc === a.id;
       const balTxt = a.id === 'all' ? '' : ` (${fmt(getAccountBalance(a.id))})`;
-      return `<button type="button" onclick="document.getElementById('filterAccount').value='${a.id}'; renderTransactions();" class="px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors ${active ? 'bg-indigo-600 text-white' : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-300'}">${a.icon} ${a.name}${balTxt}</button>`;
+      return `<button type="button" onclick="document.getElementById('filterAccount').value='${a.id}'; renderTransactions();" class="px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors ${active ? 'bg-indigo-600 text-white' : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-300'}">${a.icon || '🏦'} ${a.name}${balTxt}</button>`;
     }).join('');
 
     const catSel = document.getElementById('filterCategory');
@@ -2126,6 +2550,7 @@
     const q = document.getElementById('filterSearch').value.toLowerCase();
     const fCat = catSel.value;
     const fVal = document.getElementById('filterValidation').value;
+    const sortOrder = document.getElementById('filterSortOrder').value;
 
     const filtered = (state.transactions || []).filter(t => {
       if (curAcc !== 'all' && t.account !== curAcc) return false;
@@ -2133,18 +2558,83 @@
       if (fVal === 'validated' && !t.validated) return false;
       if (fVal === 'pending' && t.validated) return false;
       if (fVal === 'with_ticket' && !t.ticket) return false;
-      if (q && !`${t.concept} ${t.category}`.toLowerCase().includes(q)) return false;
+      if (q && !`${t.concept} ${t.category} ${getAccountMeta(t.account).name}`.toLowerCase().includes(q)) return false;
       return true;
     });
 
-    document.getElementById('txEmptyState').classList.toggle('hidden', filtered.length > 0);
+    // Orden cronológico base (más antigua primero) para calcular saldo mayor progresivo
+    const chrono = [...filtered].sort((a, b) => {
+      const dCmp = String(a.date || '').localeCompare(String(b.date || ''));
+      if (dCmp !== 0) return dCmp;
+      return Number(a.seq || 0) - Number(b.seq || 0);
+    });
 
-    document.getElementById('transactionsTableBody').innerHTML = filtered.slice(0, 150).map(t => {
-      const acc = ACCOUNTS_META.find(a => a.id === t.account)?.name || t.account;
+    const baseBal = curAcc === 'all'
+      ? 0
+      : Number((state.accountBases && state.accountBases[curAcc]) || 0);
+
+    let runningBal = baseBal;
+    let inSum = 0, outSum = 0;
+
+    const enriched = chrono.map(t => {
+      const amt = Number(t.amount || 0);
+      if (amt >= 0) inSum += amt;
+      else outSum += Math.abs(amt);
+      runningBal = Math.round((runningBal + amt) * 100) / 100;
+      return { ...t, ledgerBalance: runningBal };
+    });
+
+    const ledgerTitleEl = document.getElementById('ledgerAccountTitle');
+    if (ledgerTitleEl) {
+      ledgerTitleEl.textContent = curAcc === 'all'
+        ? `Libro Mayor · Todas las cuentas (${filtered.length} mov.)`
+        : `Libro Mayor · ${getAccountMeta(curAcc).name} (${filtered.length} mov.)`;
+    }
+    const ledgerBaseEl = document.getElementById('ledgerBaseBal');
+    const ledgerInEl = document.getElementById('ledgerInSum');
+    const ledgerOutEl = document.getElementById('ledgerOutSum');
+    const ledgerCurEl = document.getElementById('ledgerCurrentBal');
+    if (ledgerBaseEl) ledgerBaseEl.textContent = fmt(baseBal);
+    if (ledgerInEl) ledgerInEl.textContent = fmt(inSum);
+    if (ledgerOutEl) ledgerOutEl.textContent = fmt(outSum);
+    if (ledgerCurEl) {
+      const displayCur = curAcc === 'all'
+        ? (inSum - outSum)
+        : getAccountBalance(curAcc);
+      ledgerCurEl.textContent = fmt(displayCur);
+    }
+
+    const ordered = [...enriched];
+    if (sortOrder === 'date_desc') {
+      ordered.sort((a, b) => {
+        const dCmp = String(b.date || '').localeCompare(String(a.date || ''));
+        if (dCmp !== 0) return dCmp;
+        return Number(b.seq || 0) - Number(a.seq || 0);
+      });
+    } else if (sortOrder === 'account_asc') {
+      ordered.sort((a, b) => {
+        const nA = getAccountMeta(a.account).name;
+        const nB = getAccountMeta(b.account).name;
+        const aCmp = nA.localeCompare(nB, 'es');
+        if (aCmp !== 0) return aCmp;
+        const dCmp = String(a.date || '').localeCompare(String(b.date || ''));
+        if (dCmp !== 0) return dCmp;
+        return Number(a.seq || 0) - Number(b.seq || 0);
+      });
+    } else if (sortOrder === 'amount_desc') {
+      ordered.sort((a, b) => Number(b.amount || 0) - Number(a.amount || 0));
+    } else if (sortOrder === 'amount_asc') {
+      ordered.sort((a, b) => Number(a.amount || 0) - Number(b.amount || 0));
+    }
+
+    document.getElementById('txEmptyState').classList.toggle('hidden', ordered.length > 0);
+
+    document.getElementById('transactionsTableBody').innerHTML = ordered.slice(0, 250).map(t => {
+      const accName = getAccountMeta(t.account).name;
       return `
         <tr class="hover:bg-slate-50 dark:hover:bg-slate-850/70">
-          <td class="py-2 px-3 whitespace-nowrap text-slate-400">${t.date}</td>
-          <td class="py-2 px-3 whitespace-nowrap font-medium">${acc}</td>
+          <td class="py-2 px-3 whitespace-nowrap font-mono text-[11px] text-slate-400">${formatEsDate(t.date)}</td>
+          <td class="py-2 px-3 whitespace-nowrap font-medium">${accName}</td>
           <td class="py-2 px-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-[11px]">${t.category}</span></td>
           <td class="py-2 px-3 max-w-xs truncate font-medium">${t.concept}</td>
           <td class="py-2 px-3 text-center whitespace-nowrap">
@@ -2154,6 +2644,7 @@
             ${t.ticket ? `<button type="button" onclick="viewTicket('${t.id}')" class="ml-1 px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-400 text-[11px]">📎 Ver</button>` : ''}
           </td>
           <td class="py-2 px-3 text-right whitespace-nowrap font-bold ${t.amount >= 0 ? 'text-emerald-500' : 'text-rose-500'}">${t.amount >= 0 ? '+' : ''}${fmt(t.amount)}</td>
+          <td class="py-2 px-3 text-right whitespace-nowrap font-mono font-bold ${t.ledgerBalance < 0 ? 'text-rose-500' : 'text-slate-700 dark:text-slate-200'}">${fmt(t.ledgerBalance)}</td>
           <td class="py-2 px-3 text-right whitespace-nowrap space-x-1">
             <button type="button" onclick="openEditTxModal('${t.id}')" class="p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700">✏️</button>
             <button type="button" onclick="deleteTx('${t.id}')" class="p-1 rounded hover:bg-rose-500/20 text-rose-500">🗑️</button>
@@ -2162,13 +2653,13 @@
       `;
     }).join('');
 
-    document.getElementById('transactionsMobileCards').innerHTML = filtered.slice(0, 60).map(t => {
-      const acc = ACCOUNTS_META.find(a => a.id === t.account)?.name || t.account;
+    document.getElementById('transactionsMobileCards').innerHTML = ordered.slice(0, 80).map(t => {
+      const accName = getAccountMeta(t.account).name;
       return `
         <div class="p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2">
           <div class="min-w-0">
             <div class="text-xs font-bold truncate">${t.concept}</div>
-            <div class="text-[11px] text-slate-400">${formatEsDate(t.date)} · ${acc}</div>
+            <div class="text-[11px] text-slate-400">${formatEsDate(t.date)} · ${accName} · Saldo: <b class="font-mono">${fmt(t.ledgerBalance)}</b></div>
             <div class="mt-1 flex items-center gap-1.5">
               <button type="button" onclick="toggleTxValidated('${t.id}')" class="px-2 py-0.5 rounded-full text-[10px] font-semibold ${t.validated ? 'bg-emerald-500/15 text-emerald-500' : 'bg-amber-500/15 text-amber-500'}">${t.validated ? '✅ Validado' : '⏳ Pendiente'}</button>
               ${t.ticket ? `<button type="button" onclick="viewTicket('${t.id}')" class="px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-400 text-[10px]">📎 Ticket</button>` : ''}
@@ -2184,37 +2675,41 @@
   }
 
   function renderDebts() {
-    const allNames = [...new Set([...(state.friends || []), ...(state.debts || []).map(d => d.friend)])];
-    document.getElementById('friendsSummaryGrid').innerHTML = allNames.map(name => {
-      const friendDebts = (state.debts || []).filter(d => d.friend === name);
-      const pendingNet = friendDebts.filter(d => !d.settled).reduce((acc, d) => acc + (d.direction === 'owe_me' ? Number(d.amount) : -Number(d.amount)), 0);
-      return `
-        <div onclick="openFriendHistory('${name}')" class="cursor-pointer p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-indigo-500 transition-all shadow-sm flex items-center justify-between">
-          <div>
-            <div class="font-bold text-sm flex items-center gap-1.5"><span>👤</span><span>${name}</span></div>
-            <div class="text-[11px] text-slate-400 mt-0.5">${friendDebts.length} mov. · Ver historial</div>
-          </div>
-          <div class="text-right">
-            <div class="text-sm font-bold ${pendingNet > 0 ? 'text-emerald-500' : pendingNet < 0 ? 'text-rose-500' : 'text-slate-400'}">
-              ${pendingNet === 0 ? 'Al día' : (pendingNet > 0 ? '+' + fmt(pendingNet) : fmt(pendingNet))}
+    const allNames = [...new Set([...(state.friends || []), ...(state.debts || []).map(d => d.friend)])].filter(Boolean);
+    document.getElementById('friendsSummaryGrid').innerHTML = allNames.length === 0
+      ? `<div class="col-span-full text-center text-xs text-slate-400 py-6">No hay amigos configurados. Añade personas en Ajustes o asócialas al importar.</div>`
+      : allNames.map(name => {
+          const safeName = name.replace(/'/g, "\\'");
+          const friendDebts = (state.debts || []).filter(d => d.friend === name);
+          const pendingNet = friendDebts.filter(d => !d.settled).reduce((acc, d) => acc + (d.direction === 'owe_me' ? Number(d.amount) : -Number(d.amount)), 0);
+          return `
+            <div onclick="openFriendHistory('${safeName}')" class="cursor-pointer p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-indigo-500 transition-all shadow-sm flex items-center justify-between">
+              <div>
+                <div class="font-bold text-sm flex items-center gap-1.5"><span>👤</span><span>${name}</span></div>
+                <div class="text-[11px] text-slate-400 mt-0.5">${friendDebts.length} mov. · Ver historial</div>
+              </div>
+              <div class="text-right">
+                <div class="text-sm font-bold ${pendingNet > 0 ? 'text-emerald-500' : pendingNet < 0 ? 'text-rose-500' : 'text-slate-400'}">
+                  ${pendingNet === 0 ? 'Al día' : (pendingNet > 0 ? '+' + fmt(pendingNet) : fmt(pendingNet))}
+                </div>
+                <div class="text-[10px] text-slate-400">${pendingNet > 0 ? 'Te debe' : pendingNet < 0 ? 'Le debes' : '0,00 €'}</div>
+              </div>
             </div>
-            <div class="text-[10px] text-slate-400">${pendingNet > 0 ? 'Te debe' : pendingNet < 0 ? 'Le debes' : '0,00 €'}</div>
-          </div>
-        </div>
-      `;
-    }).join('');
+          `;
+        }).join('');
 
     const showSettled = document.getElementById('showSettledDebts').checked;
     const list = (state.debts || []).filter(d => showSettled || !d.settled);
     document.getElementById('debtsListContainer').innerHTML = list.length === 0
       ? '<div class="text-center text-xs text-slate-400 py-6">No hay deudas pendientes.</div>'
       : list.map(d => {
+          const safeFriend = (d.friend || '').replace(/'/g, "\\'");
           const daysAgo = Math.max(0, Math.floor((Date.now() - new Date(d.date).getTime()) / 86400000));
           return `
             <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 ${d.settled ? 'opacity-50' : ''}">
               <div class="min-w-0">
                 <div class="text-xs font-bold flex items-center gap-2">
-                  <button type="button" onclick="openFriendHistory('${d.friend}')" class="text-indigo-400 hover:underline">${d.friend}</button>
+                  <button type="button" onclick="openFriendHistory('${safeFriend}')" class="text-indigo-400 hover:underline">${d.friend}</button>
                   <span>· ${d.concept}</span>
                 </div>
                 <div class="text-[11px] text-slate-400">${d.date} (hace ${daysAgo} días) · ${d.direction === 'owe_me' ? 'Me debe' : 'Le debo'}</div>
@@ -2243,7 +2738,7 @@
     const showEmpty = ui.viewMode !== 'mobile' && !!document.getElementById('cfShowEmptyDays')?.checked;
 
     const startBal = selAcc === 'all'
-      ? ACCOUNTS_META.reduce((s, a) => s + getAccountBalance(a.id), 0)
+      ? getAccountsList().filter(a => a.includeNetWorth !== false).reduce((s, a) => s + getAccountBalance(a.id), 0)
       : getAccountBalance(selAcc);
 
     const events = buildUpcomingEvents(days, selAcc);
@@ -2294,7 +2789,7 @@
           const debeVal = isDebe ? Math.abs(ev.amount) : 0;
           const haberVal = !isDebe ? Math.abs(ev.amount) : 0;
           running += ev.amount;
-          const accLabel = selAcc === 'all' ? ` [${ACCOUNTS_META.find(a => a.id === ev.account)?.name || ev.account}]` : '';
+          const accLabel = selAcc === 'all' ? ` [${getAccountMeta(ev.account).name}]` : '';
           const negCell = running < 0 ? 'bg-rose-500/25 text-rose-500 font-extrabold' : 'font-bold';
           const shortDate = formatEsDate(iso).slice(0, 5);
           const amtSigned = `${ev.amount >= 0 ? '+' : ''}${fmt(ev.amount)}`;
@@ -2322,9 +2817,9 @@
     document.getElementById('cfThirtyDaysProj').textContent = fmt(running);
 
     document.getElementById('recurringItemsList').innerHTML = (state.recurring || []).length === 0
-      ? '<div class="text-xs text-slate-400 py-6 text-center col-span-2">No hay partidas recurrentes aún. Añade una arriba o pulsa Detectar del banco.</div>'
+      ? '<div class="text-xs text-slate-400 py-6 text-center col-span-2">No hay partidas recurrentes aún. Añade una arriba o pulsa Detectar recibos/cuotas.</div>'
       : state.recurring.map(r => {
-          const accName = ACCOUNTS_META.find(a => a.id === (r.account || 'ing_corriente'))?.name || 'ING Corriente';
+          const accName = getAccountMeta(r.account || 'ing_corriente').name;
           return `
             <div class="p-2 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 ${!r.active ? 'opacity-50' : ''}">
               <div class="flex items-center gap-2 min-w-0">
@@ -2344,19 +2839,55 @@
   }
 
   function renderSettings() {
-    document.getElementById('settingsFriendsList').innerHTML = (state.friends || []).map(f => `
-      <div class="py-2 flex items-center justify-between gap-2 text-xs">
-        <span class="font-semibold">👤 ${f}</span>
-        <div class="flex items-center gap-1.5">
-          <button type="button" onclick="openFriendHistory('${f}')" class="px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-[11px]">Historial</button>
-          <button type="button" onclick="renameFriend('${f}')" class="px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-[11px]">✏️ Renombrar</button>
-          <button type="button" onclick="deleteFriend('${f}')" class="px-2 py-1 rounded-lg bg-rose-500/15 text-rose-500 hover:bg-rose-500/25 text-[11px] font-semibold">Quitar</button>
-        </div>
-      </div>
-    `).join('');
+    const accListBox = document.getElementById('settingsAccountsList');
+    if (accListBox) {
+      accListBox.innerHTML = getAccountsList().map(a => {
+        const bal = getAccountBalance(a.id);
+        const kindOpts = Object.entries(ACCOUNT_KINDS).map(([k, v]) =>
+          `<option value="${k}" ${(a.kind || 'bank') === k ? 'selected' : ''}>${v.icon} ${v.label}</option>`
+        ).join('');
+        return `
+          <div class="py-2 flex flex-wrap items-center justify-between gap-2 text-xs">
+            <div class="min-w-0">
+              <span class="font-bold">${a.icon || '🏦'} ${a.name}</span>
+              <span class="ml-2 font-mono font-bold ${bal < 0 ? 'text-rose-500' : 'text-indigo-500'}">${fmt(bal)}</span>
+              <span class="ml-2 text-[11px] text-slate-400">${a.includeNetWorth !== false ? '· En patrimonio' : '· Excluida de patrimonio'}</span>
+            </div>
+            <div class="flex flex-wrap items-center gap-1.5">
+              <select onchange="updateAccountKind('${a.id}', this.value)" class="px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[11px]">
+                ${kindOpts}
+              </select>
+              <button type="button" onclick="toggleAccountNetWorth('${a.id}')" class="px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-[11px]">
+                ${a.includeNetWorth !== false ? 'Excluir sumas' : 'Incluir sumas'}
+              </button>
+              <button type="button" onclick="renameAccount('${a.id}')" class="px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-[11px]">✏️ Renombrar</button>
+              <button type="button" onclick="deleteAccount('${a.id}')" class="px-2 py-1 rounded-lg bg-rose-500/15 text-rose-500 hover:bg-rose-500/25 text-[11px] font-semibold">Borrar</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    document.getElementById('settingsFriendsList').innerHTML = (state.friends || []).length === 0
+      ? `<div class="py-6 text-center text-xs text-slate-400">No hay amigos añadidos. Escribe un nombre arriba y pulsa Añadir.</div>`
+      : state.friends.map(f => {
+          const safeF = f.replace(/'/g, "\\'");
+          return `
+            <div class="py-2 flex items-center justify-between gap-2 text-xs">
+              <span class="font-semibold">👤 ${f}</span>
+              <div class="flex items-center gap-1.5">
+                <button type="button" onclick="openFriendHistory('${safeF}')" class="px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-[11px]">Historial</button>
+                <button type="button" onclick="renameFriend('${safeF}')" class="px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-[11px]">✏️ Renombrar</button>
+                <button type="button" onclick="deleteFriend('${safeF}')" class="px-2 py-1 rounded-lg bg-rose-500/15 text-rose-500 hover:bg-rose-500/25 text-[11px] font-semibold">Quitar</button>
+              </div>
+            </div>
+          `;
+        }).join('');
 
     const rFriendSel = document.getElementById('ruleFriend');
-    rFriendSel.innerHTML = (state.friends || []).map(f => `<option value="${f}">${f}</option>`).join('');
+    rFriendSel.innerHTML = (state.friends || []).length === 0
+      ? `<option value="">Sin amigos</option>`
+      : state.friends.map(f => `<option value="${f}">${f}</option>`).join('');
 
     document.getElementById('sharedRulesList').innerHTML = (state.sharedRules || []).length === 0
       ? '<div class="text-xs text-slate-400 py-3 text-center">No tienes reglas configuradas aún.</div>'
@@ -2372,17 +2903,18 @@
   }
 
   function renderAdjustAccountsModal() {
-    document.getElementById('adjustAccountsFields').innerHTML = ACCOUNTS_META.map(acc => `
+    document.getElementById('adjustAccountsFields').innerHTML = getAccountsList().map(acc => `
       <div class="flex items-center justify-between gap-2 text-xs">
-        <label class="font-semibold">${acc.icon} ${acc.name}</label>
-        <input id="base_${acc.id}" type="number" step="0.01" value="${state.accountBases[acc.id] || 0}" class="w-32 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-right font-bold" />
+        <label class="font-semibold truncate">${acc.icon || '🏦'} ${acc.name}</label>
+        <input id="base_${acc.id}" type="number" step="0.01" value="${state.accountBases[acc.id] || 0}" class="w-32 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-right font-bold shrink-0" />
       </div>
     `).join('');
   }
 
   function saveAccountBases() {
-    ACCOUNTS_META.forEach(acc => {
-      state.accountBases[acc.id] = parseFloat(document.getElementById('base_' + acc.id).value) || 0;
+    getAccountsList().forEach(acc => {
+      const inp = document.getElementById('base_' + acc.id);
+      if (inp) state.accountBases[acc.id] = parseFloat(inp.value) || 0;
     });
     closeModal('modalAdjustAccounts');
     saveState();
@@ -2401,18 +2933,37 @@
     if (!file) return;
     const r = new FileReader();
     r.onload = (ev) => {
-      try { state = { ...state, ...JSON.parse(ev.target.result) }; saveState(); alert('Copia restaurada.'); }
-      catch (err) { alert('Archivo JSON inválido.'); }
+      try {
+        localStorage.removeItem(RESET_FLAG_KEY);
+        const imported = JSON.parse(ev.target.result);
+        state = {
+          accounts: Array.isArray(imported.accounts) && imported.accounts.length > 0 ? imported.accounts : DEFAULT_ACCOUNTS.map(a => ({ ...a })),
+          accountBases: { ...(imported.accountBases || {}) },
+          transactions: Array.isArray(imported.transactions) ? imported.transactions.map((t, i) => ({ seq: i + 1, ...t })) : [],
+          debts: Array.isArray(imported.debts) ? imported.debts : [],
+          friends: Array.isArray(imported.friends) ? imported.friends : [],
+          sharedRules: Array.isArray(imported.sharedRules) ? imported.sharedRules : [],
+          recurring: Array.isArray(imported.recurring) ? imported.recurring : [],
+          dismissedRecurringKeys: Array.isArray(imported.dismissedRecurringKeys) ? imported.dismissedRecurringKeys : [],
+          updatedAt: Date.now()
+        };
+        saveState();
+        alert('Copia restaurada.');
+      } catch (err) { alert('Archivo JSON inválido.'); }
     };
     r.readAsText(file);
   }
 
   function resetAllData() {
-    if (!confirm('¿Seguro que quieres vaciar todos los movimientos y deudas para empezar desde cero?')) return;
+    if (!confirm('¿Seguro que quieres borrar todos los movimientos, deudas, cuentas importadas, amigos y reglas para empezar desde cero?')) return;
     localStorage.setItem(RESET_FLAG_KEY, '1');
+    state.accounts = DEFAULT_ACCOUNTS.map(a => ({ ...a }));
     state.transactions = [];
     state.debts = [];
     state.recurring = [];
+    state.friends = [];
+    state.sharedRules = [];
+    state.dismissedRecurringKeys = [];
     state.accountBases = { ing_corriente: 0, ing_ahorro: 0, ing_nocuenta: 0, efectivo: 0, hucha_monedas: 0 };
     saveState();
   }
@@ -2500,7 +3051,14 @@
               const remote = snap.data();
               if ((remote.updatedAt || 0) > (state.updatedAt || 0)) {
                 isApplyingRemote = true;
-                state = { ...state, ...remote };
+                state = {
+                  ...state,
+                  ...remote,
+                  accounts: Array.isArray(remote.accounts) && remote.accounts.length > 0 ? remote.accounts : state.accounts,
+                  friends: Array.isArray(remote.friends) ? remote.friends : [],
+                  sharedRules: Array.isArray(remote.sharedRules) ? remote.sharedRules : [],
+                  dismissedRecurringKeys: Array.isArray(remote.dismissedRecurringKeys) ? remote.dismissedRecurringKeys : []
+                };
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
                 renderAll();
                 isApplyingRemote = false;
@@ -2528,6 +3086,7 @@
   initThemeFromDevice();
   loadState();
   applyViewMode();
+  refreshAccountSelects();
   setTab('dashboard');
 </script>
 
