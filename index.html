@@ -981,6 +981,8 @@
       }
     }
 
+    const explicitlyCleared = localStorage.getItem(RESET_FLAG_KEY) === '1';
+
     if (raw) {
       try {
         const parsed = JSON.parse(raw);
@@ -990,13 +992,13 @@
           dayOfMonth: ((i * 5) % 28) + 1,
           ...r
         }));
-        if ((!state.transactions || state.transactions.length === 0) && (!state.debts || state.debts.length === 0)) {
+        if (!explicitlyCleared && (!state.transactions || state.transactions.length === 0) && (!state.debts || state.debts.length === 0)) {
           seedDemoData();
         }
       } catch (e) {
-        seedDemoData();
+        if (!explicitlyCleared) seedDemoData();
       }
-    } else {
+    } else if (!explicitlyCleared) {
       seedDemoData();
     }
   }
@@ -2407,6 +2409,7 @@
 
   function resetAllData() {
     if (!confirm('¿Seguro que quieres vaciar todos los movimientos y deudas para empezar desde cero?')) return;
+    localStorage.setItem(RESET_FLAG_KEY, '1');
     state.transactions = [];
     state.debts = [];
     state.recurring = [];
