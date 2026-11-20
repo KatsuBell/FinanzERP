@@ -86,7 +86,7 @@
       </button>
       <button type="button" onclick="setTab('settings')" data-tab="settings" class="nav-btn w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-colors text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
         <span class="text-base shrink-0">⚙️</span>
-        <span class="nav-label truncate">Cuentas, Amigos & Reglas</span>
+        <span class="nav-label truncate">Ajustes, Recurrentes & Reglas</span>
       </button>
 
       <div class="pt-2 mt-2 border-t border-slate-200 dark:border-slate-800 space-y-1">
@@ -193,21 +193,17 @@
           </div>
         </div>
 
-        <!-- CUENTAS FINANCIERAS / PERSONALES -->
         <div class="bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
           <div class="flex items-center justify-between gap-2 mb-2">
             <div>
               <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Saldos por Cuenta</h2>
               <p class="text-[11px] text-slate-400">Pulsa una cuenta para abrir su libro mayor ordenado por fecha y ver su saldo acumulado.</p>
             </div>
-            <div class="flex items-center gap-3 shrink-0">
-              <button type="button" onclick="openModal('modalAdjustAccounts')" class="text-xs text-indigo-500 hover:underline font-medium">Ajustar / Crear cuentas</button>
-            </div>
+            <button type="button" onclick="openModal('modalAdjustAccounts')" class="text-xs text-indigo-500 hover:underline font-medium shrink-0">Ajustar / Crear cuentas</button>
           </div>
           <div id="accountsGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 pocket-grid-2 gap-2"></div>
         </div>
 
-        <!-- CUENTAS MARCADAS COMO AMIGO (SEPARADAS EN PÁGINA PRINCIPAL) -->
         <div id="friendAccountsSection" class="hidden bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
           <div class="flex items-center justify-between gap-2 mb-2">
             <div>
@@ -332,7 +328,7 @@
         <div class="flex flex-wrap items-center justify-between gap-2 bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800">
           <div>
             <h2 class="font-bold text-sm">Cuentas Compartidas con Amigos</h2>
-            <p class="text-xs text-slate-400">Haz clic sobre cualquier amigo para ver todo su historial y movimientos contigo.</p>
+            <p class="text-xs text-slate-400">Haz clic sobre cualquier amigo para ver su mayor contable y compensar movimientos.</p>
           </div>
           <div class="flex flex-wrap items-center gap-2">
             <button type="button" onclick="syncFriendAccountsToDebts(false)" class="px-3 py-1.5 rounded-xl bg-sky-500/15 text-sky-500 hover:bg-sky-500/25 text-xs font-semibold">🔄 Sincronizar cuentas Amigo</button>
@@ -343,9 +339,25 @@
 
         <div id="friendsSummaryGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 pocket-grid-2 gap-3"></div>
 
+        <!-- BARRA DE COMPENSACIÓN / CASADO EN VISTA GENERAL -->
+        <div id="globalMatchBar" class="hidden bg-indigo-600/10 border border-indigo-500/40 p-3 rounded-2xl flex flex-wrap items-center justify-between gap-2 text-xs">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="font-bold text-indigo-400">🔗 <span id="globalMatchCount">0</span> seleccionado(s)</span>
+            <span>Saldo neto selección: <b id="globalMatchNet" class="font-mono">0,00 €</b></span>
+            <span id="globalMatchHint" class="text-[11px] text-slate-400"></span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="clearGlobalDebtSelection()" class="px-2.5 py-1 rounded-lg bg-slate-200 dark:bg-slate-800 text-xs font-medium">Limpiar</button>
+            <button type="button" onclick="matchSelectedDebts(null)" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold">🔗 Casar y Saldar seleccionados</button>
+          </div>
+        </div>
+
         <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
-          <div class="flex items-center justify-between mb-3">
-            <h3 class="font-bold text-sm">Movimientos Pendientes de Saldar</h3>
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <div class="flex items-center gap-2">
+              <h3 class="font-bold text-sm">Movimientos Pendientes de Saldar</h3>
+              <button type="button" onclick="toggleSelectAllGlobalDebts()" class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-[11px] font-medium hover:bg-slate-200 dark:hover:bg-slate-700">Seleccionar todos</button>
+            </div>
             <label class="flex items-center gap-1.5 text-xs text-slate-400 cursor-pointer">
               <input id="showSettledDebts" type="checkbox" onchange="renderDebts()" class="rounded" />
               Mostrar ya saldados
@@ -376,45 +388,11 @@
           </div>
         </div>
 
-        <div class="pocket-hide bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800">
-          <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
-            <div>
-              <h3 class="font-bold text-sm">Programar Ingreso o Gasto Recurrente</h3>
-              <p class="text-[11px] text-slate-400">Solo se detectan recibos, cuotas o nóminas recurrentes (nunca supermercados ni cenas puntuales).</p>
-            </div>
-            <div class="flex items-center gap-1.5">
-              <select id="cfRoundStep" onchange="detectRecurringFromTransactions()" class="px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[11px]">
-                <option value="1">Suministros alza: +1 €</option>
-                <option value="5" selected>Suministros alza: +5 €</option>
-                <option value="10">Suministros alza: +10 €</option>
-              </select>
-              <button type="button" onclick="detectRecurringFromTransactions()" class="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-semibold">🔄 Detectar recibos/cuotas</button>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-2 sm:grid-cols-12 gap-2">
-            <input id="newRecName" type="text" placeholder="Concepto (ej. Nómina, Luz, Gimnasio...)" class="col-span-2 sm:col-span-3 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs" />
-            <select id="newRecType" class="col-span-1 sm:col-span-2 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs">
-              <option value="income">Debe / Entrada (+)</option>
-              <option value="expense">Haber / Salida (-)</option>
-            </select>
-            <input id="newRecAmount" type="number" step="0.01" placeholder="Importe €" class="col-span-1 sm:col-span-2 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold" />
-            <select id="newRecAccount" class="col-span-1 sm:col-span-2 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs">
-              <option value="ing_corriente">ING Corriente</option>
-              <option value="ing_nocuenta">ING NoCuenta</option>
-              <option value="ing_ahorro">ING Ahorro</option>
-              <option value="efectivo">Efectivo</option>
-            </select>
-            <input id="newRecDay" type="number" min="1" max="31" value="1" title="Día del mes en que ocurre (1 a 31)" placeholder="Día" class="col-span-1 sm:col-span-1 px-2 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-center" />
-            <button type="button" onclick="addManualRecurring()" class="col-span-2 sm:col-span-2 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold">+ Añadir Previsión</button>
-          </div>
-        </div>
-
         <div class="bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-2.5">
           <div class="flex flex-wrap items-center justify-between gap-2">
             <div>
               <h3 class="font-bold text-sm">Cuadro de Previsiones</h3>
-              <p class="text-[11px] text-slate-400">Importe previsto, fecha y saldo resultante por cuenta.</p>
+              <p class="text-[11px] text-slate-400">Importe previsto, fecha y saldo resultante por cuenta. Configura recurrentes y puntuales en <button type="button" onclick="setTab('settings')" class="text-indigo-500 hover:underline font-semibold">Ajustes</button>.</p>
             </div>
             <div class="flex items-center gap-1.5 w-full sm:w-auto">
               <select id="cfTimelineAccount" onchange="renderCashFlow()" class="flex-1 sm:flex-initial px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold">
@@ -449,15 +427,55 @@
             </table>
           </div>
         </div>
-
-        <div class="pocket-hide bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800">
-          <h3 class="font-bold text-sm mb-2">Partidas Recurrentes Programadas (Activar / Desactivar / Eliminar)</h3>
-          <div id="recurringItemsList" class="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-60 overflow-y-auto custom-scroll pr-1"></div>
-        </div>
       </section>
 
-      <!-- ==================== VISTA 5: AJUSTES, CUENTAS, AMIGOS & REGLAS ==================== -->
+      <!-- ==================== VISTA 5: AJUSTES, RECURRENTES, CUENTAS, AMIGOS & REGLAS ==================== -->
       <section id="view-settings" class="hidden space-y-4 max-w-6xl mx-auto">
+
+        <!-- NUEVO SISTEMA DE PREVISIONES RECURRENTES Y NO RECURRENTES -->
+        <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h2 class="font-bold text-sm flex items-center gap-2"><span>🔄</span> Gestor de Previsiones (Recurrentes & No Recurrentes)</h2>
+              <p class="text-xs text-slate-400 mt-0.5">Crea, edita, elimina o activa/desactiva cuotas mensuales y previsiones puntuales en una fecha concreta.</p>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <select id="cfRoundStep" onchange="detectRecurringFromTransactions()" class="px-2 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs">
+                <option value="1">Suministros alza: +1 €</option>
+                <option value="5" selected>Suministros alza: +5 €</option>
+                <option value="10">Suministros alza: +10 €</option>
+              </select>
+              <button type="button" onclick="detectRecurringFromTransactions()" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold">🔄 Detectar recibos/cuotas</button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-12 gap-2">
+            <input id="newRecName" type="text" placeholder="Concepto (ej. Nómina, Luz, IBI punt...)" class="col-span-2 sm:col-span-3 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs" />
+            <select id="newRecFreq" onchange="toggleNewRecScheduleInputs()" class="col-span-1 sm:col-span-2 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold">
+              <option value="monthly">🔁 Mensual (Día)</option>
+              <option value="once">📌 No recurrente (Fecha)</option>
+            </select>
+            <select id="newRecType" class="col-span-1 sm:col-span-2 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs">
+              <option value="expense">Haber / Salida (-)</option>
+              <option value="income">Debe / Entrada (+)</option>
+            </select>
+            <input id="newRecAmount" type="number" step="0.01" placeholder="Importe €" class="col-span-1 sm:col-span-2 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold" />
+            <select id="newRecAccount" class="col-span-1 sm:col-span-2 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs"></select>
+            <div id="newRecDayWrap" class="col-span-1 sm:col-span-1">
+              <input id="newRecDay" type="number" min="1" max="31" value="1" title="Día del mes (1 a 31)" placeholder="Día" class="w-full px-2 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-center" />
+            </div>
+            <div id="newRecDateWrap" class="hidden col-span-2 sm:col-span-2">
+              <input id="newRecDate" type="date" class="w-full px-2 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs" />
+            </div>
+          </div>
+          <div class="flex justify-end">
+            <button type="button" onclick="addManualRecurring()" class="px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold">+ Guardar Previsión</button>
+          </div>
+
+          <div id="recurringItemsList" class="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-72 overflow-y-auto custom-scroll pr-1 pt-1"></div>
+        </div>
+
+        <!-- CUENTAS -->
         <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3">
           <div class="flex flex-wrap items-center justify-between gap-2">
             <div>
@@ -472,6 +490,7 @@
           <div id="settingsAccountsList" class="divide-y divide-slate-100 dark:divide-slate-800 max-h-80 overflow-y-auto custom-scroll"></div>
         </div>
 
+        <!-- AMIGOS Y REGLAS -->
         <div class="grid grid-cols-1 lg:grid-cols-2 pocket-stack gap-4">
           <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3">
             <div>
@@ -553,20 +572,100 @@
 </div>
 
 <!-- ==================== MODALES ==================== -->
+<!-- HISTORIAL CON AMIGO EN FORMATO MAYOR CONTABLE + COMPENSACIÓN / AGRUPACIÓN -->
 <div id="modalFriendHistory" class="hidden fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-3">
-  <div class="bg-white dark:bg-slate-900 w-full max-w-xl rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
-    <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+  <div class="bg-white dark:bg-slate-900 w-full max-w-4xl rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden flex flex-col max-h-[88vh]">
+    <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2">
       <div>
-        <h3 id="friendModalTitle" class="font-bold text-base">Historial con Amigo</h3>
-        <p id="friendModalSubtitle" class="text-xs text-slate-400">Todos los movimientos compartidos</p>
+        <h3 id="friendModalTitle" class="font-bold text-base">Mayor Contable con Amigo</h3>
+        <p id="friendModalSubtitle" class="text-xs text-slate-400">Selecciona movimientos para casar y compensar, o salda todo lo pendiente.</p>
       </div>
-      <button type="button" onclick="closeModal('modalFriendHistory')" class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">✕</button>
+      <div class="flex items-center gap-2">
+        <label class="flex items-center gap-1.5 text-xs text-slate-400 cursor-pointer">
+          <input id="friendModalShowSettled" type="checkbox" checked onchange="rerenderCurrentFriendModal()" class="rounded" />
+          Ver ya saldados
+        </label>
+        <button type="button" onclick="closeModal('modalFriendHistory')" class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">✕</button>
+      </div>
     </div>
-    <div id="friendModalList" class="p-4 space-y-2 overflow-y-auto custom-scroll flex-1"></div>
-    <div class="p-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-850 flex items-center justify-between">
+
+    <div id="friendModalMatchBar" class="hidden px-4 py-2.5 bg-indigo-600/10 border-b border-indigo-500/30 flex flex-wrap items-center justify-between gap-2 text-xs">
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="font-bold text-indigo-400">🔗 <span id="friendMatchCount">0</span> mov. marcados</span>
+        <span>Saldo de selección: <b id="friendMatchNet" class="font-mono">0,00 €</b></span>
+        <span id="friendMatchStatusBadge" class="text-[11px]"></span>
+      </div>
+      <div class="flex items-center gap-2">
+        <button type="button" onclick="clearFriendSelection()" class="px-2.5 py-1 rounded-lg bg-slate-200 dark:bg-slate-800 text-xs font-medium">Limpiar</button>
+        <button type="button" id="friendMatchBtn" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold">🔗 Casar y Compensar</button>
+      </div>
+    </div>
+
+    <div class="overflow-x-auto custom-scroll flex-1">
+      <table class="w-full text-left border-collapse text-xs">
+        <thead>
+          <tr class="bg-slate-800 text-white sticky top-0 z-10">
+            <th class="py-2 px-2.5 w-8 text-center"><input id="friendSelectAllChk" type="checkbox" onchange="toggleSelectAllFriendDebts(this.checked)" class="rounded" /></th>
+            <th class="py-2 px-2.5 font-semibold">Fecha</th>
+            <th class="py-2 px-2.5 font-semibold">Concepto / Agrupación</th>
+            <th class="py-2 px-2.5 font-semibold text-center">Estado</th>
+            <th class="py-2 px-2.5 font-semibold text-right">Me debe (+)</th>
+            <th class="py-2 px-2.5 font-semibold text-right">Le debo (-)</th>
+            <th class="py-2 px-2.5 font-semibold text-right">Saldo Mayor</th>
+            <th class="py-2 px-2.5 font-semibold text-right">Acción</th>
+          </tr>
+        </thead>
+        <tbody id="friendModalTableBody" class="divide-y divide-slate-200 dark:divide-slate-800"></tbody>
+      </table>
+    </div>
+
+    <div class="p-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-850 flex flex-wrap items-center justify-between gap-2">
       <div id="friendModalBalance" class="text-sm font-bold">Saldo neto: 0,00 €</div>
       <button type="button" id="friendModalSettleAllBtn" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold">Saldar todo lo pendiente</button>
     </div>
+  </div>
+</div>
+
+<!-- MODAL EDITAR PARTIDA RECURRENTE / NO RECURRENTE -->
+<div id="modalEditRecurring" class="hidden fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-3">
+  <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl p-4 space-y-3">
+    <div class="flex items-center justify-between">
+      <h3 class="font-bold text-base">✏️ Editar Previsión</h3>
+      <button type="button" onclick="closeModal('modalEditRecurring')" class="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">✕</button>
+    </div>
+    <input type="hidden" id="editRecId" />
+    <div>
+      <label class="text-[11px] text-slate-400">Concepto</label>
+      <input id="editRecName" type="text" class="w-full px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs" />
+    </div>
+    <div class="grid grid-cols-2 gap-2">
+      <div>
+        <label class="text-[11px] text-slate-400">Tipo</label>
+        <select id="editRecFreq" onchange="toggleEditRecScheduleInputs()" class="w-full px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs">
+          <option value="monthly">🔁 Mensual (Día)</option>
+          <option value="once">📌 No recurrente (Fecha)</option>
+        </select>
+      </div>
+      <div>
+        <label class="text-[11px] text-slate-400">Importe (- salida / + entrada)</label>
+        <input id="editRecAmount" type="number" step="0.01" class="w-full px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold" />
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-2">
+      <div>
+        <label class="text-[11px] text-slate-400">Cuenta</label>
+        <select id="editRecAccount" class="w-full px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs"></select>
+      </div>
+      <div id="editRecDayGroup">
+        <label class="text-[11px] text-slate-400">Día del mes (1–31)</label>
+        <input id="editRecDay" type="number" min="1" max="31" class="w-full px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs" />
+      </div>
+      <div id="editRecDateGroup" class="hidden">
+        <label class="text-[11px] text-slate-400">Fecha exacta</label>
+        <input id="editRecDate" type="date" class="w-full px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs" />
+      </div>
+    </div>
+    <button type="button" onclick="saveEditedRecurring()" class="w-full py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold">Guardar Cambios</button>
   </div>
 </div>
 
@@ -922,7 +1021,15 @@
   const DONUT_COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ec4899', '#06b6d4', '#8b5cf6'];
 
   const todayISO = () => new Date().toISOString().slice(0, 10);
-  const fmt = (n) => new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(Number(n) || 0);
+  // Separador de miles español: 1.250,00 €
+  const fmt = (n) => new Intl.NumberFormat('es-ES', {
+    style: 'currency',
+    currency: 'EUR',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+    useGrouping: true
+  }).format(Number(n) || 0);
+
   const uid = () => 'id_' + Math.random().toString(36).slice(2, 9) + Date.now().toString(36);
   const normText = (s) => String(s || '').toLowerCase().replace(/\s+/g, ' ').trim();
 
@@ -949,7 +1056,10 @@
     qdSelectedFriends: [],
     ocrTicketData: null,
     editTxTicketData: null,
-    donutSelected: null
+    donutSelected: null,
+    selectedGlobalDebts: [],
+    activeFriendModal: null,
+    selectedFriendDebts: []
   };
 
   let fbAuth = null, fbDb = null, fbUser = null, fbUnsub = null, isApplyingRemote = false;
@@ -974,52 +1084,24 @@
     if (filterAcc) {
       const prev = filterAcc.value || 'all';
       filterAcc.innerHTML = `<option value="all">Todas las cuentas</option>` + buildOpts(accs);
-      if ([...filterAcc.options].some(o => o.value === prev)) filterAcc.value = prev;
-      else filterAcc.value = 'all';
+      filterAcc.value = [...filterAcc.options].some(o => o.value === prev) ? prev : 'all';
     }
 
     const cfAcc = document.getElementById('cfTimelineAccount');
     if (cfAcc) {
       const prevCf = cfAcc.value || 'all';
       cfAcc.innerHTML = `<option value="all">📋 Todas las cuentas</option>` + buildOpts(accs);
-      if ([...cfAcc.options].some(o => o.value === prevCf)) cfAcc.value = prevCf;
-      else cfAcc.value = 'all';
+      cfAcc.value = [...cfAcc.options].some(o => o.value === prevCf) ? prevCf : 'all';
     }
 
-    const newRecAcc = document.getElementById('newRecAccount');
-    if (newRecAcc) {
-      const prevRec = newRecAcc.value;
-      newRecAcc.innerHTML = buildOpts(accs);
-      if (prevRec && [...newRecAcc.options].some(o => o.value === prevRec)) newRecAcc.value = prevRec;
-    }
-
-    const ingTarget = document.getElementById('ingTargetAccount');
-    if (ingTarget) {
-      const prevIng = ingTarget.value;
-      ingTarget.innerHTML = buildOpts(accs);
-      if (prevIng && [...ingTarget.options].some(o => o.value === prevIng)) ingTarget.value = prevIng;
-    }
-
-    const hbDef = document.getElementById('hbDefaultAccount');
-    if (hbDef) {
-      const prevHb = hbDef.value;
-      hbDef.innerHTML = buildOpts(accs);
-      if (prevHb && [...hbDef.options].some(o => o.value === prevHb)) hbDef.value = prevHb;
-    }
-
-    const ocrAcc = document.getElementById('ocrAccount');
-    if (ocrAcc) {
-      const prevOcr = ocrAcc.value;
-      ocrAcc.innerHTML = buildOpts(accs);
-      if (prevOcr && [...ocrAcc.options].some(o => o.value === prevOcr)) ocrAcc.value = prevOcr;
-    }
-
-    const editAcc = document.getElementById('editTxAccount');
-    if (editAcc) {
-      const prevEdit = editAcc.value;
-      editAcc.innerHTML = buildOpts(accs);
-      if (prevEdit && [...editAcc.options].some(o => o.value === prevEdit)) editAcc.value = prevEdit;
-    }
+    ['newRecAccount', 'editRecAccount', 'ingTargetAccount', 'hbDefaultAccount', 'ocrAccount', 'editTxAccount'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        const prev = el.value;
+        el.innerHTML = buildOpts(accs);
+        if (prev && [...el.options].some(o => o.value === prev)) el.value = prev;
+      }
+    });
   }
 
   function formatEsDate(isoStr) {
@@ -1039,20 +1121,16 @@
   // ==================== TEMA SEGÚN DISPOSITIVO + 1 BOTÓN ====================
   function initThemeFromDevice() {
     const saved = localStorage.getItem(THEME_KEY);
-    let isDark;
-    if (saved === 'dark' || saved === 'light') {
-      isDark = saved === 'dark';
-    } else {
-      isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    }
+    const isDark = (saved === 'dark' || saved === 'light')
+      ? saved === 'dark'
+      : !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
     document.documentElement.classList.toggle('dark', isDark);
     const btn = document.getElementById('headerThemeBtn');
     if (btn) btn.textContent = isDark ? '☀️' : '🌙';
   }
 
   function toggleTheme() {
-    const isCurrentlyDark = document.documentElement.classList.contains('dark');
-    const next = isCurrentlyDark ? 'light' : 'dark';
+    const next = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
     localStorage.setItem(THEME_KEY, next);
     initThemeFromDevice();
   }
@@ -1063,28 +1141,25 @@
     const dIn3 = new Date(Date.now() + 3 * 86400000).getDate();
     const dIn5 = new Date(Date.now() + 5 * 86400000).getDate();
     state.accounts = DEFAULT_ACCOUNTS.map(a => ({ ...a }));
-    state.accountBases = { ing_corriente: 540.00, ing_ahorro: 1250.00, ing_nocuenta: 180.00, efectivo: 45.00, hucha_monedas: 38.50 };
-    state.friends = ['Aissa', 'Asensio', 'Ortiz'];
+    state.accountBases = { ing_corriente: 1250.00, ing_ahorro: 2450.00, ing_nocuenta: 180.00, efectivo: 45.00, hucha_monedas: 38.50 };
+    state.friends = ['Aissa', 'Asensio', 'Emilio'];
     state.sharedRules = [
-      { id: 'r1', keyword: 'Spotify', friend: 'Asensio', mode: 'fixed', value: 7.00 },
-      { id: 'r2', keyword: 'Disney', friend: 'Asensio', mode: 'fixed', value: 3.00 }
+      { id: 'r1', keyword: 'Spotify', friend: 'Emilio', mode: 'fixed', value: 3.50 }
     ];
     state.transactions = [
       { id: 'tx1', date: dToday, seq: 1, account: 'ing_corriente', category: 'Supermercados y alimentación', concept: 'Pago en MERCADONA', amount: -51.60, validated: true, ticket: null },
-      { id: 'tx2', date: dToday, seq: 2, account: 'ing_corriente', category: 'Suscripciones', concept: 'Recibo Spotify Family', amount: -17.99, validated: true, ticket: null },
-      { id: 'tx3', date: dToday, seq: 3, account: 'efectivo', category: 'Cafeterías y restaurantes', concept: 'Café y tostada', amount: -4.20, validated: false, ticket: null },
-      { id: 'tx4', date: dToday, seq: 4, account: 'ing_corriente', category: 'Nómina o Pensión', concept: 'Nómina Mensual', amount: 1650.00, validated: true, ticket: null },
-      { id: 'tx5', date: dToday, seq: 5, account: 'ing_nocuenta', category: 'Ocio y viajes', concept: 'Entradas cine', amount: -28.50, validated: true, ticket: null }
+      { id: 'tx2', date: dToday, seq: 2, account: 'ing_corriente', category: 'Nómina o Pensión', concept: 'Nómina Mensual', amount: 1650.00, validated: true, ticket: null }
     ];
     state.debts = [
-      { id: 'd1', date: dToday, friend: 'Aissa', direction: 'i_owe', amount: 20.83, concept: 'Cena compartida', settled: false },
-      { id: 'd2', date: dToday, friend: 'Asensio', direction: 'owe_me', amount: 7.00, concept: 'Spotify (Auto)', settled: false }
+      { id: 'd1', date: dToday, friend: 'Emilio', direction: 'i_owe', amount: 3.50, concept: 'Spotify (Bizum recibido)', settled: false, groupId: null },
+      { id: 'd2', date: dToday, friend: 'Emilio', direction: 'owe_me', amount: 3.50, concept: 'Spotify (Cuota)', settled: false, groupId: null },
+      { id: 'd3', date: dToday, friend: 'Aissa', direction: 'owe_me', amount: 20.83, concept: 'Cena compartida', settled: false, groupId: null }
     ];
     state.recurring = [
-      { id: 'rec1', name: 'Nómina Mensual', amount: 1650.00, account: 'ing_corriente', dayOfMonth: 28, note: 'Ingreso fijo', active: true, manual: true },
-      { id: 'rec2', name: 'Gimnasio', amount: -34.90, account: 'ing_corriente', dayOfMonth: dIn3, note: 'Cuota fija', active: true, manual: true },
-      { id: 'rec3', name: 'Factura Luz (Media + Alza)', amount: -65.00, account: 'ing_corriente', dayOfMonth: dIn5, note: 'Suministro redondeado al alza', active: true, manual: true },
-      { id: 'rec4', name: 'Spotify Family', amount: -17.99, account: 'ing_nocuenta', dayOfMonth: 15, note: 'Suscripción', active: true, manual: true }
+      { id: 'rec1', freq: 'monthly', name: 'Nómina Mensual', amount: 1650.00, account: 'ing_corriente', dayOfMonth: 28, date: null, note: 'Día 28 de cada mes', active: true, manual: true },
+      { id: 'rec2', freq: 'monthly', name: 'Gimnasio', amount: -34.90, account: 'ing_corriente', dayOfMonth: dIn3, date: null, note: `Día ${dIn3} de cada mes`, active: true, manual: true },
+      { id: 'rec3', freq: 'monthly', name: 'Factura Luz (Media + Alza)', amount: -65.00, account: 'ing_corriente', dayOfMonth: dIn5, date: null, note: 'Suministro redondeado al alza', active: true, manual: true },
+      { id: 'rec4', freq: 'once', name: 'Revisión coche / ITV', amount: -58.00, account: 'ing_corriente', dayOfMonth: null, date: new Date(Date.now() + 4 * 86400000).toISOString().slice(0, 10), note: 'Puntual / No recurrente', active: true, manual: true }
     ];
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }
@@ -1110,12 +1185,14 @@
           accounts: parsedAccounts,
           accountBases: { ...(parsed.accountBases || {}) },
           transactions: Array.isArray(parsed.transactions) ? parsed.transactions.map((t, idx) => ({ seq: idx + 1, ...t })) : [],
-          debts: Array.isArray(parsed.debts) ? parsed.debts : [],
+          debts: Array.isArray(parsed.debts) ? parsed.debts.map(d => ({ groupId: null, ...d })) : [],
           friends: Array.isArray(parsed.friends) ? parsed.friends : [],
           sharedRules: Array.isArray(parsed.sharedRules) ? parsed.sharedRules : [],
           recurring: Array.isArray(parsed.recurring) ? parsed.recurring.map((r, i) => ({
+            freq: r.date ? 'once' : 'monthly',
             account: 'ing_corriente',
             dayOfMonth: ((i * 5) % 28) + 1,
+            date: r.date || null,
             ...r
           })) : [],
           dismissedRecurringKeys: Array.isArray(parsed.dismissedRecurringKeys) ? parsed.dismissedRecurringKeys : [],
@@ -1169,7 +1246,7 @@
       transactions: 'Movimientos & Mayor Contable',
       debts: 'Deudas & Amigos',
       cashflow: 'Previsiones Cash Flow',
-      settings: 'Cuentas, Amigos & Reglas'
+      settings: 'Ajustes, Recurrentes & Reglas'
     };
     document.getElementById('pageTitle').textContent = titles[tab] || 'FinanzERP';
 
@@ -1260,6 +1337,10 @@
   function closeModal(id) {
     const el = document.getElementById(id);
     if (el) el.classList.add('hidden');
+    if (id === 'modalFriendHistory') {
+      ui.activeFriendModal = null;
+      ui.selectedFriendDebts = [];
+    }
   }
 
   // ==================== DEDUPLICACIÓN DE MOVIMIENTOS ====================
@@ -1312,7 +1393,8 @@
             direction: 'owe_me',
             amount: debtAmount,
             concept: `${rule.keyword} (Auto)`,
-            settled: false
+            settled: false,
+            groupId: null
           });
           created++;
         }
@@ -1346,7 +1428,7 @@
     alert(`Reglas aplicadas: se han generado ${totalCreated} deudas nuevas.`);
   }
 
-  // ==================== GESTIÓN DE CUENTAS Y AMIGOS ====================
+  // ==================== GESTIÓN DE CUENTAS Y AMIGOS + CASADO / COMPENSACIÓN ====================
   function ensureFriendExists(name) {
     const clean = String(name || '').trim();
     if (!clean) return null;
@@ -1359,23 +1441,17 @@
   function extractFriendLabelFromAccount(acc) {
     const raw = (acc?.name || '').trim();
     if (!raw) return null;
-    const cleaned = raw
-      .replace(/^(cuenta|amigo|amigos|deuda|deudas|grupo|compartid[oa])\s*[-:/]?\s*/i, '')
-      .trim();
+    const cleaned = raw.replace(/^(cuenta|amigo|amigos|deuda|deudas|grupo|compartid[oa])\s*[-:/]?\s*/i, '').trim();
     return cleaned || raw;
   }
 
   function syncFriendAccountsToDebts(silent = true) {
-    let addedFriends = 0;
     let addedDebts = 0;
-
     (state.accounts || []).filter(a => a.kind === 'friend').forEach(acc => {
       const fName = ensureFriendExists(extractFriendLabelFromAccount(acc));
       if (!fName) return;
-      if (!state.friends.includes(fName)) addedFriends++;
 
-      const accTxs = (state.transactions || []).filter(t => t.account === acc.id);
-      accTxs.forEach(tx => {
+      (state.transactions || []).filter(t => t.account === acc.id).forEach(tx => {
         const amt = Number(tx.amount || 0);
         if (amt === 0) return;
         const direction = amt > 0 ? 'owe_me' : 'i_owe';
@@ -1393,7 +1469,8 @@
             direction,
             amount: absAmt,
             concept: `${tx.concept || acc.name} (${acc.name})`,
-            settled: false
+            settled: false,
+            groupId: null
           });
           addedDebts++;
         }
@@ -1404,6 +1481,204 @@
       saveState();
       alert(`Sincronización completada: ${addedDebts} movimiento(s) de cuentas Amigo vinculados a Deudas & Amigos.`);
     }
+  }
+
+  function toggleGlobalDebtSelect(id) {
+    if (ui.selectedGlobalDebts.includes(id)) {
+      ui.selectedGlobalDebts = ui.selectedGlobalDebts.filter(x => x !== id);
+    } else {
+      ui.selectedGlobalDebts.push(id);
+    }
+    renderDebts();
+  }
+
+  function clearGlobalDebtSelection() {
+    ui.selectedGlobalDebts = [];
+    renderDebts();
+  }
+
+  function toggleSelectAllGlobalDebts() {
+    const showSettled = document.getElementById('showSettledDebts').checked;
+    const visibleIds = (state.debts || []).filter(d => showSettled || !d.settled).map(d => d.id);
+    const allSelected = visibleIds.length > 0 && visibleIds.every(id => ui.selectedGlobalDebts.includes(id));
+    ui.selectedGlobalDebts = allSelected ? [] : visibleIds;
+    renderDebts();
+  }
+
+  function toggleFriendDebtSelect(id) {
+    if (ui.selectedFriendDebts.includes(id)) {
+      ui.selectedFriendDebts = ui.selectedFriendDebts.filter(x => x !== id);
+    } else {
+      ui.selectedFriendDebts.push(id);
+    }
+    rerenderCurrentFriendModal();
+  }
+
+  function clearFriendSelection() {
+    ui.selectedFriendDebts = [];
+    rerenderCurrentFriendModal();
+  }
+
+  function toggleSelectAllFriendDebts(checked) {
+    if (!ui.activeFriendModal) return;
+    const showSettled = !!document.getElementById('friendModalShowSettled')?.checked;
+    const list = (state.debts || []).filter(d => d.friend === ui.activeFriendModal && (showSettled || !d.settled));
+    ui.selectedFriendDebts = checked ? list.map(d => d.id) : [];
+    rerenderCurrentFriendModal();
+  }
+
+  function computeSelectionNet(ids) {
+    return (state.debts || [])
+      .filter(d => ids.includes(d.id))
+      .reduce((sum, d) => sum + (d.direction === 'owe_me' ? Number(d.amount) : -Number(d.amount)), 0);
+  }
+
+  function matchSelectedDebts(friendContext = null) {
+    const ids = friendContext ? ui.selectedFriendDebts : ui.selectedGlobalDebts;
+    if (!ids || ids.length < 2) {
+      return alert('Selecciona al menos 2 movimientos para casar y compensar.');
+    }
+    const selected = (state.debts || []).filter(d => ids.includes(d.id));
+    const net = selected.reduce((sum, d) => sum + (d.direction === 'owe_me' ? Number(d.amount) : -Number(d.amount)), 0);
+    const roundedNet = Math.round(net * 100) / 100;
+
+    if (roundedNet !== 0) {
+      const ok = confirm(
+        `Los ${selected.length} movimientos seleccionados dejan una diferencia neta de ${roundedNet >= 0 ? '+' : ''}${fmt(roundedNet)} (no es 0,00 € exacto).\n\n¿Quieres casarlos y marcarlos como saldados de todos modos?`
+      );
+      if (!ok) return;
+    }
+
+    const groupCode = 'AGR-' + Math.random().toString(36).slice(2, 6).toUpperCase();
+    const summaryLabel = `${selected.length} mov. · neto ${roundedNet >= 0 ? '+' : ''}${fmt(roundedNet)}`;
+
+    state.debts.forEach(d => {
+      if (ids.includes(d.id)) {
+        d.settled = true;
+        d.groupId = groupCode;
+        d.groupSummary = summaryLabel;
+        d.groupedAt = todayISO();
+      }
+    });
+
+    if (friendContext) {
+      ui.selectedFriendDebts = [];
+    } else {
+      ui.selectedGlobalDebts = [];
+    }
+
+    saveState();
+    if (friendContext) {
+      openFriendHistory(friendContext);
+    }
+  }
+
+  function rerenderCurrentFriendModal() {
+    if (ui.activeFriendModal) {
+      openFriendHistory(ui.activeFriendModal);
+    }
+  }
+
+  function openFriendHistory(friendName) {
+    ui.activeFriendModal = friendName;
+    const showSettled = document.getElementById('friendModalShowSettled')
+      ? document.getElementById('friendModalShowSettled').checked
+      : true;
+
+    const allFriendDebts = (state.debts || []).filter(d => d.friend === friendName);
+    // Orden cronológico para el saldo acumulado del libro mayor
+    const chrono = [...allFriendDebts].sort((a, b) => String(a.date || '').localeCompare(String(b.date || '')));
+
+    let running = 0;
+    let pendingNet = 0;
+    const enriched = chrono.map(d => {
+      const signed = d.direction === 'owe_me' ? Number(d.amount) : -Number(d.amount);
+      running = Math.round((running + signed) * 100) / 100;
+      if (!d.settled) pendingNet = Math.round((pendingNet + signed) * 100) / 100;
+      return { ...d, signed, ledgerBalance: running };
+    });
+
+    // Mostramos los más recientes arriba manteniendo su saldo mayor exacto en cada fila
+    const displayRows = [...enriched].reverse().filter(d => showSettled || !d.settled);
+
+    document.getElementById('friendModalTitle').textContent = `Mayor Contable · ${friendName}`;
+    document.getElementById('friendModalSubtitle').textContent = `${allFriendDebts.length} movimiento(s) · Marca casillas para casar/compensar.`;
+
+    // Barra de compensación dentro del modal
+    const matchBar = document.getElementById('friendModalMatchBar');
+    const selIds = ui.selectedFriendDebts;
+    if (selIds.length > 0) {
+      matchBar.classList.remove('hidden');
+      const selNet = computeSelectionNet(selIds);
+      const rSelNet = Math.round(selNet * 100) / 100;
+      document.getElementById('friendMatchCount').textContent = selIds.length;
+      const netEl = document.getElementById('friendMatchNet');
+      netEl.textContent = (rSelNet >= 0 ? '+' : '') + fmt(rSelNet);
+      netEl.className = `font-mono font-bold ${rSelNet === 0 ? 'text-emerald-500' : 'text-amber-500'}`;
+      document.getElementById('friendMatchStatusBadge').textContent = rSelNet === 0
+        ? '✅ Cuadra a 0,00 € (compensación exacta)'
+        : '⚠️ Diferencia distinta de 0,00 €';
+      const safeF = friendName.replace(/'/g, "\\'");
+      document.getElementById('friendMatchBtn').setAttribute('onclick', `matchSelectedDebts('${safeF}')`);
+    } else {
+      matchBar.classList.add('hidden');
+    }
+
+    const tbody = document.getElementById('friendModalTableBody');
+    if (displayRows.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="8" class="text-center text-xs text-slate-400 py-8">No hay movimientos para mostrar con ${friendName}.</td></tr>`;
+    } else {
+      tbody.innerHTML = displayRows.map(d => {
+        const isChecked = ui.selectedFriendDebts.includes(d.id);
+        const debeVal = d.direction === 'owe_me' ? Number(d.amount) : 0;
+        const haberVal = d.direction === 'i_owe' ? Number(d.amount) : 0;
+        const safeF = friendName.replace(/'/g, "\\'");
+        const groupBadge = d.groupId
+          ? `<span class="ml-1.5 inline-flex items-center px-1.5 py-0.5 rounded bg-indigo-500/15 text-indigo-400 font-mono text-[10px]" title="${d.groupSummary || ''}">🔗 ${d.groupId}</span>`
+          : '';
+
+        return `
+          <tr class="${d.settled ? 'opacity-65 bg-slate-50/50 dark:bg-slate-850/30' : 'hover:bg-slate-50 dark:hover:bg-slate-850/70'} ${isChecked ? 'bg-indigo-500/10' : ''}">
+            <td class="py-2 px-2.5 text-center">
+              <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleFriendDebtSelect('${d.id}')" class="rounded cursor-pointer" />
+            </td>
+            <td class="py-2 px-2.5 whitespace-nowrap font-mono text-[11px] text-slate-400">${formatEsDate(d.date)}</td>
+            <td class="py-2 px-2.5 font-medium">
+              <div>${d.concept}${groupBadge}</div>
+              ${d.groupId ? `<div class="text-[10px] text-indigo-400">Agrupado/Compensado (${d.groupSummary || d.groupId})</div>` : ''}
+            </td>
+            <td class="py-2 px-2.5 text-center whitespace-nowrap">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold ${d.settled ? 'bg-emerald-500/15 text-emerald-500' : 'bg-amber-500/15 text-amber-500'}">
+                ${d.settled ? '✅ Saldado' : '⏳ Pendiente'}
+              </span>
+            </td>
+            <td class="py-2 px-2.5 text-right whitespace-nowrap font-semibold ${debeVal > 0 ? 'text-emerald-500' : 'text-slate-400'}">${debeVal > 0 ? '+' + fmt(debeVal) : '- €'}</td>
+            <td class="py-2 px-2.5 text-right whitespace-nowrap font-semibold ${haberVal > 0 ? 'text-rose-500' : 'text-slate-400'}">${haberVal > 0 ? '-' + fmt(haberVal) : '- €'}</td>
+            <td class="py-2 px-2.5 text-right whitespace-nowrap font-mono font-bold ${d.ledgerBalance < 0 ? 'text-rose-500' : d.ledgerBalance > 0 ? 'text-emerald-500' : 'text-slate-400'}">${(d.ledgerBalance >= 0 ? '+' : '') + fmt(d.ledgerBalance)}</td>
+            <td class="py-2 px-2.5 text-right whitespace-nowrap">
+              <button type="button" onclick="toggleDebtSettled('${d.id}'); openFriendHistory('${safeF}')" class="px-2 py-1 rounded-lg text-[11px] font-semibold ${d.settled ? 'bg-slate-200 dark:bg-slate-700' : 'bg-emerald-600 text-white'}">
+                ${d.settled ? 'Reabrir' : 'Saldar'}
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    const balEl = document.getElementById('friendModalBalance');
+    balEl.textContent = pendingNet === 0
+      ? 'Saldo pendiente: 0,00 € (Al día)'
+      : pendingNet > 0
+        ? `Te debe pendiente: +${fmt(pendingNet)}`
+        : `Le debes pendiente: -${fmt(Math.abs(pendingNet))}`;
+    balEl.className = `text-sm font-bold ${pendingNet > 0 ? 'text-emerald-500' : pendingNet < 0 ? 'text-rose-500' : 'text-slate-400'}`;
+
+    document.getElementById('friendModalSettleAllBtn').onclick = () => {
+      state.debts.forEach(d => { if (d.friend === friendName && !d.settled) d.settled = true; });
+      saveState();
+      openFriendHistory(friendName);
+    };
+    openModal('modalFriendHistory');
   }
 
   function makeSafeAccountId(baseName, fallbackPrefix = 'hb_acc') {
@@ -1471,14 +1746,7 @@
     if (!name) return alert('Escribe un nombre para la cuenta.');
     const metaKind = ACCOUNT_KINDS[kind] || ACCOUNT_KINDS.bank;
     const id = makeSafeAccountId(name, 'acc');
-    const accObj = {
-      id,
-      name,
-      icon: metaKind.icon,
-      color: metaKind.color,
-      kind,
-      includeNetWorth: metaKind.includeNetWorth
-    };
+    const accObj = { id, name, icon: metaKind.icon, color: metaKind.color, kind, includeNetWorth: metaKind.includeNetWorth };
     state.accounts.push(accObj);
     state.accountBases[id] = 0;
     if (kind === 'friend') {
@@ -1561,49 +1829,6 @@
     if (!confirm(`¿Quitar a "${name}" de tu lista de amigos?`)) return;
     state.friends = state.friends.filter(f => f !== name);
     saveState();
-  }
-
-  function openFriendHistory(friendName) {
-    const list = state.debts.filter(d => d.friend === friendName).sort((a, b) => b.date.localeCompare(a.date));
-    document.getElementById('friendModalTitle').textContent = `Historial con ${friendName}`;
-    document.getElementById('friendModalSubtitle').textContent = `${list.length} movimiento(s) registrado(s)`;
-
-    let net = 0;
-    const container = document.getElementById('friendModalList');
-    if (list.length === 0) {
-      container.innerHTML = `<div class="text-center text-xs text-slate-400 py-8">No hay movimientos registrados con ${friendName}.</div>`;
-    } else {
-      container.innerHTML = list.map(d => {
-        const signed = d.direction === 'owe_me' ? Number(d.amount) : -Number(d.amount);
-        if (!d.settled) net += signed;
-        return `
-          <div class="p-3 rounded-xl border ${d.settled ? 'border-slate-200 dark:border-slate-800 opacity-60' : 'border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-850'} flex items-center justify-between gap-2">
-            <div class="min-w-0">
-              <div class="text-xs font-bold truncate">${d.concept}</div>
-              <div class="text-[11px] text-slate-400">${formatEsDate(d.date)} · ${d.direction === 'owe_me' ? 'Me debe' : 'Le debo'} ${d.settled ? '· ✅ Saldado' : '· ⏳ Pendiente'}</div>
-            </div>
-            <div class="flex items-center gap-2 shrink-0">
-              <span class="text-xs font-bold ${d.direction === 'owe_me' ? 'text-emerald-500' : 'text-rose-500'}">${d.direction === 'owe_me' ? '+' : '-'}${fmt(d.amount)}</span>
-              <button type="button" onclick="toggleDebtSettled('${d.id}'); openFriendHistory('${friendName.replace(/'/g, "\\'")}')" class="px-2 py-1 rounded-lg text-[11px] font-semibold ${d.settled ? 'bg-slate-200 dark:bg-slate-700' : 'bg-emerald-600 text-white'}">
-                ${d.settled ? 'Reabrir' : 'Saldar'}
-              </button>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    const balEl = document.getElementById('friendModalBalance');
-    balEl.textContent = net === 0 ? 'Saldo pendiente: 0,00 € (Al día)' : net > 0 ? `Te debe en total: ${fmt(net)}` : `Le debes en total: ${fmt(Math.abs(net))}`;
-    balEl.className = `text-sm font-bold ${net > 0 ? 'text-emerald-500' : net < 0 ? 'text-rose-500' : 'text-slate-400'}`;
-
-    const settleBtn = document.getElementById('friendModalSettleAllBtn');
-    settleBtn.onclick = () => {
-      state.debts.forEach(d => { if (d.friend === friendName && !d.settled) d.settled = true; });
-      saveState();
-      openFriendHistory(friendName);
-    };
-    openModal('modalFriendHistory');
   }
 
   // ==================== REGISTRO RÁPIDO EFECTIVO Y DEUDAS ====================
@@ -1701,7 +1926,7 @@
     const concept = document.getElementById('qdConcept').value.trim() || 'Plan compartido';
 
     ui.qdSelectedFriends.forEach(friend => {
-      state.debts.unshift({ id: uid(), date, friend, direction: ui.qdDir, amount, concept, settled: false });
+      state.debts.unshift({ id: uid(), date, friend, direction: ui.qdDir, amount, concept, settled: false, groupId: null });
     });
 
     ui.qdSelectedFriends = [];
@@ -1715,12 +1940,20 @@
 
   function toggleDebtSettled(id) {
     const d = state.debts.find(x => x.id === id);
-    if (d) d.settled = !d.settled;
+    if (d) {
+      d.settled = !d.settled;
+      if (!d.settled) {
+        d.groupId = null;
+        d.groupSummary = null;
+      }
+    }
     saveState();
   }
 
   function deleteDebt(id) {
     state.debts = state.debts.filter(x => x.id !== id);
+    ui.selectedGlobalDebts = ui.selectedGlobalDebts.filter(x => x !== id);
+    ui.selectedFriendDebts = ui.selectedFriendDebts.filter(x => x !== id);
     saveState();
   }
 
@@ -1728,7 +1961,6 @@
   function parseHomeBankJulianDate(julianRaw) {
     const julian = parseInt(julianRaw);
     if (isNaN(julian) || julian <= 0) return todayISO();
-    // En HomeBank, el día juliano parte de 0001-01-01 (o 1970-01-01 en algunas exportaciones)
     let dt = new Date(Date.UTC(1, 0, 1));
     dt.setUTCDate(dt.getUTCDate() + julian - 1);
     if (dt.getUTCFullYear() > 2100) {
@@ -1787,23 +2019,12 @@
           const concept = String(r[idxDesc] || category).trim();
 
           const added = addTransactionSafe({ date: dateStr, account: targetAcc, category, concept, amount, validated: true, ticket: null });
-          if (!added) {
-            skippedDupes++;
-            continue;
-          }
+          if (!added) { skippedDupes++; continue; }
           imported++;
           autoDebts += evaluateSharedRulesForTx(added);
 
           if (autoRoundup && amount < 0 && (category.toLowerCase().includes('redondeo') || concept.toLowerCase().includes('redondeo'))) {
-            addTransactionSafe({
-              date: dateStr,
-              account: savingsAcc,
-              category: 'Redondeo Ahorro',
-              concept: 'Abono Redondeo ING',
-              amount: Math.abs(amount),
-              validated: true,
-              ticket: null
-            });
+            addTransactionSafe({ date: dateStr, account: savingsAcc, category: 'Redondeo Ahorro', concept: 'Abono Redondeo ING', amount: Math.abs(amount), validated: true, ticket: null });
           }
         }
 
@@ -1875,12 +2096,8 @@
           const concept = [payeeName, wording].filter(Boolean).join(' - ') || category;
 
           const added = addTransactionSafe({ date: dateStr, account, category, concept, amount, validated: true, ticket: null });
-          if (!added) {
-            skippedDupes++;
-          } else {
-            imported++;
-            evaluateSharedRulesForTx(added);
-          }
+          if (!added) skippedDupes++;
+          else { imported++; evaluateSharedRulesForTx(added); }
         });
       } else {
         const beforeCount = state.accounts.length;
@@ -2004,10 +2221,7 @@
       const nums = totalLines[i].match(/\d{1,5}(?:[.,]\d{1,2})?/g);
       if (nums) {
         const valid = nums.map(parseEuroNum).filter(n => !isNaN(n) && n > 0 && n < 10000);
-        if (valid.length > 0) {
-          amount = valid[valid.length - 1];
-          break;
-        }
+        if (valid.length > 0) { amount = valid[valid.length - 1]; break; }
       }
     }
     if (amount === null) {
@@ -2187,7 +2401,65 @@
     openModal('modalViewTicket');
   }
 
-  // ==================== CASH FLOW Y PARTIDAS RECURRENTES ====================
+  // ==================== CASH FLOW + RECURRENTES & NO RECURRENTES ====================
+  function toggleNewRecScheduleInputs() {
+    const freq = document.getElementById('newRecFreq').value;
+    const isOnce = freq === 'once';
+    document.getElementById('newRecDayWrap').classList.toggle('hidden', isOnce);
+    document.getElementById('newRecDateWrap').classList.toggle('hidden', !isOnce);
+    if (isOnce && !document.getElementById('newRecDate').value) {
+      document.getElementById('newRecDate').value = todayISO();
+    }
+  }
+
+  function toggleEditRecScheduleInputs() {
+    const freq = document.getElementById('editRecFreq').value;
+    const isOnce = freq === 'once';
+    document.getElementById('editRecDayGroup').classList.toggle('hidden', isOnce);
+    document.getElementById('editRecDateGroup').classList.toggle('hidden', !isOnce);
+  }
+
+  function openEditRecurringModal(id) {
+    refreshAccountSelects();
+    const r = (state.recurring || []).find(x => x.id === id);
+    if (!r) return;
+    document.getElementById('editRecId').value = r.id;
+    document.getElementById('editRecName').value = r.name;
+    document.getElementById('editRecFreq').value = r.freq === 'once' || r.date ? 'once' : 'monthly';
+    document.getElementById('editRecAmount').value = r.amount;
+    document.getElementById('editRecAccount').value = r.account || 'ing_corriente';
+    document.getElementById('editRecDay').value = r.dayOfMonth || 1;
+    document.getElementById('editRecDate').value = r.date || todayISO();
+    toggleEditRecScheduleInputs();
+    openModal('modalEditRecurring');
+  }
+
+  function saveEditedRecurring() {
+    const id = document.getElementById('editRecId').value;
+    const r = (state.recurring || []).find(x => x.id === id);
+    if (!r) return;
+    const name = document.getElementById('editRecName').value.trim();
+    const freq = document.getElementById('editRecFreq').value;
+    const amount = parseFloat(document.getElementById('editRecAmount').value);
+    const account = document.getElementById('editRecAccount').value;
+    const dayOfMonth = Math.min(31, Math.max(1, parseInt(document.getElementById('editRecDay').value) || 1));
+    const date = document.getElementById('editRecDate').value || todayISO();
+
+    if (!name || isNaN(amount) || amount === 0) return alert('Completa concepto e importe válido.');
+
+    r.name = name;
+    r.freq = freq;
+    r.amount = amount;
+    r.account = account;
+    r.dayOfMonth = dayOfMonth;
+    r.date = freq === 'once' ? date : null;
+    r.note = freq === 'once' ? `Puntual · ${formatEsDate(date)}` : `Día ${dayOfMonth} de cada mes`;
+    r.manual = true;
+
+    closeModal('modalEditRecurring');
+    saveState();
+  }
+
   function isNonRecurringSpotExpense(textLower) {
     const spotPatterns = [
       /\b(mercadona|carrefour|dia|lidl|aldi|consum|eroski|alcampo|supermercado|alimentacion|alimentación|fruta|verdura|panaderia|panadería|carniceria|carnicería)\b/,
@@ -2250,10 +2522,12 @@
 
         detected.push({
           id: uid(),
+          freq: 'monthly',
           name: g.name,
           amount: finalAmt,
           account: g.account || 'ing_corriente',
           dayOfMonth: g.dayOfMonth || 1,
+          date: null,
           note,
           active: true,
           manual: false
@@ -2279,10 +2553,12 @@
 
   function addManualRecurring() {
     const name = document.getElementById('newRecName').value.trim();
+    const freq = document.getElementById('newRecFreq').value;
     const type = document.getElementById('newRecType').value;
     const rawAmt = parseFloat(document.getElementById('newRecAmount').value);
     const account = document.getElementById('newRecAccount').value;
     const dayOfMonth = Math.min(31, Math.max(1, parseInt(document.getElementById('newRecDay').value) || 1));
+    const date = document.getElementById('newRecDate').value || todayISO();
 
     if (!name || isNaN(rawAmt) || rawAmt <= 0) return alert('Introduce concepto e importe válido.');
     const amount = type === 'expense' ? -Math.abs(rawAmt) : Math.abs(rawAmt);
@@ -2290,7 +2566,19 @@
     const recKey = buildRecurringKey(name, account);
     state.dismissedRecurringKeys = (state.dismissedRecurringKeys || []).filter(k => k !== recKey);
 
-    state.recurring.push({ id: uid(), name, amount, account, dayOfMonth, note: `Día ${dayOfMonth} de cada mes`, active: true, manual: true });
+    state.recurring.push({
+      id: uid(),
+      freq,
+      name,
+      amount,
+      account,
+      dayOfMonth,
+      date: freq === 'once' ? date : null,
+      note: freq === 'once' ? `Puntual · ${formatEsDate(date)}` : `Día ${dayOfMonth} de cada mes`,
+      active: true,
+      manual: true
+    });
+
     document.getElementById('newRecName').value = '';
     document.getElementById('newRecAmount').value = '';
     saveState();
@@ -2304,7 +2592,7 @@
 
   function deleteRecurring(id) {
     const target = state.recurring.find(x => x.id === id);
-    if (target) {
+    if (target && target.freq !== 'once') {
       const k = buildRecurringKey(target.name, target.account);
       state.dismissedRecurringKeys = [...new Set([...(state.dismissedRecurringKeys || []), k])];
     }
@@ -2316,7 +2604,21 @@
     const events = [];
     const start = new Date();
     start.setHours(0, 0, 0, 0);
+    const endIso = new Date(start.getTime() + horizonDays * 86400000).toISOString().slice(0, 10);
+    const startIso = start.toISOString().slice(0, 10);
 
+    // 1) Previsiones no recurrentes con fecha exacta dentro del horizonte
+    (state.recurring || []).forEach(r => {
+      if (!r.active || (r.freq !== 'once' && !r.date)) return;
+      const rAcc = r.account || 'ing_corriente';
+      if (filterAccount !== 'all' && rAcc !== filterAccount) return;
+      if (r.date >= startIso && r.date <= endIso) {
+        const offset = Math.round((new Date(r.date + 'T00:00:00') - start) / 86400000);
+        events.push({ date: r.date, offset, name: r.name, amount: Number(r.amount), account: rAcc, isOnce: true });
+      }
+    });
+
+    // 2) Previsiones mensuales recurrentes por día del mes
     for (let offset = 0; offset <= horizonDays; offset++) {
       const d = new Date(start.getTime() + offset * 86400000);
       const dayNum = d.getDate();
@@ -2324,22 +2626,17 @@
       const iso = d.toISOString().slice(0, 10);
 
       (state.recurring || []).forEach(r => {
-        if (!r.active) return;
+        if (!r.active || r.freq === 'once' || r.date) return;
         const rAcc = r.account || 'ing_corriente';
         if (filterAccount !== 'all' && rAcc !== filterAccount) return;
         const targetDay = Math.min(Number(r.dayOfMonth || 1), lastDayOfMonth);
         if (dayNum === targetDay) {
-          events.push({
-            date: iso,
-            offset,
-            name: r.name,
-            amount: Number(r.amount),
-            account: rAcc
-          });
+          events.push({ date: iso, offset, name: r.name, amount: Number(r.amount), account: rAcc, isOnce: false });
         }
       });
     }
-    return events;
+
+    return events.sort((a, b) => a.date.localeCompare(b.date) || a.offset - b.offset);
   }
 
   function selectDonutSlice(catName, amount, pct) {
@@ -2359,6 +2656,14 @@
       renderCashFlow();
       renderSettings();
       updateSyncIndicators();
+      if (ui.activeFriendModal) {
+        // Refrescar datos si el modal está abierto
+        const curName = ui.activeFriendModal;
+        const modalEl = document.getElementById('modalFriendHistory');
+        if (modalEl && !modalEl.classList.contains('hidden')) {
+          openFriendHistory(curName);
+        }
+      }
     } catch (e) { console.error('Render error:', e); }
   }
 
@@ -2647,10 +2952,7 @@
       return Number(a.seq || 0) - Number(b.seq || 0);
     });
 
-    const baseBal = curAcc === 'all'
-      ? 0
-      : Number((state.accountBases && state.accountBases[curAcc]) || 0);
-
+    const baseBal = curAcc === 'all' ? 0 : Number((state.accountBases && state.accountBases[curAcc]) || 0);
     let runningBal = baseBal;
     let inSum = 0, outSum = 0;
 
@@ -2676,10 +2978,7 @@
     if (ledgerInEl) ledgerInEl.textContent = fmt(inSum);
     if (ledgerOutEl) ledgerOutEl.textContent = fmt(outSum);
     if (ledgerCurEl) {
-      const displayCur = curAcc === 'all'
-        ? (inSum - outSum)
-        : getAccountBalance(curAcc);
-      ledgerCurEl.textContent = fmt(displayCur);
+      ledgerCurEl.textContent = fmt(curAcc === 'all' ? (inSum - outSum) : getAccountBalance(curAcc));
     }
 
     const ordered = [...enriched];
@@ -2691,9 +2990,7 @@
       });
     } else if (sortOrder === 'account_asc') {
       ordered.sort((a, b) => {
-        const nA = getAccountMeta(a.account).name;
-        const nB = getAccountMeta(b.account).name;
-        const aCmp = nA.localeCompare(nB, 'es');
+        const aCmp = getAccountMeta(a.account).name.localeCompare(getAccountMeta(b.account).name, 'es');
         if (aCmp !== 0) return aCmp;
         const dCmp = String(a.date || '').localeCompare(String(b.date || ''));
         if (dCmp !== 0) return dCmp;
@@ -2770,7 +3067,6 @@
           const safeName = name.replace(/'/g, "\\'");
           const friendDebts = (state.debts || []).filter(d => d.friend === name);
           const pendingNet = friendDebts.filter(d => !d.settled).reduce((acc, d) => acc + (d.direction === 'owe_me' ? Number(d.amount) : -Number(d.amount)), 0);
-
           const linkedAcc = (state.accounts || []).find(a => a.kind === 'friend' && normText(extractFriendLabelFromAccount(a)) === normText(name));
           const accBal = linkedAcc ? getAccountBalance(linkedAcc.id) : null;
 
@@ -2778,7 +3074,7 @@
             <div onclick="openFriendHistory('${safeName}')" class="cursor-pointer p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-indigo-500 transition-all shadow-sm flex items-center justify-between gap-2">
               <div class="min-w-0">
                 <div class="font-bold text-sm flex items-center gap-1.5 truncate"><span>👤</span><span class="truncate">${name}</span></div>
-                <div class="text-[11px] text-slate-400 mt-0.5">${friendDebts.length} mov. · Ver historial</div>
+                <div class="text-[11px] text-slate-400 mt-0.5">${friendDebts.length} mov. · Ver mayor y casar</div>
                 ${accBal !== null ? `<div class="text-[10px] text-sky-500 mt-0.5">Cuenta ${linkedAcc.name}: <b>${fmt(accBal)}</b></div>` : ''}
               </div>
               <div class="text-right shrink-0">
@@ -2791,6 +3087,25 @@
           `;
         }).join('');
 
+    // Barra de casado / compensación general
+    const matchBar = document.getElementById('globalMatchBar');
+    if (matchBar) {
+      if (ui.selectedGlobalDebts.length > 0) {
+        matchBar.classList.remove('hidden');
+        const net = computeSelectionNet(ui.selectedGlobalDebts);
+        const rNet = Math.round(net * 100) / 100;
+        document.getElementById('globalMatchCount').textContent = ui.selectedGlobalDebts.length;
+        const netEl = document.getElementById('globalMatchNet');
+        netEl.textContent = (rNet >= 0 ? '+' : '') + fmt(rNet);
+        netEl.className = `font-mono font-bold ${rNet === 0 ? 'text-emerald-500' : 'text-amber-500'}`;
+        document.getElementById('globalMatchHint').textContent = rNet === 0
+          ? '✅ Se compensan a 0,00 €'
+          : '⚠️ Diferencia distinta de 0,00 €';
+      } else {
+        matchBar.classList.add('hidden');
+      }
+    }
+
     const showSettled = document.getElementById('showSettledDebts').checked;
     const list = (state.debts || []).filter(d => showSettled || !d.settled);
     document.getElementById('debtsListContainer').innerHTML = list.length === 0
@@ -2798,14 +3113,23 @@
       : list.map(d => {
           const safeFriend = (d.friend || '').replace(/'/g, "\\'");
           const daysAgo = Math.max(0, Math.floor((Date.now() - new Date(d.date).getTime()) / 86400000));
+          const isChecked = ui.selectedGlobalDebts.includes(d.id);
+          const groupBadge = d.groupId
+            ? `<span class="px-1.5 py-0.5 rounded bg-indigo-500/15 text-indigo-400 font-mono text-[10px]">🔗 ${d.groupId}</span>`
+            : '';
+
           return `
-            <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 ${d.settled ? 'opacity-50' : ''}">
-              <div class="min-w-0">
-                <div class="text-xs font-bold flex items-center gap-2">
-                  <button type="button" onclick="openFriendHistory('${safeFriend}')" class="text-indigo-400 hover:underline">${d.friend}</button>
-                  <span>· ${d.concept}</span>
+            <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-850 border ${isChecked ? 'border-indigo-500 bg-indigo-500/5' : 'border-slate-200 dark:border-slate-800'} flex items-center justify-between gap-2 ${d.settled ? 'opacity-60' : ''}">
+              <div class="flex items-center gap-2.5 min-w-0">
+                <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleGlobalDebtSelect('${d.id}')" class="rounded cursor-pointer shrink-0" />
+                <div class="min-w-0">
+                  <div class="text-xs font-bold flex flex-wrap items-center gap-1.5">
+                    <button type="button" onclick="openFriendHistory('${safeFriend}')" class="text-indigo-400 hover:underline">${d.friend}</button>
+                    <span>· ${d.concept}</span>
+                    ${groupBadge}
+                  </div>
+                  <div class="text-[11px] text-slate-400">${formatEsDate(d.date)} (hace ${daysAgo} días) · ${d.direction === 'owe_me' ? 'Me debe' : 'Le debo'}${d.groupId ? ` · ${d.groupSummary || ''}` : ''}</div>
                 </div>
-                <div class="text-[11px] text-slate-400">${formatEsDate(d.date)} (hace ${daysAgo} días) · ${d.direction === 'owe_me' ? 'Me debe' : 'Le debo'}</div>
               </div>
               <div class="flex items-center gap-2 shrink-0">
                 <span class="text-xs font-bold ${d.direction === 'owe_me' ? 'text-emerald-500' : 'text-rose-500'}">${d.direction === 'owe_me' ? '+' : '-'}${fmt(d.amount)}</span>
@@ -2820,7 +3144,7 @@
   function renderCashFlow() {
     let fInc = 0, fExp = 0;
     (state.recurring || []).forEach(r => {
-      if (!r.active) return;
+      if (!r.active || r.freq === 'once' || r.date) return;
       if (r.amount > 0) fInc += Number(r.amount);
       else fExp += Math.abs(Number(r.amount));
     });
@@ -2883,6 +3207,7 @@
           const haberVal = !isDebe ? Math.abs(ev.amount) : 0;
           running += ev.amount;
           const accLabel = selAcc === 'all' ? ` [${getAccountMeta(ev.account).name}]` : '';
+          const onceTag = ev.isOnce ? ` <span class="text-[10px] px-1.5 py-0.5 rounded bg-sky-500/15 text-sky-400">Puntual</span>` : '';
           const negCell = running < 0 ? 'bg-rose-500/25 text-rose-500 font-extrabold' : 'font-bold';
           const shortDate = formatEsDate(iso).slice(0, 5);
           const amtSigned = `${ev.amount >= 0 ? '+' : ''}${fmt(ev.amount)}`;
@@ -2890,7 +3215,7 @@
           rowsHtml.push(`
             <tr class="hover:bg-slate-50 dark:hover:bg-slate-850/70">
               <td class="py-2 px-2 border-r border-slate-200 dark:border-slate-800 font-mono text-[11px]"><span class="pocket-hide">${formatEsDate(iso)}</span><span class="pocket-only table-cell">${shortDate}</span></td>
-              <td class="py-2 px-2 border-r border-slate-200 dark:border-slate-800 font-medium">${ev.name}<span class="text-[10px] text-slate-400">${accLabel}</span></td>
+              <td class="py-2 px-2 border-r border-slate-200 dark:border-slate-800 font-medium">${ev.name}${onceTag}<span class="text-[10px] text-slate-400">${accLabel}</span></td>
               <td class="py-2 px-2 border-r border-slate-200 dark:border-slate-800 text-right font-semibold pocket-hide ${debeVal > 0 ? 'text-emerald-500' : 'text-slate-400'}">${debeVal > 0 ? fmt(debeVal) : '- €'}</td>
               <td class="py-2 px-2 border-r border-slate-200 dark:border-slate-800 text-right font-semibold pocket-hide ${haberVal > 0 ? 'text-rose-500' : 'text-slate-400'}">${haberVal > 0 ? fmt(haberVal) : '- €'}</td>
               <td class="py-2 px-2 border-r border-slate-200 dark:border-slate-800 text-right font-bold whitespace-nowrap pocket-only table-cell ${ev.amount >= 0 ? 'text-emerald-500' : 'text-rose-500'}">${amtSigned}</td>
@@ -2902,36 +3227,42 @@
     }
 
     document.getElementById('cfTreasuryTableBody').innerHTML = rowsHtml.join('');
-
     document.getElementById('cfFixedIncome').textContent = fmt(fInc);
     document.getElementById('cfFixedExpense').textContent = fmt(fExp);
     document.getElementById('cfMonthlySave').textContent = (monthlyNet >= 0 ? '+' : '') + fmt(monthlyNet);
     document.getElementById('cfMonthlySave').className = `text-lg font-bold mt-0.5 ${monthlyNet >= 0 ? 'text-indigo-500' : 'text-rose-500'}`;
     document.getElementById('cfThirtyDaysProj').textContent = fmt(running);
-
-    document.getElementById('recurringItemsList').innerHTML = (state.recurring || []).length === 0
-      ? '<div class="text-xs text-slate-400 py-6 text-center col-span-2">No hay partidas recurrentes aún. Añade una arriba o pulsa Detectar recibos/cuotas.</div>'
-      : state.recurring.map(r => {
-          const accName = getAccountMeta(r.account || 'ing_corriente').name;
-          return `
-            <div class="p-2 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 ${!r.active ? 'opacity-50' : ''}">
-              <div class="flex items-center gap-2 min-w-0">
-                <input type="checkbox" ${r.active ? 'checked' : ''} onchange="toggleRecurring('${r.id}')" class="rounded" />
-                <div class="truncate">
-                  <div class="text-xs font-semibold truncate">${r.name}</div>
-                  <div class="text-[10px] text-slate-400">Día ${r.dayOfMonth || 1} · ${accName} · ${r.note || ''}</div>
-                </div>
-              </div>
-              <div class="flex items-center gap-2 shrink-0">
-                <span class="text-xs font-bold ${r.amount >= 0 ? 'text-emerald-500' : 'text-rose-500'}">${r.amount >= 0 ? '+' : ''}${fmt(r.amount)}</span>
-                <button type="button" onclick="deleteRecurring('${r.id}')" class="text-slate-400 hover:text-rose-500 text-xs">✕</button>
-              </div>
-            </div>
-          `;
-        }).join('');
   }
 
   function renderSettings() {
+    // Lista de previsiones recurrentes y no recurrentes en Ajustes
+    const recBox = document.getElementById('recurringItemsList');
+    if (recBox) {
+      recBox.innerHTML = (state.recurring || []).length === 0
+        ? '<div class="text-xs text-slate-400 py-6 text-center col-span-2">No hay previsiones configuradas aún. Crea una arriba o pulsa Detectar recibos/cuotas.</div>'
+        : state.recurring.map(r => {
+            const accName = getAccountMeta(r.account || 'ing_corriente').name;
+            const isOnce = r.freq === 'once' || !!r.date;
+            const whenTxt = isOnce ? `📌 ${formatEsDate(r.date)}` : `🔁 Día ${r.dayOfMonth || 1}`;
+            return `
+              <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 ${!r.active ? 'opacity-50' : ''}">
+                <div class="flex items-center gap-2 min-w-0">
+                  <input type="checkbox" ${r.active ? 'checked' : ''} onchange="toggleRecurring('${r.id}')" class="rounded shrink-0" />
+                  <div class="min-w-0">
+                    <div class="text-xs font-semibold truncate">${r.name}</div>
+                    <div class="text-[10px] text-slate-400 truncate">${whenTxt} · ${accName} · ${r.note || ''}</div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-1.5 shrink-0">
+                  <span class="text-xs font-bold ${r.amount >= 0 ? 'text-emerald-500' : 'text-rose-500'}">${r.amount >= 0 ? '+' : ''}${fmt(r.amount)}</span>
+                  <button type="button" onclick="openEditRecurringModal('${r.id}')" title="Editar previsión" class="p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-xs">✏️</button>
+                  <button type="button" onclick="deleteRecurring('${r.id}')" title="Eliminar previsión" class="p-1 text-slate-400 hover:text-rose-500 text-xs">✕</button>
+                </div>
+              </div>
+            `;
+          }).join('');
+    }
+
     const accListBox = document.getElementById('settingsAccountsList');
     if (accListBox) {
       accListBox.innerHTML = getAccountsList().map(a => {
@@ -2969,7 +3300,7 @@
             <div class="py-2 flex items-center justify-between gap-2 text-xs">
               <span class="font-semibold">👤 ${f}</span>
               <div class="flex items-center gap-1.5">
-                <button type="button" onclick="openFriendHistory('${safeF}')" class="px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-[11px]">Historial</button>
+                <button type="button" onclick="openFriendHistory('${safeF}')" class="px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-[11px]">Mayor</button>
                 <button type="button" onclick="renameFriend('${safeF}')" class="px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-[11px]">✏️ Renombrar</button>
                 <button type="button" onclick="deleteFriend('${safeF}')" class="px-2 py-1 rounded-lg bg-rose-500/15 text-rose-500 hover:bg-rose-500/25 text-[11px] font-semibold">Quitar</button>
               </div>
