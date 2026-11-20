@@ -193,6 +193,7 @@
           </div>
         </div>
 
+        <!-- CUENTAS FINANCIERAS / PERSONALES -->
         <div class="bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
           <div class="flex items-center justify-between gap-2 mb-2">
             <div>
@@ -204,6 +205,18 @@
             </div>
           </div>
           <div id="accountsGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 pocket-grid-2 gap-2"></div>
+        </div>
+
+        <!-- CUENTAS MARCADAS COMO AMIGO (SEPARADAS EN PÁGINA PRINCIPAL) -->
+        <div id="friendAccountsSection" class="hidden bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <div>
+              <h2 class="text-xs font-bold uppercase tracking-wider text-sky-500">Cuentas de Amigos & Compartidas</h2>
+              <p class="text-[11px] text-slate-400">Estas cuentas están vinculadas a Deudas & Amigos; pulsa para ver su mayor o ir a Deudas.</p>
+            </div>
+            <button type="button" onclick="setTab('debts')" class="text-xs text-amber-500 hover:underline font-semibold shrink-0">Ir a Deudas & Amigos →</button>
+          </div>
+          <div id="friendAccountsGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 pocket-grid-2 gap-2"></div>
         </div>
 
         <div class="bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-2">
@@ -255,7 +268,6 @@
       <section id="view-transactions" class="hidden space-y-3 max-w-7xl mx-auto">
         <div id="accountQuickTabs" class="flex items-center gap-1.5 overflow-x-auto pb-1 custom-scroll"></div>
 
-        <!-- RESUMEN DE MAYOR PARA LA CUENTA / FILTRO ACTIVO -->
         <div id="ledgerSummaryBar" class="bg-white dark:bg-slate-900 px-3.5 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs">
           <div id="ledgerAccountTitle" class="font-bold text-sm">Libro Mayor · Todas las cuentas</div>
           <div class="flex flex-wrap items-center gap-3">
@@ -320,9 +332,10 @@
         <div class="flex flex-wrap items-center justify-between gap-2 bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800">
           <div>
             <h2 class="font-bold text-sm">Cuentas Compartidas con Amigos</h2>
-            <p class="text-xs text-slate-400">Haz clic sobre cualquier amigo para ver todo su historial de movimientos contigo.</p>
+            <p class="text-xs text-slate-400">Haz clic sobre cualquier amigo para ver todo su historial y movimientos contigo.</p>
           </div>
-          <div class="flex items-center gap-2">
+          <div class="flex flex-wrap items-center gap-2">
+            <button type="button" onclick="syncFriendAccountsToDebts(false)" class="px-3 py-1.5 rounded-xl bg-sky-500/15 text-sky-500 hover:bg-sky-500/25 text-xs font-semibold">🔄 Sincronizar cuentas Amigo</button>
             <button type="button" onclick="setTab('settings')" class="pocket-hide px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-medium">⚙️ Gestionar amigos</button>
             <button type="button" onclick="openModal('modalQuickDebt')" class="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-semibold">+ Apuntar Cena / Préstamo</button>
           </div>
@@ -449,9 +462,12 @@
           <div class="flex flex-wrap items-center justify-between gap-2">
             <div>
               <h2 class="font-bold text-sm flex items-center gap-2"><span>🏦</span> Cuentas Importadas y Personalizadas</h2>
-              <p class="text-xs text-slate-400 mt-0.5">Edita nombre, tipo, saldo inicial o si computa en el patrimonio/ahorro. Las cuentas de tipo "Amigo" también se reflejan en Deudas & Amigos.</p>
+              <p class="text-xs text-slate-400 mt-0.5">Al marcar una cuenta como <b>Amigo</b>, se añade automáticamente a Deudas & Amigos y se separa en la página principal.</p>
             </div>
-            <button type="button" onclick="openModal('modalAdjustAccounts')" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold">+ Crear cuenta</button>
+            <div class="flex items-center gap-2">
+              <button type="button" onclick="syncFriendAccountsToDebts(false)" class="px-3 py-1.5 rounded-xl bg-sky-500/15 text-sky-500 hover:bg-sky-500/25 text-xs font-semibold">🔄 Sincronizar Amigo → Deudas</button>
+              <button type="button" onclick="openModal('modalAdjustAccounts')" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold">+ Crear cuenta</button>
+            </div>
           </div>
           <div id="settingsAccountsList" class="divide-y divide-slate-100 dark:divide-slate-800 max-h-80 overflow-y-auto custom-scroll"></div>
         </div>
@@ -1340,6 +1356,56 @@
     return clean;
   }
 
+  function extractFriendLabelFromAccount(acc) {
+    const raw = (acc?.name || '').trim();
+    if (!raw) return null;
+    const cleaned = raw
+      .replace(/^(cuenta|amigo|amigos|deuda|deudas|grupo|compartid[oa])\s*[-:/]?\s*/i, '')
+      .trim();
+    return cleaned || raw;
+  }
+
+  function syncFriendAccountsToDebts(silent = true) {
+    let addedFriends = 0;
+    let addedDebts = 0;
+
+    (state.accounts || []).filter(a => a.kind === 'friend').forEach(acc => {
+      const fName = ensureFriendExists(extractFriendLabelFromAccount(acc));
+      if (!fName) return;
+      if (!state.friends.includes(fName)) addedFriends++;
+
+      const accTxs = (state.transactions || []).filter(t => t.account === acc.id);
+      accTxs.forEach(tx => {
+        const amt = Number(tx.amount || 0);
+        if (amt === 0) return;
+        const direction = amt > 0 ? 'owe_me' : 'i_owe';
+        const absAmt = Math.abs(amt);
+        const dup = (state.debts || []).some(d =>
+          (d.sourceTxId && d.sourceTxId === tx.id) ||
+          (d.friend === fName && d.date === tx.date && Math.abs(Number(d.amount) - absAmt) < 0.01 && normText(d.concept).includes(normText(tx.concept)))
+        );
+        if (!dup) {
+          state.debts.unshift({
+            id: uid(),
+            sourceTxId: tx.id,
+            date: tx.date || todayISO(),
+            friend: fName,
+            direction,
+            amount: absAmt,
+            concept: `${tx.concept || acc.name} (${acc.name})`,
+            settled: false
+          });
+          addedDebts++;
+        }
+      });
+    });
+
+    if (!silent) {
+      saveState();
+      alert(`Sincronización completada: ${addedDebts} movimiento(s) de cuentas Amigo vinculados a Deudas & Amigos.`);
+    }
+  }
+
   function makeSafeAccountId(baseName, fallbackPrefix = 'hb_acc') {
     const slug = normText(baseName).replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 24);
     let candidate = slug || `${fallbackPrefix}_${Math.random().toString(36).slice(2, 6)}`;
@@ -1405,16 +1471,20 @@
     if (!name) return alert('Escribe un nombre para la cuenta.');
     const metaKind = ACCOUNT_KINDS[kind] || ACCOUNT_KINDS.bank;
     const id = makeSafeAccountId(name, 'acc');
-    state.accounts.push({
+    const accObj = {
       id,
       name,
       icon: metaKind.icon,
       color: metaKind.color,
       kind,
       includeNetWorth: metaKind.includeNetWorth
-    });
+    };
+    state.accounts.push(accObj);
     state.accountBases[id] = 0;
-    if (kind === 'friend') ensureFriendExists(name.replace(/^(cuenta|amigo)\s*[-:/]?\s*/i, '').trim() || name);
+    if (kind === 'friend') {
+      ensureFriendExists(extractFriendLabelFromAccount(accObj));
+      syncFriendAccountsToDebts(true);
+    }
     document.getElementById('newAccName').value = '';
     saveState();
     renderAdjustAccountsModal();
@@ -1428,6 +1498,10 @@
     acc.icon = kMeta.icon;
     acc.color = kMeta.color;
     acc.includeNetWorth = kMeta.includeNetWorth;
+    if (newKind === 'friend') {
+      ensureFriendExists(extractFriendLabelFromAccount(acc));
+      syncFriendAccountsToDebts(true);
+    }
     saveState();
   }
 
@@ -1437,6 +1511,10 @@
     const nextName = prompt('Nuevo nombre para la cuenta:', acc.name);
     if (!nextName || !nextName.trim()) return;
     acc.name = nextName.trim();
+    if (acc.kind === 'friend') {
+      ensureFriendExists(extractFriendLabelFromAccount(acc));
+      syncFriendAccountsToDebts(true);
+    }
     saveState();
   }
 
@@ -1502,7 +1580,7 @@
           <div class="p-3 rounded-xl border ${d.settled ? 'border-slate-200 dark:border-slate-800 opacity-60' : 'border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-850'} flex items-center justify-between gap-2">
             <div class="min-w-0">
               <div class="text-xs font-bold truncate">${d.concept}</div>
-              <div class="text-[11px] text-slate-400">${d.date} · ${d.direction === 'owe_me' ? 'Me debe' : 'Le debo'} ${d.settled ? '· ✅ Saldado' : '· ⏳ Pendiente'}</div>
+              <div class="text-[11px] text-slate-400">${formatEsDate(d.date)} · ${d.direction === 'owe_me' ? 'Me debe' : 'Le debo'} ${d.settled ? '· ✅ Saldado' : '· ⏳ Pendiente'}</div>
             </div>
             <div class="flex items-center gap-2 shrink-0">
               <span class="text-xs font-bold ${d.direction === 'owe_me' ? 'text-emerald-500' : 'text-rose-500'}">${d.direction === 'owe_me' ? '+' : '-'}${fmt(d.amount)}</span>
@@ -1647,6 +1725,22 @@
   }
 
   // ==================== IMPORTADORES ING Y HOMEBANK ====================
+  function parseHomeBankJulianDate(julianRaw) {
+    const julian = parseInt(julianRaw);
+    if (isNaN(julian) || julian <= 0) return todayISO();
+    // En HomeBank, el día juliano parte de 0001-01-01 (o 1970-01-01 en algunas exportaciones)
+    let dt = new Date(Date.UTC(1, 0, 1));
+    dt.setUTCDate(dt.getUTCDate() + julian - 1);
+    if (dt.getUTCFullYear() > 2100) {
+      const dtUnix = new Date(Date.UTC(1970, 0, 1));
+      dtUnix.setUTCDate(dtUnix.getUTCDate() + julian);
+      if (dtUnix.getUTCFullYear() >= 1970 && dtUnix.getUTCFullYear() <= 2100) {
+        return dtUnix.toISOString().slice(0, 10);
+      }
+    }
+    return !isNaN(dt) ? dt.toISOString().slice(0, 10) : todayISO();
+  }
+
   function handleIngExcelUpload(e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -1732,7 +1826,7 @@
     const reader = new FileReader();
     reader.onload = (evt) => {
       const text = evt.target.result;
-      let imported = 0, skippedDupes = 0, createdAccounts = 0, linkedFriendDebts = 0;
+      let imported = 0, skippedDupes = 0, createdAccounts = 0;
 
       if (file.name.toLowerCase().endsWith('.xhb') || text.trim().startsWith('<?xml')) {
         const xml = new DOMParser().parseFromString(text, 'text/xml');
@@ -1770,11 +1864,7 @@
         xml.querySelectorAll('ope').forEach(o => {
           const rawAccKey = o.getAttribute('account');
           const accObj = hbKeyToAppAcc[rawAccKey];
-
-          const julian = parseInt(o.getAttribute('date'));
-          const dateObj = new Date(Date.UTC(1, 0, 1));
-          dateObj.setUTCDate(dateObj.getUTCDate() + julian - 1);
-          const dateStr = !isNaN(dateObj) ? dateObj.toISOString().slice(0, 10) : todayISO();
+          const dateStr = parseHomeBankJulianDate(o.getAttribute('date'));
           const amount = parseFloat(o.getAttribute('amount') || '0');
           if (isNaN(amount) || amount === 0) return;
 
@@ -1790,33 +1880,6 @@
           } else {
             imported++;
             evaluateSharedRulesForTx(added);
-          }
-
-          if (accObj && accObj.kind === 'friend') {
-            const inferredFriend = inferAccountKindAndFriend(accObj.name).friendName || payeeName || accObj.name;
-            const fName = ensureFriendExists(inferredFriend);
-            if (fName) {
-              const direction = amount > 0 ? 'owe_me' : 'i_owe';
-              const absAmt = Math.abs(amount);
-              const debtExists = state.debts.some(d =>
-                d.friend === fName &&
-                d.date === dateStr &&
-                Math.abs(Number(d.amount) - absAmt) < 0.01 &&
-                normText(d.concept) === normText(concept)
-              );
-              if (!debtExists) {
-                state.debts.unshift({
-                  id: uid(),
-                  date: dateStr,
-                  friend: fName,
-                  direction,
-                  amount: absAmt,
-                  concept: `${concept} (HomeBank · ${accObj.name})`,
-                  settled: false
-                });
-                linkedFriendDebts++;
-              }
-            }
           }
         });
       } else {
@@ -1843,11 +1906,12 @@
         createdAccounts = Math.max(0, state.accounts.length - beforeCount);
       }
 
+      syncFriendAccountsToDebts(true);
       detectRecurringFromTransactions(true);
       closeModal('modalHomeBank');
       e.target.value = '';
       saveState();
-      alert(`HomeBank importado: ${createdAccounts} cuenta(s) detectada(s)/creada(s), ${imported} movimientos nuevos, ${skippedDupes} duplicados omitidos y ${linkedFriendDebts} movimientos vinculados a amigos.`);
+      alert(`HomeBank importado: ${createdAccounts} cuenta(s) detectada(s)/creada(s), ${imported} movimientos nuevos y ${skippedDupes} duplicados omitidos.`);
     };
     reader.readAsText(file);
   }
@@ -2098,6 +2162,7 @@
       state.transactions.push(newTx);
       evaluateSharedRulesForTx(newTx);
     }
+    syncFriendAccountsToDebts(true);
     closeModal('modalEditTx');
     saveState();
   }
@@ -2297,39 +2362,53 @@
     } catch (e) { console.error('Render error:', e); }
   }
 
+  function renderAccountCardHtml(acc) {
+    const bal = getAccountBalance(acc.id);
+    const lastDate = getAccountLastDate(acc.id);
+    const dateLabel = lastDate ? `Act. ${formatEsDate(lastDate)}` : 'Sin mov.';
+    const kindBadge = ACCOUNT_KINDS[acc.kind]?.label || 'Cuenta';
+    return `
+      <div onclick="openAccountHistory('${acc.id}')" title="Clic para abrir el libro mayor de ${acc.name}" class="cursor-pointer p-2.5 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-800 hover:border-indigo-500 transition-all group">
+        <div class="flex items-center justify-between gap-1 text-xs text-slate-400">
+          <span class="truncate group-hover:text-indigo-400 font-medium">${acc.name}</span>
+          <span class="shrink-0">${acc.icon || '🏦'}</span>
+        </div>
+        <div class="text-sm sm:text-base font-bold mt-1 ${acc.color || 'text-indigo-500'}">${fmt(bal)}</div>
+        <div class="text-[10px] text-slate-400 mt-0.5 flex items-center justify-between gap-1">
+          <span class="truncate">${dateLabel} · ${kindBadge}</span>
+          <span class="pocket-hide shrink-0">Mayor →</span>
+        </div>
+      </div>
+    `;
+  }
+
   function renderAccountsAndWeeklyRadar() {
     const accs = getAccountsList();
-    let totalNetWorth = 0, totalLiquid = 0;
-    const grid = document.getElementById('accountsGrid');
+    const regularAccs = accs.filter(a => a.kind !== 'friend');
+    const friendAccs = accs.filter(a => a.kind === 'friend');
 
-    grid.innerHTML = accs.map(acc => {
+    let totalNetWorth = 0, totalLiquid = 0;
+    accs.forEach(acc => {
       const bal = getAccountBalance(acc.id);
-      const lastDate = getAccountLastDate(acc.id);
-      const dateLabel = lastDate ? `Act. ${formatEsDate(lastDate)}` : 'Sin mov.';
       const included = acc.includeNetWorth !== false;
       if (included) {
         totalNetWorth += bal;
         if (acc.kind !== 'loan') totalLiquid += bal;
       }
-      const kindBadge = ACCOUNT_KINDS[acc.kind]?.label || 'Cuenta';
-      return `
-        <div onclick="openAccountHistory('${acc.id}')" title="Clic para abrir el libro mayor de ${acc.name}" class="cursor-pointer p-2.5 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-800 hover:border-indigo-500 transition-all group">
-          <div class="flex items-center justify-between gap-1 text-xs text-slate-400">
-            <span class="truncate group-hover:text-indigo-400 font-medium">${acc.name}</span>
-            <span class="shrink-0">${acc.icon || '🏦'}</span>
-          </div>
-          <div class="text-sm sm:text-base font-bold mt-1 ${acc.color || 'text-indigo-500'}">${fmt(bal)}</div>
-          <div class="text-[10px] text-slate-400 mt-0.5 flex items-center justify-between gap-1">
-            <span class="truncate">${dateLabel} · ${kindBadge}</span>
-            <span class="pocket-hide shrink-0">Mayor →</span>
-          </div>
-        </div>
-      `;
-    }).join('');
+    });
+
+    document.getElementById('accountsGrid').innerHTML = regularAccs.map(renderAccountCardHtml).join('');
+
+    const friendSec = document.getElementById('friendAccountsSection');
+    const friendGrid = document.getElementById('friendAccountsGrid');
+    if (friendSec && friendGrid) {
+      friendSec.classList.toggle('hidden', friendAccs.length === 0);
+      friendGrid.innerHTML = friendAccs.map(renderAccountCardHtml).join('');
+    }
 
     const radarAccounts = ui.viewMode === 'mobile'
-      ? accs.filter(a => a.kind !== 'loan').slice(0, 2).map(a => a.id)
-      : accs.filter(a => a.kind !== 'loan').slice(0, 4).map(a => a.id);
+      ? regularAccs.filter(a => a.kind !== 'loan').slice(0, 2).map(a => a.id)
+      : regularAccs.filter(a => a.kind !== 'loan').slice(0, 4).map(a => a.id);
 
     const weekEvents = buildUpcomingEvents(7, 'all');
     document.getElementById('weeklyRadarGrid').innerHTML = radarAccounts.map(accId => {
@@ -2562,7 +2641,6 @@
       return true;
     });
 
-    // Orden cronológico base (más antigua primero) para calcular saldo mayor progresivo
     const chrono = [...filtered].sort((a, b) => {
       const dCmp = String(a.date || '').localeCompare(String(b.date || ''));
       if (dCmp !== 0) return dCmp;
@@ -2675,20 +2753,35 @@
   }
 
   function renderDebts() {
-    const allNames = [...new Set([...(state.friends || []), ...(state.debts || []).map(d => d.friend)])].filter(Boolean);
+    const friendAccountNames = (state.accounts || [])
+      .filter(a => a.kind === 'friend')
+      .map(a => extractFriendLabelFromAccount(a))
+      .filter(Boolean);
+
+    const allNames = [...new Set([
+      ...(state.friends || []),
+      ...friendAccountNames,
+      ...(state.debts || []).map(d => d.friend)
+    ])].filter(Boolean);
+
     document.getElementById('friendsSummaryGrid').innerHTML = allNames.length === 0
-      ? `<div class="col-span-full text-center text-xs text-slate-400 py-6">No hay amigos configurados. Añade personas en Ajustes o asócialas al importar.</div>`
+      ? `<div class="col-span-full text-center text-xs text-slate-400 py-6">No hay amigos configurados. Marca cuentas como "Amigo" en Ajustes o añade personas aquí.</div>`
       : allNames.map(name => {
           const safeName = name.replace(/'/g, "\\'");
           const friendDebts = (state.debts || []).filter(d => d.friend === name);
           const pendingNet = friendDebts.filter(d => !d.settled).reduce((acc, d) => acc + (d.direction === 'owe_me' ? Number(d.amount) : -Number(d.amount)), 0);
+
+          const linkedAcc = (state.accounts || []).find(a => a.kind === 'friend' && normText(extractFriendLabelFromAccount(a)) === normText(name));
+          const accBal = linkedAcc ? getAccountBalance(linkedAcc.id) : null;
+
           return `
-            <div onclick="openFriendHistory('${safeName}')" class="cursor-pointer p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-indigo-500 transition-all shadow-sm flex items-center justify-between">
-              <div>
-                <div class="font-bold text-sm flex items-center gap-1.5"><span>👤</span><span>${name}</span></div>
+            <div onclick="openFriendHistory('${safeName}')" class="cursor-pointer p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-indigo-500 transition-all shadow-sm flex items-center justify-between gap-2">
+              <div class="min-w-0">
+                <div class="font-bold text-sm flex items-center gap-1.5 truncate"><span>👤</span><span class="truncate">${name}</span></div>
                 <div class="text-[11px] text-slate-400 mt-0.5">${friendDebts.length} mov. · Ver historial</div>
+                ${accBal !== null ? `<div class="text-[10px] text-sky-500 mt-0.5">Cuenta ${linkedAcc.name}: <b>${fmt(accBal)}</b></div>` : ''}
               </div>
-              <div class="text-right">
+              <div class="text-right shrink-0">
                 <div class="text-sm font-bold ${pendingNet > 0 ? 'text-emerald-500' : pendingNet < 0 ? 'text-rose-500' : 'text-slate-400'}">
                   ${pendingNet === 0 ? 'Al día' : (pendingNet > 0 ? '+' + fmt(pendingNet) : fmt(pendingNet))}
                 </div>
@@ -2712,7 +2805,7 @@
                   <button type="button" onclick="openFriendHistory('${safeFriend}')" class="text-indigo-400 hover:underline">${d.friend}</button>
                   <span>· ${d.concept}</span>
                 </div>
-                <div class="text-[11px] text-slate-400">${d.date} (hace ${daysAgo} días) · ${d.direction === 'owe_me' ? 'Me debe' : 'Le debo'}</div>
+                <div class="text-[11px] text-slate-400">${formatEsDate(d.date)} (hace ${daysAgo} días) · ${d.direction === 'owe_me' ? 'Me debe' : 'Le debo'}</div>
               </div>
               <div class="flex items-center gap-2 shrink-0">
                 <span class="text-xs font-bold ${d.direction === 'owe_me' ? 'text-emerald-500' : 'text-rose-500'}">${d.direction === 'owe_me' ? '+' : '-'}${fmt(d.amount)}</span>
